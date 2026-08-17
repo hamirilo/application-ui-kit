@@ -21,6 +21,22 @@ StorybookをUIの視覚的な仕様・使用例として扱います。新しい
 
 tokens/theme.css がスタイルTokenの入口です。コンポーネントではraw colorではなく、bg-primary、text-foreground、border-borderなどのsemantic tokenを使います。アプリごとのブランド差分はアプリ側のToken overrideで表現し、コンポーネント実装を複製しないでください。
 
+## 品質確認（推奨）
+
+このリポジトリでは、アプリ全体の性能スコアを保証するのではなく、コンポーネントとStory単位の品質を確認します。アプリ全体のLighthouseや主要導線の確認は、[品質確認プレイブック](https://github.com/hamirilo/ai-dev-playbook/blob/main/playbooks/quality-checks.md)に従って利用側アプリで実施してください。
+
+新しいコンポーネントやStoryを追加・変更するときは、該当する範囲で次を確認します。
+
+- Storybookのa11yチェックで重大な問題がない
+- キーボード操作、フォーカス、ラベル、エラー表示が成立する
+- loading、empty、error、disabled、長い文字列などの状態が成立する
+- 狭い画面幅でも主要操作と内容が失われない
+- reduced motionなど、利用者の設定を不必要に無視しない
+- raw colorを追加せず、semantic tokenを利用する
+- typecheck、test、lint、Storybook buildが通る
+
+Lighthouseの点数だけを上げるために、意味のあるHTML、アクセシビリティ情報、必要なUI状態を削らないでください。
+
 ## Package
 
 パッケージ名は @hamirilo/application-ui-kit です。公開リポジトリ名とパッケージ名を一致させ、初回公開版からこの名前を正式なAPIとして扱います。
