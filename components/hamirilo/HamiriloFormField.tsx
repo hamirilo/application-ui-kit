@@ -1,7 +1,7 @@
 /**
  * HamiriloFormField - ラベル + 入力 + エラー + ヘルプをまとめるフォーム部品
  *
- * server-rendered markupの `includes/molecules/form_field.html` の React 版。
+ * markupの `includes/molecules/form_field.html` の React 版。
  * 余白・必須マーク・エラー表示のルールをここに集約し、画面ごとのばらつきを防ぐ。
  *
  * 余白は design-system/components.md の規約に合わせて固定している:
@@ -35,7 +35,7 @@ export interface HamiriloFormFieldProps {
 
   /**
    * 入力欄の id。省略時は自動生成する。
-   * server-rendered application フォームと紐づける場合は `field.id_for_label` を渡す。
+   * application フォームと紐づける場合は `field.id_for_label` を渡す。
    */
   htmlFor?: string;
 

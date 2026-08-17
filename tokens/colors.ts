@@ -30,7 +30,6 @@ export interface SemanticColor {
  * アクションカラー
  *
  * ボタン・操作系の色。1画面に primary は原則1つ。
- * Django テンプレートでは `btn-primary` 等の CSS クラスを使い、
  * React では `<HamiriloButton variant="primary">` を使う。
  */
 export const ACTION_COLORS: SemanticColor[] = [
@@ -143,7 +142,6 @@ export const BASE_COLORS: SemanticColor[] = [
  *
  * これらはセマンティックトークンではなく Tailwind パレットを直接使う。
  * 理由: アプリごとに意味の数が違い、トークン化すると破綻するため。
- * Django テンプレートでは `models.py` の `*_display_class` プロパティが返す。
  *
  * 出典: design-system/colors.md の「推奨セマンティクス」表
  */

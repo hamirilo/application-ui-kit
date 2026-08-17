@@ -33,7 +33,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html） | \`<input type="checkbox">\`（共通クラスは未整備） |
+| markup（.html） | \`<input type="checkbox">\`（共通クラスは未整備） |
 | 排他的な選択（どれか 1 つ） | ラジオボタン。チェックボックスは「複数選べる」と読まれる |
 | 選択肢が多い（十数個以上） | \`HamiriloSelect\` か検索できる UI |
 | 即座に設定が反映される ON/OFF | スイッチ（\`HamiriloSwitch\` は未提供。必要になったら追加する） |

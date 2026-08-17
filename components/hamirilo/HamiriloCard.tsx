@@ -1,10 +1,10 @@
 /**
  * HamiriloCard - shared UI libraryのカードコンポーネント
  *
- * 見た目は server-rendered markupの `.card` / `.card-sm` / `.card-lg` に揃えている。
+ * 見た目は markupの `.card` / `.card-sm` / `.card-lg` に揃えている。
  *
  * <important>
- * server-rendered markup（.html）では `<div class="card">` を使う。
+ * markup（.html）では `<div class="card">` を使う。
  * HamiriloCard は React application の中でだけ使う。
  * </important>
  */

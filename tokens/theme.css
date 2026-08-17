@@ -105,14 +105,14 @@
  *
  * Tailwind v4 のデフォルトでは `dark:` が @media (prefers-color-scheme: dark)
  * にコンパイルされる。それだと OS がダークモードのユーザーに対して
- * components/ui/* の `dark:` だけが勝手に効き、server-rendered markup側は
+ * components/ui/* の `dark:` だけが勝手に効き、markup側は
  * `bg-white` 直書きのままなので画面が半分だけ暗くなって破綻する。
  *
  * そこでクラス方式に変更し、`<html class="dark">` を付けたときだけ
  * 有効になるオプトイン方式にする。付けない限り従来通りライトのまま。
  *
  * <important>
- * ダークモードは「構造の用意」段階。既存の server-rendered markupと
+ * ダークモードは「構造の用意」段階。既存の markupと
  * 既存 Dx コンポーネントは `bg-white` / `text-gray-900` 直書きのため
  * まだダークで破綻する。破綻箇所は Storybook の Dark 切替で確認できる。
  * 新規コンポーネントはセマンティックトークン
@@ -220,13 +220,13 @@
 /* ==========================================================================
  * 共有コンポーネントクラス
  *
- * server-rendered markupから使う「素の HTML + class」の部品。
+ * markupから使う「素の HTML + class」の部品。
  * React application の中では対応する Dx コンポーネントを使う。
  *   btn-primary  ↔ <HamiriloButton variant="primary">
  *   input-field  ↔ <HamiriloInput>
  *   card         ↔ <HamiriloCard>
  *
- * 見本は Storybook の Foundations/CSS Classes を参照。
+ * 見本は Storybook の Foundations を参照。
  * ========================================================================== */
 
 @layer components {
@@ -369,7 +369,7 @@
     @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6;
   }
 
-  /* server-rendered application Template 側の一覧テーブル（ADR-0009: レイアウト系 UI は server-rendered application 所有） */
+  /* application Template 側の一覧テーブル（ADR-0009: レイアウト系 UI は application 所有） */
   .data-table {
     @apply w-full text-sm border-collapse;
   }

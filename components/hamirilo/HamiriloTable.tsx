@@ -8,7 +8,7 @@
  * <important>
  * これは「見た目の共通化」だけを担う。ソート・ページング・フィルタは
  * 業務ロジックなので各アプリ側で実装し、その結果を rows に渡す。
- * server-rendered application 側の一覧は server-rendering + テンプレートで描画し、HamiriloTable は使わない。
+ * application 側の一覧は application rendering + テンプレートで描画し、HamiriloTable は使わない。
  * </important>
  */
 

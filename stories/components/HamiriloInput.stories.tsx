@@ -7,8 +7,8 @@ import { HamiriloFormField, HamiriloInput } from "../../components/hamirilo";
  *
  * <important>
  * これは **React application の中でだけ** 使う。
- * server-rendered application フォームでは widget に `class="input-field"` を指定する。
- * 見本は Foundations/CSS Classes を参照。
+ * application フォームでは widget に `class="input-field"` を指定する。
+ * 見本は Foundations を参照。
  * </important>
  */
 const meta = {
@@ -22,8 +22,8 @@ const meta = {
 ## 目的
 
 入力欄の見た目・フォーカスリング・エラー表現を 1 箇所に集約する。
-server-rendered application の \`input-field\` クラスと同じ余白（\`px-3.5 py-2.5\`）・角丸（\`rounded-lg\`）に
-揃えてあるため、同じ画面に server-rendering フォームと React application が並んでも段差が出ない。
+application の \`input-field\` クラスと同じ余白（\`px-3.5 py-2.5\`）・角丸（\`rounded-lg\`）に
+揃えてあるため、同じ画面に application rendering フォームと React application が並んでも段差が出ない。
 
 ## 使う場面
 
@@ -34,12 +34,12 @@ server-rendered application の \`input-field\` クラスと同じ余白（\`px-
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
+| markup（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
 | ラベル・エラー・ヘルプも必要 | \`HamiriloFormField\` で包む（余白と aria が自動で付く） |
 | 複数行の入力 | \`<textarea className="input-field">\`（React 版は未提供） |
 | 選択肢から選ぶ | \`HamiriloSelect\` |
 | 日付の入力 | \`HamiriloDatePicker\` |
-| 検索して選ぶ（社員選択など） | Tom Select（server-rendered application） / Autocomplete（React） |
+| 検索して選ぶ（社員選択など） | application-specific select（application） / Autocomplete（React） |
 
 ## 注意事項
 

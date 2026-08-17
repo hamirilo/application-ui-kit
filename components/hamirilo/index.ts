@@ -26,7 +26,7 @@ export type { HamiriloConfirmDialogProps } from "./HamiriloConfirmDialog";
 export { HamiriloFormDialog } from "./HamiriloFormDialog";
 export type { HamiriloFormDialogProps } from "./HamiriloFormDialog";
 
-export { HamiriloToast, HamiriloToaster, registerGlobalDxToast } from "./HamiriloToast";
+export { HamiriloToast, HamiriloToaster } from "./HamiriloToast";
 export type { HamiriloToastOptions, HamiriloToastType } from "./HamiriloToast";
 
 export { HamiriloDropdown } from "./HamiriloDropdown";

@@ -24,7 +24,7 @@ const meta = {
         component: `
 ## 目的
 
-server-rendered application の \`includes/molecules/form_field.html\` の React 版。
+application の \`includes/molecules/form_field.html\` の React 版。
 以下を 1 箇所に集約する。
 
 - **余白の固定** — ラベル下 \`mb-1.5\` / エラー上 \`mt-1.5\` / ヘルプ上 \`mt-1\`
@@ -41,7 +41,7 @@ server-rendered application の \`includes/molecules/form_field.html\` の React
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html） | \`{% include 'includes/molecules/form_field.html' %}\` |
+| markup（.html） | \`{% include 'includes/molecules/form_field.html' %}\` |
 | ラベルが不要な入力（検索ボックス、テーブル内のインライン編集） | \`HamiriloInput\` 単体 + \`aria-label\` |
 | チェックボックス | \`HamiriloCheckbox\`（ラベルを自前で持っているため二重になる） |
 
@@ -68,7 +68,7 @@ server-rendered application の \`includes/molecules/form_field.html\` の React
   \`*\` は読み上げでは「アスタリスク」または無視されるため
 - **HTML の \`required\` 属性とは別物。** バリデーションが必要なら
   子の入力欄にも \`required\` を渡す
-- server-rendered application フォームと連携する場合は \`htmlFor={field.id_for_label}\` を渡して id を揃える
+- application フォームと連携する場合は \`htmlFor={field.id_for_label}\` を渡して id を揃える
         `,
       },
     },

@@ -7,8 +7,8 @@ import { HamiriloButton } from "../../components/hamirilo";
  *
  * <important>
  * これは **React application の中でだけ** 使う。
- * server-rendered markup（.html）では `<button class="btn-primary">` を使う。
- * 見本は Foundations/CSS Classes を参照。
+ * markup（.html）では `<button class="btn-primary">` を使う。
+ * 見本は Foundations を参照。
  * </important>
  */
 const meta = {
@@ -33,7 +33,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html）内のボタン | \`<button class="btn-primary">\` |
+| markup（.html）内のボタン | \`<button class="btn-primary">\` |
 | 画面遷移するだけのリンク | \`<a>\` + \`variant="link"\`。見た目がボタンでも意味がリンクなら \`<a>\` を使う |
 | アイコンだけの小さな操作（テーブル行内など） | \`variant="ghost"\` + \`size="sm"\` |
 | shadcn/ui の \`Button\` を直接使う | 禁止。必ず HamiriloButton を経由する（ADR-0003） |

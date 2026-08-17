@@ -33,7 +33,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html） | \`badge {{ obj.status_display_class }}\`（\`models.py\` の \`*_display_class\` と組み合わせる） |
+| markup（.html） | \`badge {{ obj.status_display_class }}\`（\`models.py\` の \`*_display_class\` と組み合わせる） |
 | クリックできる操作 | \`HamiriloButton\`（バッジはクリック不可の表示専用） |
 | 数値のカウント表示（未読件数等） | 別途 \`avatar-*\` 系のドット表示を検討 |
 

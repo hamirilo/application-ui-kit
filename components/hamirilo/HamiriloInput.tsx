@@ -1,8 +1,8 @@
 /**
  * HamiriloInput - shared UI libraryのテキスト入力コンポーネント
  *
- * 見た目は server-rendered markupの `input-field` クラスに揃えている。
- * 同じ画面に server-rendering フォームと React application が並んでも段差が出ないようにするため。
+ * 見た目は markupの `input-field` クラスに揃えている。
+ * 同じ画面に application rendering フォームと React application が並んでも段差が出ないようにするため。
  *
  * 画面側では HamiriloInput のみを使用し、素の <input> にクラスを直書きしないでください。
  */

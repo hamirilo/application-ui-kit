@@ -42,7 +42,7 @@ const meta = {
 | フォームの入力と送信 | \`HamiriloFormDialog\`（Enter 送信・送信中の入力無効化が組み込み済み） |
 | 操作結果の通知 | \`HamiriloToast\`。完了を伝えるだけでダイアログを出さない |
 | \`confirm()\` / \`alert()\` | **禁止。** 見た目が OS 依存で、文言も制御できない |
-| server-rendered markup（.html） | 各プロジェクトのモーダル partial か server-rendering。React application を新設しない |
+| markup（.html） | 各プロジェクトのモーダル partial か application rendering。React application を新設しない |
 | 情報量が多い（1 画面ぶん以上） | 専用ページへ遷移する。モーダル内スクロールは読みにくい |
 
 ## Props

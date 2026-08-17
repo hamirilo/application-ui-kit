@@ -1,11 +1,11 @@
 /**
  * HamiriloSelect - shared UI libraryのセレクトボックス
  *
- * 見た目は server-rendered markupの `select.input-field` に揃えている。
+ * 見た目は markupの `select.input-field` に揃えている。
  *
  * <important>
  * 選択肢が多く検索が必要な場合（部署選択・社員選択など）は HamiriloSelect を使わない。
- * server-rendered application 側は Tom Select、React 側は @base-ui/react の Autocomplete を検討する。
+ * application 側は application-specific select、React 側は @base-ui/react の Autocomplete を検討する。
  * HamiriloSelect は選択肢が十数個までの用途に限る。
  * </important>
  */

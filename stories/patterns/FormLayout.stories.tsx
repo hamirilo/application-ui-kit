@@ -51,7 +51,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html）のフォーム | \`{% include 'includes/molecules/form_field.html' %}\` + \`form-validation.js\`。Foundations/CSS Classes を参照 |
+| markup（.html）のフォーム | \`{% include 'includes/molecules/form_field.html' %}\` + \`form-validation.js\`。Foundations を参照 |
 | 項目が 3 個以下の入力 | \`HamiriloFormDialog\` でモーダルにする。画面遷移させるほどの内容ではない |
 | 入力項目が 20 個を超える | ステップ分割（ウィザード）を検討する。1 画面に詰め込まない |
 | 一覧の中のインライン編集 | セル内に \`HamiriloInput\` を直接置く。\`HamiriloFormField\` は使わない（ラベルが二重になる） |

@@ -119,7 +119,7 @@ function getErrorMessage(error: unknown): string {
  *
  * @example
  * ```tsx
- * // 削除確認（danger） - 既存 server-rendered application View への削除リクエストをそのまま渡すだけ
+ * // 削除確認（danger） - 既存 application View への削除リクエストをそのまま渡すだけ
  * const [open, setOpen] = useState(false)
  *
  * <HamiriloConfirmDialog

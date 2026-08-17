@@ -30,7 +30,7 @@ const DEPARTMENTS: HamiriloSelectItem[] = [
  *
  * <important>
  * 選択肢が十数個を超える、または検索が必要な場合は使わない。
- * server-rendered application は Tom Select、React は @base-ui/react の Autocomplete を使う。
+ * application は application-specific select、React は @base-ui/react の Autocomplete を使う。
  * </important>
  */
 const meta = {
@@ -44,7 +44,7 @@ const meta = {
 ## 目的
 
 選択肢から 1 つ選ぶ操作を統一する。
-見た目は server-rendered application の \`select.input-field\`（矢印アイコン付き）に揃えてある。
+見た目は application の \`select.input-field\`（矢印アイコン付き）に揃えてある。
 
 素の \`<select>\` ではなく \`@base-ui/react\` の Select を使っている理由は、
 OS 標準のドロップダウンではグループ見出しや無効項目の見た目が揃わず、
@@ -59,8 +59,8 @@ OS 標準のドロップダウンではグループ見出しや無効項目の�
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html） | \`<select class="input-field">\` |
-| 選択肢が多い / 検索が必要（社員・部署・取引先） | Tom Select（server-rendered application） / Autocomplete（React） |
+| markup（.html） | \`<select class="input-field">\` |
+| 選択肢が多い / 検索が必要（社員・部署・取引先） | application-specific select（application） / Autocomplete（React） |
 | 選択肢が 2 つで排他 | \`HamiriloCheckbox\` かラジオボタン（1 クリックで済む） |
 | 複数選択したい | 現状未提供。チェックボックスのリストで代替する |
 | 日付を選ぶ | \`HamiriloDatePicker\` |
@@ -68,7 +68,7 @@ OS 標準のドロップダウンではグループ見出しや無効項目の�
 ## Props
 
 選択肢は JSX の子要素ではなく **\`items\` 配列**で渡す。
-配列にしている理由は、server-rendered application の \`choices\` や API のレスポンスを
+配列にしている理由は、application の \`choices\` や API のレスポンスを
 そのまま \`map\` で渡せるようにするため。
 
 \`\`\`ts

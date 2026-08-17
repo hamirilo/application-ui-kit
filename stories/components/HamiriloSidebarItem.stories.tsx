@@ -13,7 +13,7 @@ const meta = {
 React application 内のサイドバー項目。選択中の項目を背景とテキストカラーで示す。
 
 **何に使うか**: 動的に選択状態が変わるサイドバー（React application 内のみ）
-**何に使わないか**: server-rendered markupのナビ（\`sidebar.html\` / \`global_nav.html\` を使う）、単発のボタン（\`HamiriloButton\`）
+**何に使わないか**: markupのナビ（\`sidebar.html\` / \`global_nav.html\` を使う）、単発のボタン（\`HamiriloButton\`）
 
 セマンティックトークン（\`text-primary\` / \`bg-accent\`）のみを使い、\`activeColor\` のような variant 発散を避ける。
         `,

@@ -49,7 +49,7 @@ const meta = {
 | 確認だけ（入力なし） | \`HamiriloConfirmDialog\` |
 | 入力項目が多い / 段階的な入力が必要 | **専用ページへ遷移する。** モーダル内スクロールのフォームは入力ミスに気付けない |
 | ファイルアップロードが主目的 | ドロップ領域を含む専用画面。モーダルは領域が狭い |
-| server-rendered markup（.html） | server-rendering でフォーム partial を差し込む。React application を新設しない |
+| markup（.html） | application rendering でフォーム partial を差し込む。React application を新設しない |
 | 入力途中で他の情報を参照したくなるフォーム | ページにする。モーダルは背後を隠してしまう |
 
 ## Props
@@ -67,7 +67,7 @@ const meta = {
 | \`disabled\` | 入力を無効化する（権限がない場合など） |
 | \`maxWidth\` | \`sm\` / \`md\` / \`lg\`（既定） / \`xl\` / \`2xl\` |
 
-## server-rendered application との連携
+## application との連携
 
 React application からの送信は fetch で行い、**request security トークンを必ず付ける**。
 
@@ -80,7 +80,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     const res = await fetch('/requests/create/', {
       method: 'POST',
       headers: { 'X-request securityToken': request-security },
-      body: new FormData(e.currentTarget),   // name 属性がそのまま server-rendered application のフィールド名になる
+      body: new FormData(e.currentTarget),   // name 属性がそのまま application のフィールド名になる
     })
     if (!res.ok) throw new Error('保存に失敗しました')
     setOpen(false)
@@ -93,7 +93,7 @@ const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
 }
 \`\`\`
 
-server-rendered application のバリデーションエラーは JSON で返し、\`HamiriloFormField\` の \`error\` に流す
+application のバリデーションエラーは JSON で返し、\`HamiriloFormField\` の \`error\` に流す
 （Story の \`WithValidationError\` を参照）。
 
 ## 注意事項
@@ -260,7 +260,7 @@ export const Submitting: Story = {
  *
  * 送信は失敗し、**ダイアログは開いたまま**エラーが表示される。
  * 全体エラーは先頭のアラート、項目エラーは `HamiriloFormField` の `error` に流す。
- * これが server-rendered application の `form.errors` を React 側で受ける想定の形。
+ * これが application の `form errors` を React 側で受ける想定の形。
  */
 export const WithValidationError: Story = {
   render: (args) => {
@@ -284,7 +284,7 @@ export const WithValidationError: Story = {
             setLoading(true);
             try {
               await new Promise((resolve) => window.setTimeout(resolve, 800));
-              // server-rendered application からの { errors: {...} } を想定
+              // application からの { errors: {...} } を想定
               setErrors({
                 __all__: "入力内容にエラーがあります。",
                 amount: "上限額（100,000 円）を超えています",

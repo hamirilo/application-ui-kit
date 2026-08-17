@@ -6,7 +6,7 @@ import { HamiriloFormField, HamiriloTextarea } from "../../components/hamirilo";
  *
  * <important>
  * これは **React application の中でだけ** 使う。
- * server-rendered application フォームでは widget に `class="input-field"` を指定する。
+ * application フォームでは widget に `class="input-field"` を指定する。
  * </important>
  */
 const meta = {
@@ -30,7 +30,7 @@ const meta = {
 | 場面 | 代わりに使うもの |
 |---|---|
 | 1 行の入力 | \`HamiriloInput\` |
-| server-rendered markup（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
+| markup（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
 
 ## 注意事項
 

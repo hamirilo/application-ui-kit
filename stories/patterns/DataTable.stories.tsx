@@ -60,7 +60,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| **server-rendered application の一覧画面** | server-rendering + テンプレートの \`{% for %}\`。これが既定。Foundations/CSS Classes の「テーブル」を参照 |
+| **application の一覧画面** | application rendering + テンプレートの \`{% for %}\`。これが既定。Foundations の「テーブル」を参照 |
 | 数百行以上 | サーバー側ページング。全行を描画すると重い |
 | 項目が 2〜3 個で縦に読ませたい | 定義リスト（\`<dl>\`）かカードのリスト |
 | 表計算のような編集 | HamiriloTable の範囲外。専用 UI を検討する |

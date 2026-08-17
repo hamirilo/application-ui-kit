@@ -121,7 +121,7 @@ export function StatusTable({
   );
 }
 
-/** アイコン1つ。server-rendered application の `{% icon %}` と同じ SVG 属性で描画する */
+/** アイコン1つ。application の `{% icon %}` と同じ SVG 属性で描画する */
 export function Icon({
   name,
   className = "w-5 h-5",
@@ -166,7 +166,7 @@ export function IconGrid() {
 /**
  * CSS クラスの見本。
  *
- * `sample` に素の HTML 文字列を渡す。server-rendered markupに
+ * `sample` に素の HTML 文字列を渡す。markupに
  * そのままコピーできる形にしておくため、React 要素ではなく文字列で持つ。
  */
 export function ClassSample({

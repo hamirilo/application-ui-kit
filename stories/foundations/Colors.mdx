@@ -94,7 +94,7 @@ import { ColorTable, StatusTable, SpecTable, Code, DoDont } from './_parts'
 
 トーンは **背景 50 番台 + テキスト 500〜600 番台**に揃え、border は原則付けません。
 
-server-rendered application では色をテンプレートに書かず、`models.py` のプロパティで返します。
+application では色をテンプレートに書かず、`models.py` のプロパティで返します。
 色の決定ロジックが 1 箇所に集まり、一覧・詳細・API で色がずれなくなります。
 
 ```python

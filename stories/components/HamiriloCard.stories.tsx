@@ -6,8 +6,8 @@ import { HamiriloButton, HamiriloCard, HamiriloDropdown } from "../../components
  * HamiriloCard はコンテンツをひとまとまりに見せるための枠。
  *
  * <important>
- * server-rendered markup（.html）では `<div class="card">` を使う。
- * HamiriloCard は React application の中でだけ使う。見本は Foundations/CSS Classes を参照。
+ * markup（.html）では `<div class="card">` を使う。
+ * HamiriloCard は React application の中でだけ使う。見本は Foundations を参照。
  * </important>
  */
 const meta = {
@@ -33,7 +33,7 @@ CSS クラスの \`.card\` / \`.card-sm\` / \`.card-lg\` と**同じ見た目**�
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html） | \`<div class="card">\` |
+| markup（.html） | \`<div class="card">\` |
 | カードの中にさらにカード | ネスト禁止。内側は \`border-t\` の区切りか \`bg-muted\` の区画にする |
 | 業務固有のカード（VideoCard / EmployeeCard など） | 各アプリで実装する。中身の意味が業務ごとに違うため共通化しない（ただし外枠に HamiriloCard を使うのは良い） |
 | クリックできる一覧項目 | カードではなくテーブル（\`HamiriloTable\`）かリストを検討する。カードは並べると走査しにくい |

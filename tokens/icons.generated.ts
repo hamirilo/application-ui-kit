@@ -3,13 +3,13 @@
  *
  * <important>
  * このファイルは自動生成物。手で編集しない。
- * SSOT は the original private platform 内の packages/django-shared/icons_templatetag.py の ICONS。
+ * SSOT は the original source 内の shared icon source の ICONS。
  * アイコンを追加・変更したら icons_templatetag.py を直し、下記コマンドで再生成する。
  *
  *   npm run gen:icons
  * </important>
  *
- * server-rendered markupでは `{% icon "plus" size="sm" %}` を使う（このファイルは使わない）。
+ * markupでは `{% icon "plus" size="sm" %}` を使う（このファイルは使わない）。
  * Storybook の Foundations/Icons が一覧を描画するために TS 版を持っている。
  */
 

@@ -1,12 +1,10 @@
 {
   "$schema": "https://biomejs.dev/schemas/1.9.4/schema.json",
-  "extends": ["./hamirilo-platform/standards/configs/shared_biome.json"],
   "files": {
     "ignore": [
       "**/dist/**",
       "**/storybook-static/**",
       "**/.storybook/**",
-      "**/hamirilo-ui-*.tgz",
       "**/components/ui/**",
       "**/stories/**"
     ]

@@ -37,7 +37,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html） | flatpickr（\`input-field flatpickr-input\` クラス）。React application を新設しない |
+| markup（.html） | flatpickr（\`input-field flatpickr-input\` クラス）。React application を新設しない |
 | 日時（時刻まで）が必要 | 時刻の入力は未対応。日付 + 別途 \`<input type="time">\` を組み合わせる |
 | 生年月日の入力 | カレンダーで何十年も遡るのは苦しい。年・月・日の \`HamiriloSelect\` か素のテキスト入力を検討 |
 | 「今日」「今週」のような相対指定 | ボタンによるプリセットを併設する（Story の \`WithPresets\` を参照） |
@@ -82,7 +82,7 @@ const [dates, setDates] = useState<Date[]>([])
   **\`range\` と \`multiple\` は閉じない**（連続で選ぶため）。
   閉じるのは外側クリックか \`Esc\`
 - \`multiple\` のトリガーは「5日選択（7/1, 7/2, 7/3 他2件）」の形に畳まれる（先頭 3 件まで列挙）
-- **server-rendered application へ送るときは文字列に変換する。**
+- **application へ送るときは文字列に変換する。**
   \`format(date, 'yyyy-MM-dd')\` を使う。\`toISOString()\` は UTC に変換されるため、
   日本時間の早朝が前日になる
 - **未選択と「今日」を混同しない。** \`value\` の初期値に \`new Date()\` を入れると、

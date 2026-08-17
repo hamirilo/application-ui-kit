@@ -89,8 +89,8 @@ const COLUMNS: HamiriloTableColumn<Request>[] = [
  * HamiriloTable は列定義とデータを渡して一覧を描画するコンポーネント。
  *
  * <important>
- * server-rendered application の一覧は server-rendering + テンプレートで描画する。HamiriloTable は使わない。
- * テンプレート側の見本は Foundations/CSS Classes の「テーブル」を参照。
+ * application の一覧は application rendering + テンプレートで描画する。HamiriloTable は使わない。
+ * テンプレート側の見本は Foundations の「テーブル」を参照。
  * </important>
  */
 const meta = {
@@ -116,7 +116,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered application の一覧画面 | server-rendering + テンプレート（\`{% for %}\`）。Foundations/CSS Classes の HTML を使う |
+| application の一覧画面 | application rendering + テンプレート（\`{% for %}\`）。Foundations の HTML を使う |
 | ソート・ページング・絞り込みの実装 | **HamiriloTable は持たない。** 業務ロジックなのでアプリ側で実装し、結果を \`rows\` に渡す |
 | 数百行以上の表示 | 仮想スクロールやページングを別途検討する（HamiriloTable は全行を描画する） |
 | 数値の集計・編集ができる表 | 表計算的な UI が必要。HamiriloTable の範囲外 |

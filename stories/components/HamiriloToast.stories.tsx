@@ -21,14 +21,14 @@ const meta = {
 ## 目的
 
 「保存しました」「削除に失敗しました」のような**操作結果の通知**を 1 箇所に集約する。
-React / 素の JS / server-rendered application messages のどの経路から呼んでも、同じトーストに出る。
+React / 素の JS / application messages のどの経路から呼んでも、同じトーストに出る。
 
 | 呼び出し元 | 書き方 |
 |---|---|
 | React application | \`import { HamiriloToast } from '../../components/hamirilo'\` → \`HamiriloToast.success('保存しました')\` |
-| application JavaScript / server-rendering / 素の JS | \`window.HamiriloToast.success('保存しました')\` |
+| application JavaScript / application rendering / 素の JS | \`window.HamiriloToast.success('保存しました')\` |
 | 既存コード（後方互換） | \`window.showToast('保存しました', 'success')\` → 内部で HamiriloToast に転送される |
-| server-rendered application View | \`messages.success(request, '保存しました')\` → 次のページ読み込み時に自動でトースト表示 |
+| application View | \`messages.success(request, '保存しました')\` → 次のページ読み込み時に自動でトースト表示 |
 
 ## 使う場面
 
@@ -45,7 +45,7 @@ React / 素の JS / server-rendered application messages のどの経路から�
 | 入力項目のバリデーションエラー | \`HamiriloFormField\` の \`error\`。**該当の入力欄の近くに出す**。トーストは消えるので、直すべき場所が分からなくなる |
 | 必ず読ませたい重要な情報 | ページ内のアラート領域か \`HamiriloDialog\`。トーストは数秒で消える |
 | 常に表示しておきたい状態（下書き保存済み等） | 画面内のラベルやバッジ |
-| 画面遷移を伴う保存 | server-rendered application の \`messages\` に載せる。遷移でトーストが消えてしまう |
+| 画面遷移を伴う保存 | application の \`messages\` に載せる。遷移でトーストが消えてしまう |
 
 ## API
 
@@ -79,7 +79,7 @@ HamiriloToast.show({ title, description, type, duration })
 - **成功トーストを連発しない。** 一括処理は「3 件を削除しました」と 1 回にまとめる
 - \`duration\` を短くしすぎない。読み終わる前に消える（既定の 5 秒を基準にする）
 - **画面遷移を伴う操作では使えない。** 遷移でトーストごと消えるため、
-  server-rendered application 側の \`messages\` に載せて遷移先で表示させる
+  application 側の \`messages\` に載せて遷移先で表示させる
 - \`title\` / \`description\` はプレーンな文字列を渡す。アイコンは種類から自動で付く
 - \`window.HamiriloToast\` を使うには \`registerGlobalDxToast()\` が実行済みである必要がある
   （テンプレート版のブートストラップで実行済み）

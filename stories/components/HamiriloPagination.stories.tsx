@@ -6,7 +6,7 @@ import { HamiriloPagination, HamiriloTable } from "../../components/hamirilo";
  * HamiriloPagination は一覧・テーブルの下に置くページ送り UI。
  *
  * <important>
- * ページ番号の計算や現在ページの保持は画面側（またはサーバー側の server-rendering）の責務。
+ * ページ番号の計算や現在ページの保持は画面側（またはサーバー側の application rendering）の責務。
  * このコンポーネントは見た目とキーボード操作だけを提供する。
  * </important>
  */
@@ -31,7 +31,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| server-rendered markup（.html）の一覧 | \`includes/molecules/pagination.html\`（既存の server-rendering 版） |
+| markup（.html）の一覧 | \`includes/molecules/pagination.html\`（既存の application rendering 版） |
 | 件数が少なくページングが不要 | 使わない（\`totalPages <= 1\` では自動的に何も描画されない） |
 | 無限スクロール | 使わない（別途実装） |
 
