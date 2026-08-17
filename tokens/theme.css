@@ -369,7 +369,7 @@
     @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6;
   }
 
-  /* application Template 側の一覧テーブル（ADR-0009: レイアウト系 UI は application 所有） */
+  /* application Template 側の一覧テーブル（the layout guidance: レイアウト系 UI は application 所有） */
   .data-table {
     @apply w-full text-sm border-collapse;
   }

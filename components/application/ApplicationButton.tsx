@@ -86,7 +86,7 @@ export const ApplicationButton = React.forwardRef<HTMLButtonElement, Application
     },
     ref,
   ) => {
-    // DX variant を shadcn/ui variant にマッピング
+    // Application variant を shadcn/ui variant にマッピング
     const shadcnVariant = React.useMemo(() => {
       switch (variant) {
         case "primary":

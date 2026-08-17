@@ -23,14 +23,14 @@ tokens/theme.css がスタイルTokenの入口です。コンポーネントで�
 
 ## Package
 
-既存利用者との互換性を優先し、パッケージ名は当面 @hamirilo/application-ui-kit を維持します。公開リポジトリ名とnpmパッケージ名の変更は、別の明示的なAPI移行として扱います。
+パッケージ名は @hamirilo/application-ui-kit です。公開リポジトリ名とパッケージ名を一致させ、初回公開版からこの名前を正式なAPIとして扱います。
 
     import { ApplicationButton } from '@hamirilo/application-ui-kit'
     import '@hamirilo/application-ui-kit/styles.css'
 
     <ApplicationButton variant="primary">保存</ApplicationButton>
 
-Application*という既存のexport名は初回移行では変更していません。名称の一般化は、移行とAPI変更を混ぜないため別PRで検討します。
+Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
 
 ## 資産を追加するとき
 

@@ -36,7 +36,7 @@ const meta = {
 | markup（.html）内のボタン | \`<button class="btn-primary">\` |
 | 画面遷移するだけのリンク | \`<a>\` + \`variant="link"\`。見た目がボタンでも意味がリンクなら \`<a>\` を使う |
 | アイコンだけの小さな操作（テーブル行内など） | \`variant="ghost"\` + \`size="sm"\` |
-| shadcn/ui の \`Button\` を直接使う | 禁止。必ず ApplicationButton を経由する（ADR-0003） |
+| shadcn/ui の \`Button\` を直接使う | 禁止。必ず ApplicationButton を経由する（the UI Kit rule） |
 
 ## 注意事項
 
