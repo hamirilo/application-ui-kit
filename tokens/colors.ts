@@ -10,7 +10,7 @@
  * 実際の色は `var(--color-*)` 経由か Tailwind クラス経由で解決する。
  * </important>
  *
- * 出典: packages/dx-ui/tokens/theme.css
+ * 出典: tokens/theme.css
  * ルール: design-system/colors.md
  */
 

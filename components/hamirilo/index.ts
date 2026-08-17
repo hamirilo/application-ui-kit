@@ -5,7 +5,7 @@
  * 画面側では Application UI Kit コンポーネントのみを使用し、shadcn/ui を直接使用しないでください。
  *
  * 各コンポーネントの仕様・使用例・使わない場面は Storybook を参照してください。
- *   cd packages/dx-ui && npm run storybook
+ *   bun run storybook
  *
  * <important>
  * このファイルをプロジェクトへコピーする際は、export している .tsx と
