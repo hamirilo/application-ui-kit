@@ -1,0 +1,135 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { SPACING_SCALE, SPACING_RULES } from '../../tokens/spacing'
+import { SpecTable, Code, DoDont } from './_parts'
+
+<Meta title="Foundations/Spacing" />
+
+# Spacing
+
+Tailwind のデフォルトスケール（**0.25rem = 4px 刻み**）をそのまま使います。
+独自スケールは定義しません。
+
+- 運用ルール: `ai-dev-standards/spacing-and-layout.md`
+
+<DoDont
+  doText={<>スケール上の値を使う。<Code>p-4</Code> <Code>gap-3</Code> <Code>mb-1.5</Code></>}
+  dontText={<>任意値を使う。<Code>p-[13px]</Code> <Code>w-[300px]</Code> <Code>mt-[7px]</Code></>}
+/>
+
+任意値を許すと、同じ意味の余白が画面ごとに 1〜2px ずれて増殖します。
+ずれは個別には気づかれませんが、画面を並べると不揃いに見えます。
+
+---
+
+## よく使う値
+
+<SpecTable
+  head={['トークン', 'rem', 'px', '見本', '用途']}
+  rows={SPACING_SCALE.map((s) => [
+    <Code>{s.token}</Code>,
+    s.rem,
+    s.px,
+    <div className="h-3 bg-primary" style={{ width: s.rem }} />,
+    s.usage,
+  ])}
+/>
+
+---
+
+## 固定ルール（値を 1 つに決めているもの）
+
+同じ文脈で `mb-1` と `mb-2` が混在すると、フォームが縦に揺れて見えます。
+以下は**値を 1 つに固定**しています。迷わずこれを使ってください。
+
+<SpecTable
+  head={['文脈', '値', '備考']}
+  rows={SPACING_RULES.map((r) => [r.context, <Code>{r.value}</Code>, r.note || '—'])}
+/>
+
+React では `HamiriloFormField` がこの余白を内部で適用するため、
+**フォームを組むときは自分で余白を書かないでください**。
+
+```tsx
+{/* ✓ 余白は HamiriloFormField が持つ */}
+<div className="space-y-4">
+  <HamiriloFormField label="件名" required><HamiriloInput /></HamiriloFormField>
+  <HamiriloFormField label="担当者"><HamiriloSelect items={users} /></HamiriloFormField>
+</div>
+```
+
+---
+
+## コンポーネント内側の余白
+
+CSS クラスと Dx コンポーネントで対応しています。
+
+<SpecTable
+  head={['部品', 'CSS クラス', 'React', '内側余白']}
+  rows={[
+    ['カード（小）', <Code>card-sm</Code>, <Code>{'padding="sm"'}</Code>, <Code>p-3</Code>],
+    ['カード（標準）', <Code>card</Code>, <Code>{'padding="md"'}</Code>, <Code>p-4</Code>],
+    ['カード（大）', <Code>card-lg</Code>, <Code>{'padding="lg"'}</Code>, <Code>p-6</Code>],
+    ['ボタン（標準）', <Code>btn-primary</Code>, <Code>{'size="md"'}</Code>, <Code>px-5 py-2.5</Code>],
+    ['ボタン（小）', <Code>btn-sm</Code>, <Code>{'size="sm"'}</Code>, <Code>px-3 py-1.5</Code>],
+    ['ボタン（大）', <Code>btn-lg</Code>, <Code>{'size="lg"'}</Code>, <Code>px-6 py-3</Code>],
+    ['入力欄', <Code>input-field</Code>, <Code>HamiriloInput</Code>, <Code>px-3.5 py-2.5</Code>],
+    ['バッジ', <Code>badge</Code>, '—', <Code>px-2 py-0.5</Code>],
+  ]}
+/>
+
+これらの余白は `tokens/theme.css` に定義済みです。
+**クラスを使えば自動で適用されるので、上から余白を打ち消さないでください**
+（`class="card p-2"` のような上書きは、後で `card` を直したときに追従しません）。
+
+---
+
+## 要素間の余白
+
+縦に並ぶ要素の間隔は、**個々の要素に `mb-*` を付けるより親に `space-y-*` を付ける**方が
+崩れません。最後の要素にだけ余白が残る問題が起きません。
+
+<DoDont
+  doText={<><Code>{'<div className="space-y-4">'}</Code> で親がまとめて制御</>}
+  dontText={<>子要素それぞれに <Code>mb-4</Code>（最後の要素に余分な余白が残る）</>}
+/>
+
+<SpecTable
+  head={['文脈', '値']}
+  rows={[
+    ['フォーム項目の縦間隔', <Code>space-y-4</Code>],
+    ['カード内の要素間', <Code>gap-3</Code>],
+    ['ボタンを横に並べる', <Code>gap-2</Code>],
+    ['カードを並べる（グリッド）', <Code>gap-4</Code>],
+    ['セクション間', <Code>mb-6</Code> ],
+  ]}
+/>
+
+---
+
+## レスポンシブ
+
+モバイルファーストで書きます。**素の指定がモバイル**、`md:` 以降で広い画面に上書きします。
+
+```html
+<!-- モバイル 1 列 → タブレット 2 列 → デスクトップ 3 列 -->
+<div class="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+```
+
+| 接頭辞 | 最小幅 | 想定端末 |
+| --- | --- | --- |
+| （なし） | 0px | スマートフォン |
+| `sm:` | 640px | 大きめのスマートフォン |
+| `md:` | 768px | タブレット |
+| `lg:` | 1024px | ノート PC |
+| `xl:` | 1280px | デスクトップ |
+
+各 Story はツールバーの **Viewport** で Mobile / Tablet / Desktop に切り替えて確認できます。
+
+### 注意事項
+
+- **横スクロールを発生させない**。テーブルは親を `overflow-x-auto` で包みます
+  （`HamiriloTable` は内部で対応済み）
+- **タップ領域は最低 44×44px** を確保します。`btn-xs` を並べる場合は
+  周囲に余白を取ってください（`ai-dev-standards/accessibility.md`）
+- モバイルで `px-8` のような大きい左右余白を使うと本文幅が足りなくなります。
+  左右余白は `px-4 md:px-6` のように広げてください

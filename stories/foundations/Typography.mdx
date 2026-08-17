@@ -1,0 +1,130 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { HEADINGS, LINE_HEIGHTS, TEXT_COLORS, FONT_WEIGHTS, MIN_SIZES } from '../../tokens/typography'
+import { SpecTable, Code, DoDont } from './_parts'
+
+<Meta title="Foundations/Typography" />
+
+# Typography
+
+- フォントの SSOT: `tokens/theme.css` の `--font-sans`
+- 運用ルール: `ai-dev-standards/typography.md`
+
+```
+Inter, IBM Plex Sans JP, ui-sans-serif, system-ui, sans-serif, （絵文字フォント）
+```
+
+欧文は Inter、和文は IBM Plex Sans JP を使います。
+どちらも読み込めない環境では OS 標準のサンセリフにフォールバックします。
+`font-sans` 以外のフォントファミリを画面ごとに指定しないでください。
+
+---
+
+## 見出しスケール
+
+<SpecTable
+  head={['レベル', '見本', 'クラス', 'サイズ', '用途']}
+  rows={HEADINGS.map((h) => [
+    h.level,
+    <span className={h.cls}>見出しサンプル</span>,
+    <Code>{h.cls}</Code>,
+    h.px,
+    h.usage,
+  ])}
+/>
+
+**見出しレベルは飛ばさない**でください（H1 の次に H3 を置かない）。
+スクリーンリーダーは見出しの階層で文書構造を読み取るため、
+飛ばすと目次が壊れます。
+
+**サイズだけで見出しを作らない**でください。
+見た目を小さくしたい場合も、要素は `<h2>` のままクラスで調整します。
+
+<DoDont
+  doText={<><Code>{'<h2 className="text-xl font-semibold">'}</Code>（要素は正しい階層、見た目はクラスで調整）</>}
+  dontText={<><Code>{'<div className="text-3xl font-bold">'}</Code>（見出しに見えるが構造上は本文）</>}
+/>
+
+---
+
+## 行間
+
+<SpecTable
+  head={['クラス', '値', '用途']}
+  rows={LINE_HEIGHTS.map((l) => [<Code>{l.cls}</Code>, l.value, l.usage])}
+/>
+
+長い本文には `leading-relaxed`、見出しには `leading-tight` を使います。
+見出しは行間が広いと 1 つの見出しに見えなくなります。
+
+---
+
+## フォントウェイト
+
+<SpecTable
+  head={['クラス', '値', '見本', '用途']}
+  rows={FONT_WEIGHTS.map((w) => [
+    <Code>{w.cls}</Code>,
+    w.value,
+    <span className={w.cls}>サンプル Sample 123</span>,
+    w.usage,
+  ])}
+/>
+
+`font-light`（300）以下は使いません。細い和文は視認性が落ちます。
+
+---
+
+## テキストカラーとコントラスト比
+
+コントラスト比は白背景に対する値です。WCAG AA は通常サイズで **4.5:1** 以上が必要です。
+
+<SpecTable
+  head={['クラス', '見本', '名称', 'コントラスト比', 'WCAG AA']}
+  rows={TEXT_COLORS.map((c) => [
+    <Code>{c.cls}</Code>,
+    <span className={c.cls}>テキストサンプル</span>,
+    c.name,
+    c.contrast,
+    c.wcag,
+  ])}
+/>
+
+### 注意事項
+
+- **`text-gray-500` 以下は小さいテキストに使わない**でください。
+  補足情報でも読めなければ意味がありません
+- **`text-gray-400`（無効テキスト）は WCAG AA を満たしません。**
+  そのため無効状態は色だけで示さず、`disabled` 属性・アイコン・文言を併用します
+- 新規コンポーネントでは `text-foreground` / `text-muted-foreground` を使ってください。
+  上の `text-gray-*` はダークモードに追従しません
+
+---
+
+## 最小サイズ
+
+<SpecTable
+  head={['対象', '最小サイズ']}
+  rows={[
+    ['本文', MIN_SIZES.body],
+    ['キャプション・メタ情報', MIN_SIZES.caption],
+    ['ボタンのラベル', MIN_SIZES.button],
+  ]}
+/>
+
+`text-[10px]` 以下は原則使いません。
+例外はアバターの頭文字（`avatar-sm`）のように、読む対象ではない文字だけです。
+
+---
+
+## 数値の表示
+
+金額・件数などの数値は**右寄せ**にすると桁が揃って比較しやすくなります
+（`HamiriloTable` の `align: "right"`）。
+
+```tsx
+{ key: 'amount', header: '金額', align: 'right',
+  cell: (r) => `${r.amount.toLocaleString()} 円` }
+```
+
+`toLocaleString()` で桁区切りを入れてください。
+`1234567` と `1,234,567` では読み取り速度が大きく変わります。

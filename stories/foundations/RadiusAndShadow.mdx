@@ -1,0 +1,107 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { RADIUS_SCALE, SHADOW_SCALE, TRANSITIONS, REDUCED_MOTION_NOTE } from '../../tokens/radius'
+import { SpecTable, Code, DoDont } from './_parts'
+
+<Meta title="Foundations/Radius & Shadow" />
+
+# Radius, Shadow, Animation
+
+- radius の SSOT: `tokens/theme.css` の `--radius`（`0.5rem`）
+- 運用ルール: `ai-dev-standards/spacing-and-layout.md`, `ai-dev-standards/components.md`
+
+---
+
+## 角丸
+
+<SpecTable
+  head={['クラス', '見本', '値', '用途']}
+  rows={RADIUS_SCALE.map((r) => [
+    <Code>{r.cls}</Code>,
+    <div className={`h-12 w-20 border border-border bg-muted ${r.cls}`} />,
+    r.rem,
+    r.usage,
+  ])}
+/>
+
+### 使い分け
+
+<SpecTable
+  head={['部品', '角丸']}
+  rows={[
+    ['ボタン・入力欄・セレクト', <Code>rounded-lg</Code>],
+    ['カード・テーブルの外枠', <Code>rounded-xl</Code>],
+    ['ダイアログ・大きいパネル', <Code>rounded-2xl</Code>],
+    ['バッジ・アバター', <Code>rounded-full</Code>],
+    ['メンションピル等の小要素', <Code>rounded</Code>],
+  ]}
+/>
+
+同じ画面で角丸が混在すると雑に見えます。
+**ボタンは `rounded-lg`、カードは `rounded-xl`** に統一してください。
+CSS クラス（`btn-*` / `card`）と Dx コンポーネントは既にこの値になっています。
+
+---
+
+## シャドウ
+
+**`shadow-sm` のみを使います。** 影で階層を表現しようとすると、
+画面ごとに深さがばらつき、結果として立体感ではなく散らかった印象になります。
+階層はボーダーと背景色（`bg-card` / `bg-muted`）で表現してください。
+
+<SpecTable
+  head={['クラス', '見本', '用途', '可否']}
+  rows={SHADOW_SCALE.map((s) => [
+    <Code>{s.cls}</Code>,
+    <div className={`h-12 w-20 rounded-xl border border-border bg-card ${s.cls}`} />,
+    s.usage,
+    s.allowed ? '✓ 使う' : '✗ 使わない',
+  ])}
+/>
+
+`shadow-lg` は**ドロップダウン・ポップオーバーなど、他の要素の上に浮く要素だけ**の例外です。
+浮遊要素は影がないと背後のコンテンツと混ざって読めなくなります。
+
+<DoDont
+  doText={<>カードは <Code>card</Code>（<Code>shadow-sm</Code> 込み）を使う</>}
+  dontText={<><Code>shadow-md</Code> / <Code>shadow-xl</Code> / <Code>shadow-2xl</Code> でカードを目立たせる</>}
+/>
+
+**カードを入れ子にしない**でください（`ai-dev-standards/components.md`）。
+影付きのカードの中に影付きのカードを置くと境界が判別できなくなります。
+入れ子が必要に見えるときは、内側を `border` だけの区画にします。
+
+---
+
+## トランジション
+
+<SpecTable
+  head={['クラス', '用途']}
+  rows={TRANSITIONS.map((t) => [<Code>{t.cls}</Code>, t.usage])}
+/>
+
+- ホバー・フォーカスの変化は `transition-colors` を使います
+- `transition-all` は使いません。意図しないプロパティ（レイアウト）まで
+  アニメーションして、描画が重くなります
+- ダイアログ・ドロップダウンの出入りは `tw-animate-css` の
+  `animate-in` / `fade-in-0` / `zoom-in-95` / `slide-in-from-*` を使います
+  （`HamiriloDialog` / `HamiriloDropdown` に実装済み）
+
+---
+
+## モーション配慮
+
+{REDUCED_MOTION_NOTE}
+
+OS で「視差効果を減らす」を設定しているユーザーがいます。
+めまいや吐き気を引き起こすことがあるため、**装飾的なアニメーションは無効化できるようにします**。
+
+```css
+@media (prefers-reduced-motion: reduce) {
+  .animate-pulse { animation: none; }
+}
+```
+
+状態変化を伝える短いトランジション（`transition-colors`）はそのままで構いません。
+問題になるのは、大きく動く・繰り返す・自動で始まるアニメーションです。
+
+出典: `ai-dev-standards/accessibility.md`

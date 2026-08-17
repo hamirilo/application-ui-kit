@@ -1,0 +1,152 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { ACTION_COLORS, BASE_COLORS, STATUS_COLORS, AVATAR_COLORS } from '../../tokens/colors'
+import { ColorTable, StatusTable, SpecTable, Code, DoDont } from './_parts'
+
+<Meta title="Foundations/Colors" />
+
+# Colors
+
+**色は見た目で選ばず、意味で選びます。**
+
+トークン名は `primary` / `danger` のように**役割**を表します。
+`company-blue` や `dark-gray` のような**見た目の名前は使いません**。
+役割で名付けておくことで、アプリごとにブランドカラーを差し替えても
+コードを書き換えずに済みます。
+
+- 値の SSOT: `tokens/theme.css` の `@theme`
+- 運用ルール: `ai-dev-standards/colors.md`
+
+<DoDont
+  doText={<>意味で選ぶ。削除ボタンは <Code>btn-danger</Code> / <Code>variant="danger"</Code></>}
+  dontText={<>見た目で選ぶ。<Code>bg-red-500</Code> や <Code>bg-[#ef4444]</Code> の直書き</>}
+/>
+
+---
+
+## 色の 2 層構造
+
+用途によって参照する層が違います。ここを混同すると統一が崩れます。
+
+<SpecTable
+  head={['層', '何に使うか', '例']}
+  rows={[
+    [
+      'セマンティックトークン',
+      'ボタン・入力欄・カードなど「操作と構造」。CSS クラスと Dx コンポーネントの内部',
+      <Code>var(--color-primary)</Code>,
+    ],
+    [
+      'Tailwind パレット',
+      'ステータスバッジなど「業務上の意味」。テンプレートから直接指定',
+      <Code>bg-emerald-50 text-emerald-600</Code>,
+    ],
+  ]}
+/>
+
+ステータス色をトークン化しないのは、**意味の数がアプリごとに違う**ためです
+（案件ステータス・優先度・承認段階など）。無理にトークン化すると破綻します。
+
+---
+
+## アクションカラー
+
+ボタン・操作系の色です。**1 画面に `primary` は原則 1 つ**にします。
+主要な操作が複数あると、ユーザーは何をすべきか判断できません。
+
+<ColorTable colors={ACTION_COLORS} />
+
+固定ルール（迷ったらこれに従う）:
+
+- **キャンセル・戻る → 必ず `secondary`**
+- **削除・取り消し不可の操作 → 必ず `danger`**
+- 保存完了・承認 → `success`
+
+各トークンには `-hover` / `-active` / `-foreground` が対応しています
+（例: `--color-primary-hover`）。ホバー色を自分で選ばないでください。
+
+---
+
+## ベース・ニュートラルカラー
+
+背景・文字・ボーダーです。**ダークモード時に `.dark` で上書きされるのはこの層だけ**です。
+
+<ColorTable colors={BASE_COLORS} />
+
+新規コンポーネントではこちらを使ってください。
+
+<DoDont
+  doText={<><Code>bg-card</Code> / <Code>text-foreground</Code> / <Code>border-border</Code></>}
+  dontText={<><Code>bg-white</Code> / <Code>text-gray-900</Code> / <Code>border-gray-200</Code>（dark で破綻する）</>}
+/>
+
+ツールバーの **Theme** を dark に切り替えると、上の表の色が変化し、
+アクションカラーの色相は変わらないことが確認できます。
+意味と色の対応を light / dark で揃えるためです。
+
+---
+
+## ステータスカラー（意味 → 色）
+
+**同じ意味の状態には全アプリで同じ色を使います。** アプリごとに別系統にすると、
+後から統一するコストが跳ね上がります。
+
+<StatusTable statuses={STATUS_COLORS} />
+
+トーンは **背景 50 番台 + テキスト 500〜600 番台**に揃え、border は原則付けません。
+
+server-rendered application では色をテンプレートに書かず、`models.py` のプロパティで返します。
+色の決定ロジックが 1 箇所に集まり、一覧・詳細・API で色がずれなくなります。
+
+```python
+@property
+def status_display_class(self):
+    return {
+        "new": "bg-yellow-50 text-yellow-600",
+        "in_progress": "bg-sky-50 text-sky-500",
+        "closed": "bg-gray-100 text-gray-500",
+    }.get(self.status, "bg-gray-100 text-gray-400")
+```
+
+```html
+<span class="badge {{ obj.status_display_class }}">{{ obj.get_status_display }}</span>
+```
+
+意味を持たないローテーション色（出現順で循環させる色分けなど）を使う場合は、
+例外であることをコード上にコメントで明示してください。
+
+---
+
+## アバターの色
+
+<SpecTable
+  head={['対象', 'クラス', '見本']}
+  rows={[
+    ['ユーザー', <Code>{AVATAR_COLORS.user}</Code>,
+      <span className={`avatar-md ${AVATAR_COLORS.user}`}>山</span>],
+    ['システム・匿名', <Code>{AVATAR_COLORS.system}</Code>,
+      <span className={`avatar-md ${AVATAR_COLORS.system}`}>?</span>],
+  ]}
+/>
+
+---
+
+## 注意事項
+
+- **インラインスタイルでの色指定は禁止**（`style="color: #3b82f6"`）。
+  トークンを経由しないため、テーマ変更で置き換えられず、ダークモードにも追従しません
+- **任意値クラスも禁止**（`bg-[#3b82f6]`）
+- **クラス名は必ずリテラル文字列で書く**。`` `bg-${color}-50` `` のような動的組立は
+  Tailwind が静的解析できずクラスが生成されません（灰色の箱になります）。
+  条件分岐が必要なら、完全なクラス名を分岐の両側に書きます
+
+```tsx
+// ✗ 生成されない
+<span className={`bg-${color}-50`} />
+
+// ✓ リテラルで持つ
+<span className={isDone ? 'bg-emerald-50 text-emerald-600' : 'bg-sky-50 text-sky-500'} />
+```
+
+- **色だけで情報を伝えない**。エラーは赤枠だけでなくメッセージも出します
+  （色覚特性や、屋外での視認性の問題があります）
+- コントラスト比は `Foundations/Typography` を参照してください
