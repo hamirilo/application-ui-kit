@@ -33,6 +33,8 @@ tokens/theme.css がスタイルTokenの入口です。コンポーネントで�
 - 狭い画面幅でも主要操作と内容が失われない
 - reduced motionなど、利用者の設定を不必要に無視しない
 - raw colorを追加せず、semantic tokenを利用する
+- ReactコンポーネントはTSX、補助ロジックはTSを基本とし、理由なくJSXやJavaScriptへ戻さない
+- anyで型エラーを隠さず、外部データは必要に応じて実行時検証する
 - typecheck、test、lint、Storybook buildが通る
 
 Lighthouseの点数だけを上げるために、意味のあるHTML、アクセシビリティ情報、必要なUI状態を削らないでください。
