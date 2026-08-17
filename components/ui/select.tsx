@@ -17,7 +17,7 @@ const SelectGroupLabel = SelectPrimitive.GroupLabel
  *
  * 見た目は application markupの `select.input-field` に揃えている
  * （padding / border-radius / border 色 / フォーカスリング）。
- * 揃えている理由: 同じ画面に htmx 版の select と React 版の HamiriloSelect が
+ * 揃えている理由: 同じ画面に htmx 版の select と React 版の ApplicationSelect が
  * 並んだときに段差が出ないようにするため。
  */
 const SelectTrigger = React.forwardRef<

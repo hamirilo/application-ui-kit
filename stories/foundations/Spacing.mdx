@@ -46,14 +46,14 @@ Tailwind のデフォルトスケール（**0.25rem = 4px 刻み**）をその�
   rows={SPACING_RULES.map((r) => [r.context, <Code>{r.value}</Code>, r.note || '—'])}
 />
 
-React では `HamiriloFormField` がこの余白を内部で適用するため、
+React では `ApplicationFormField` がこの余白を内部で適用するため、
 **フォームを組むときは自分で余白を書かないでください**。
 
 ```tsx
-{/* ✓ 余白は HamiriloFormField が持つ */}
+{/* ✓ 余白は ApplicationFormField が持つ */}
 <div className="space-y-4">
-  <HamiriloFormField label="件名" required><HamiriloInput /></HamiriloFormField>
-  <HamiriloFormField label="担当者"><HamiriloSelect items={users} /></HamiriloFormField>
+  <ApplicationFormField label="件名" required><ApplicationInput /></ApplicationFormField>
+  <ApplicationFormField label="担当者"><ApplicationSelect items={users} /></ApplicationFormField>
 </div>
 ```
 
@@ -72,7 +72,7 @@ CSS クラスと Dx コンポーネントで対応しています。
     ['ボタン（標準）', <Code>btn-primary</Code>, <Code>{'size="md"'}</Code>, <Code>px-5 py-2.5</Code>],
     ['ボタン（小）', <Code>btn-sm</Code>, <Code>{'size="sm"'}</Code>, <Code>px-3 py-1.5</Code>],
     ['ボタン（大）', <Code>btn-lg</Code>, <Code>{'size="lg"'}</Code>, <Code>px-6 py-3</Code>],
-    ['入力欄', <Code>input-field</Code>, <Code>HamiriloInput</Code>, <Code>px-3.5 py-2.5</Code>],
+    ['入力欄', <Code>input-field</Code>, <Code>ApplicationInput</Code>, <Code>px-3.5 py-2.5</Code>],
     ['バッジ', <Code>badge</Code>, '—', <Code>px-2 py-0.5</Code>],
   ]}
 />
@@ -128,7 +128,7 @@ CSS クラスと Dx コンポーネントで対応しています。
 ### 注意事項
 
 - **横スクロールを発生させない**。テーブルは親を `overflow-x-auto` で包みます
-  （`HamiriloTable` は内部で対応済み）
+  （`ApplicationTable` は内部で対応済み）
 - **タップ領域は最低 44×44px** を確保します。`btn-xs` を並べる場合は
   周囲に余白を取ってください（`ai-dev-standards/accessibility.md`）
 - モバイルで `px-8` のような大きい左右余白を使うと本文幅が足りなくなります。

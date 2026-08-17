@@ -2,7 +2,7 @@
  * Foundations の MDX から使う表示部品。
  *
  * ここは「仕様書の描画」専用。アプリから import してはいけない
- * （アプリ用の共通部品は components/hamirilo/ に置く）。
+ * （アプリ用の共通部品は components/application/ に置く）。
  * `_` 始まりのファイル名は Story として収集されない。
  *
  * <important>

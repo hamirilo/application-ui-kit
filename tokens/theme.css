@@ -222,9 +222,9 @@
  *
  * markupから使う「素の HTML + class」の部品。
  * React application の中では対応する Dx コンポーネントを使う。
- *   btn-primary  ↔ <HamiriloButton variant="primary">
- *   input-field  ↔ <HamiriloInput>
- *   card         ↔ <HamiriloCard>
+ *   btn-primary  ↔ <ApplicationButton variant="primary">
+ *   input-field  ↔ <ApplicationInput>
+ *   card         ↔ <ApplicationCard>
  *
  * 見本は Storybook の Foundations を参照。
  * ========================================================================== */

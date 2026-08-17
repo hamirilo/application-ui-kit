@@ -30,7 +30,7 @@ export interface SemanticColor {
  * アクションカラー
  *
  * ボタン・操作系の色。1画面に primary は原則1つ。
- * React では `<HamiriloButton variant="primary">` を使う。
+ * React では `<ApplicationButton variant="primary">` を使う。
  */
 export const ACTION_COLORS: SemanticColor[] = [
   {

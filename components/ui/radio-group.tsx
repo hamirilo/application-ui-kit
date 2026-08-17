@@ -9,7 +9,7 @@ const RadioGroup = RadioGroupPrimitive
 
 /**
  * Base UI の Radio をラップした基底ラジオボタン（丸 + ドット表示）。
- * `HamiriloRadioGroup` のような縦/横に並ぶリスト表現で使う。
+ * `ApplicationRadioGroup` のような縦/横に並ぶリスト表現で使う。
  */
 const RadioItem = React.forwardRef<HTMLSpanElement, RadioPrimitive.Root.Props>(
   ({ className, ...props }, ref) => (
@@ -62,7 +62,7 @@ export interface RadioGroupItemProps
 /**
  * Base UI の Radio を「隣接ボタンが1本の枠に見える」segmented control 用にラップしたもの。
  * ドットインジケーターは表示せず、子要素（ラベル・アイコン）をそのままボタンの中身として描画する。
- * `HamiriloButtonGroup` で使う。
+ * `ApplicationButtonGroup` で使う。
  */
 const RadioGroupItem = React.forwardRef<HTMLElement, RadioGroupItemProps>(
   ({ className, variant, size, ...props }, ref) => {

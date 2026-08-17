@@ -1,5 +1,5 @@
 {
-  "name": "@hamirilo/ui",
+  "name": "@hamirilo/application-ui-kit",
   "version": "1.0.4",
   "description": "Shared React application UI components, semantic design tokens, and Storybook specification",
   "type": "module",
@@ -15,9 +15,9 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "types": "./components/hamirilo/index.ts",
+  "types": "./components/application/index.ts",
   "exports": {
-    ".": "./components/hamirilo/index.ts",
+    ".": "./components/application/index.ts",
     "./styles.css": "./tokens/theme.css",
     "./tokens/*": "./tokens/*"
   },

@@ -3,7 +3,7 @@
   "configVersion": 0,
   "workspaces": {
     "": {
-      "name": "@hamirilo/ui",
+      "name": "@hamirilo/application-ui-kit",
       "dependencies": {
         "@base-ui/react": "^1.6.0",
         "class-variance-authority": "^0.7.1",

@@ -23,19 +23,19 @@ tokens/theme.css がスタイルTokenの入口です。コンポーネントで�
 
 ## Package
 
-既存利用者との互換性を優先し、パッケージ名は当面 @hamirilo/ui を維持します。公開リポジトリ名とnpmパッケージ名の変更は、別の明示的なAPI移行として扱います。
+既存利用者との互換性を優先し、パッケージ名は当面 @hamirilo/application-ui-kit を維持します。公開リポジトリ名とnpmパッケージ名の変更は、別の明示的なAPI移行として扱います。
 
-    import { HamiriloButton } from '@hamirilo/ui'
-    import '@hamirilo/ui/styles.css'
+    import { ApplicationButton } from '@hamirilo/application-ui-kit'
+    import '@hamirilo/application-ui-kit/styles.css'
 
-    <HamiriloButton variant="primary">保存</HamiriloButton>
+    <ApplicationButton variant="primary">保存</ApplicationButton>
 
-Hamirilo*という既存のexport名は初回移行では変更していません。名称の一般化は、移行とAPI変更を混ぜないため別PRで検討します。
+Application*という既存のexport名は初回移行では変更していません。名称の一般化は、移行とAPI変更を混ぜないため別PRで検討します。
 
 ## 資産を追加するとき
 
 1. 複数アプリで再利用できる汎用UIか確認する。
-2. components/hamirilo/に実装し、components/ui/は下請けprimitiveに限定する。
+2. components/application/に実装し、components/ui/は下請けprimitiveに限定する。
 3. Tokenはtokens/theme.cssを更新する。
 4. Storybookに目的、状態、使い方、使わない場面を追加する。
 5. typecheck、test、lint、Storybook buildを確認する。

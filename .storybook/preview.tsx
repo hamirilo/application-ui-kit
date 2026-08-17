@@ -1,6 +1,6 @@
 import * as React from 'react'
 import type { Preview, Decorator } from '@storybook/react-vite'
-import { HamiriloToaster } from '../components/hamirilo'
+import { ApplicationToaster } from '../components/application'
 import './storybook.css'
 
 const withTheme: Decorator = (Story, context) => {
@@ -19,7 +19,7 @@ const withTheme: Decorator = (Story, context) => {
     <div className="dx-preview font-sans p-6">
       <Story />
       {/* トーストは全ページ常時マウントが前提（実アプリでは base.html） */}
-      <HamiriloToaster />
+      <ApplicationToaster />
     </div>
   )
 }

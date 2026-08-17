@@ -13,7 +13,7 @@ import {
 } from './toast'
 import { toastManager, type ToastVariant } from '../../hooks/use-toast'
 
-/** variant ごとのアイコン。HamiriloToast はここでアイコンを描画する（title には文字列のみ渡す） */
+/** variant ごとのアイコン。ApplicationToast はここでアイコンを描画する（title には文字列のみ渡す） */
 const VARIANT_ICON = {
   success: { Icon: CheckCircle, className: "text-emerald-600 dark:text-emerald-400" },
   destructive: { Icon: XCircle, className: "text-red-600 dark:text-red-400" },
