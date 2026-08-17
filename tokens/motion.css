@@ -1,0 +1,66 @@
+/* ==========================================================================
+ * Application UI Kit — モーションデザイントークン
+ *
+ * アニメーション・トランジションの標準値。
+ * 実装は CSS transform + cubic-bezier を使い、framer-motion 等ライブラリに依存しない。
+ *
+ * 読み込み元:
+ *   1. 各プロジェクトの backend/static/css/input.css（@import で取り込む）
+ *   2. Storybook の .storybook/storybook.css
+ *
+ * ========================================================================== */
+
+@theme {
+  /* ========================================
+   * イージング関数（cubic-bezier）
+   * ======================================== */
+
+  /* ease-in-out-circ: 柔らかく自然な動き（フェーディング・移動等） */
+  --motion-ease-default: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+
+  /* ease-out-cubic: 素早い開始から柔らかく終わる（展開・アニメーション） */
+  --motion-ease-out: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+
+  /* ease-in: 柔らかく開始して加速（折りたたみ等の退場） */
+  --motion-ease-in: cubic-bezier(0.4, 0.0, 1.0, 1.0);
+
+  /* ease-in-out: リニアに近い等速（距離が短い移動） */
+  --motion-ease-linear: cubic-bezier(0.0, 0.0, 1.0, 1.0);
+
+  /* ========================================
+   * 持続時間（duration）
+   *
+   * 基本は 150ms（短い） / 200ms（標準） / 300ms（長い）。
+   * マイクロインタラクション（hover / focus 状態の変化）は150ms。
+   * 主要なナビゲーション（サイドバーアクティブインジケーター移動）は200ms。
+   * ========================================= */
+
+  --motion-duration-fast: 150ms; /* hover / focus の状態変化 */
+  --motion-duration-base: 200ms; /* ナビ切り替え・ハイライト移動等 */
+  --motion-duration-slow: 300ms; /* モーダル表示・フェード等（訂正待ち） */
+
+  /* ========================================
+   * デレイ（delay）
+   *
+   * キャスケードエフェクト用。通常は不要。
+   * ========================================= */
+
+  --motion-delay-none: 0ms;
+  --motion-delay-short: 50ms;
+}
+
+/* ==========================================================================
+ * prefers-reduced-motion 対応
+ *
+ * ユーザーが「動きを減らす」設定をしている場合、アニメーション時間をゼロ化する。
+ * これにより、CSS ルール自体を変える必要がなく、duration だけで制御できる。
+ * ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-duration-fast: 0ms !important;
+    --motion-duration-base: 0ms !important;
+    --motion-duration-slow: 0ms !important;
+    --motion-delay-short: 0ms !important;
+  }
+}

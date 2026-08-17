@@ -1,0 +1,394 @@
+/* ==========================================================================
+ * Application UI Kit — デザイントークン（プラットフォーム標準）
+ *
+ * ★ このファイルがトークンと共有コンポーネントクラスの Single Source of Truth。
+ *
+ * 読み込み元は 2 箇所:
+ *   1. 各プロジェクトの backend/static/css/input.css（@import で取り込む）
+ *   2. Storybook の .storybook/storybook.css
+ *
+ * どちらから読んでも同じ値になるため、Storybook の見た目 = 実アプリの見た目 になる。
+ *
+ * <important>
+ * ここを変更すると全プロジェクトの全画面に波及する。
+ * 変更したら design-system/colors.md と Storybook の Foundations も必ず更新する。
+ * 片方だけ直すと再び分裂する（design-system/colors.md の運用ルール）。
+ * </important>
+ *
+ * プロジェクト固有の CSS（flatpickr / tom-select / 実験場 等）はここに書かない。
+ * 各プロジェクトの input.css に書く。
+ * ========================================================================== */
+
+@import "./motion.css";
+@import "./fonts.css";
+
+/* パッケージ内の .tsx が使う Tailwind クラスを consumer のビルドに拾わせる。
+ * Tailwind v4 は node_modules を自動走査しないため明示が必要。 */
+@source "../components";
+
+@theme {
+  --font-sans: "Inter", "IBM Plex Sans JP", ui-sans-serif, system-ui, sans-serif,
+    "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+
+  /* Design Tokens */
+  --radius: 0.5rem;
+
+  /* ========================================
+   * カラーパレット（プラットフォーム標準）
+   * ======================================== */
+
+  /* ベースカラー */
+  --color-background: oklch(1 0 0); /* 白背景 */
+  --color-foreground: oklch(0.2 0.014 285.938); /* ダークグレー文字 */
+
+  /* プライマリ（青） - メインアクション */
+  --color-primary: oklch(0.623 0.214 259.815); /* Blue 600 - bg-blue-600 相当 */
+  --color-primary-hover: oklch(0.566 0.212 262.881); /* Blue 700 */
+  --color-primary-active: oklch(0.506 0.205 265.755); /* Blue 800 */
+  --color-primary-foreground: oklch(1 0 0); /* 白文字 */
+
+  /* セカンダリ（グレー） - 補助アクション */
+  --color-secondary: oklch(1 0 0); /* 白背景 */
+  --color-secondary-hover: oklch(0.985 0.002 247.839); /* Gray 50 */
+  --color-secondary-active: oklch(0.968 0.007 247.896); /* Gray 100 */
+  --color-secondary-foreground: oklch(0.373 0.034 259.733); /* Gray 700 */
+  --color-secondary-border: oklch(0.872 0.01 258.338); /* Gray 300 */
+
+  /* サクセス（緑） - 成功・承認（Tailwind 500系ベース・明るく鮮やか） */
+  --color-success: oklch(0.696 0.17 162.48); /* Emerald 500 */
+  --color-success-hover: oklch(0.596 0.145 163.225); /* Emerald 600 */
+  --color-success-active: oklch(0.508 0.118 165.612); /* Emerald 700 */
+  --color-success-foreground: oklch(1 0 0); /* 白文字 */
+
+  /* デンジャー（赤） - 削除・危険（Tailwind 500系ベース・明るく鮮やか） */
+  --color-danger: oklch(0.637 0.237 25.331); /* Red 500 */
+  --color-danger-hover: oklch(0.577 0.245 27.325); /* Red 600 */
+  --color-danger-active: oklch(0.505 0.213 27.518); /* Red 700 */
+  --color-danger-foreground: oklch(1 0 0); /* 白文字 */
+
+  /* 警告（オレンジ） */
+  --color-warning: oklch(0.745 0.15 60.695); /* Orange 500 */
+  --color-warning-hover: oklch(0.688 0.164 51.439); /* Orange 600 */
+  --color-warning-foreground: oklch(1 0 0); /* 白文字 */
+
+  /* 情報（青・薄め） */
+  --color-info: oklch(0.776 0.099 238.136); /* Sky 400 */
+  --color-info-hover: oklch(0.705 0.123 239.273); /* Sky 500 */
+  --color-info-foreground: oklch(1 0 0); /* 白文字 */
+
+  /* カード・ポップオーバー */
+  --color-card: oklch(1 0 0);
+  --color-card-foreground: oklch(0.2 0.014 285.938);
+  --color-popover: oklch(1 0 0);
+  --color-popover-foreground: oklch(0.2 0.014 285.938);
+
+  /* ミュート */
+  --color-muted: oklch(0.968 0.007 247.896); /* Gray 100 */
+  --color-muted-foreground: oklch(0.554 0.013 258.071); /* Gray 500 */
+
+  /* アクセント */
+  --color-accent: oklch(0.968 0.007 247.896);
+  --color-accent-foreground: oklch(0.271 0.029 256.848);
+
+  /* ボーダー・入力 */
+  --color-border: oklch(0.898 0.012 247.858); /* Gray 200 */
+  --color-input: oklch(0.898 0.012 247.858); /* Gray 200 */
+  --color-ring: oklch(0.623 0.214 259.815); /* Blue 600 */
+
+  /* shadcn/ui 互換（destructive） - --color-danger と揃える */
+  --color-destructive: oklch(0.637 0.237 25.331);
+  --color-destructive-foreground: oklch(1 0 0);
+}
+
+/* ==========================================================================
+ * ダークモード（クラス方式・オプトイン）
+ *
+ * Tailwind v4 のデフォルトでは `dark:` が @media (prefers-color-scheme: dark)
+ * にコンパイルされる。それだと OS がダークモードのユーザーに対して
+ * components/ui/* の `dark:` だけが勝手に効き、markup側は
+ * `bg-white` 直書きのままなので画面が半分だけ暗くなって破綻する。
+ *
+ * そこでクラス方式に変更し、`<html class="dark">` を付けたときだけ
+ * 有効になるオプトイン方式にする。付けない限り従来通りライトのまま。
+ *
+ * <important>
+ * ダークモードは「構造の用意」段階。既存の markupと
+ * 既存 Dx コンポーネントは `bg-white` / `text-gray-900` 直書きのため
+ * まだダークで破綻する。破綻箇所は Storybook の Dark 切替で確認できる。
+ * 新規コンポーネントはセマンティックトークン
+ * （bg-card / text-foreground / border-border）のみを使い dark-ready にする。
+ * </important>
+ * ========================================================================== */
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+.dark {
+  --color-background: oklch(0.208 0.014 285.938); /* Gray 900 相当 */
+  --color-foreground: oklch(0.968 0.007 247.896); /* Gray 100 */
+
+  --color-card: oklch(0.258 0.014 285.938); /* Gray 850 相当 */
+  --color-card-foreground: oklch(0.968 0.007 247.896);
+  --color-popover: oklch(0.258 0.014 285.938);
+  --color-popover-foreground: oklch(0.968 0.007 247.896);
+
+  --color-muted: oklch(0.31 0.014 285.938); /* Gray 800 相当 */
+  --color-muted-foreground: oklch(0.72 0.013 258.071); /* Gray 400 */
+
+  --color-accent: oklch(0.31 0.014 285.938);
+  --color-accent-foreground: oklch(0.968 0.007 247.896);
+
+  --color-border: oklch(0.37 0.014 285.938); /* Gray 700 相当 */
+  --color-input: oklch(0.37 0.014 285.938);
+
+  /* セカンダリボタンはダークでは暗い面 + 明るい文字にする */
+  --color-secondary: oklch(0.258 0.014 285.938);
+  --color-secondary-hover: oklch(0.31 0.014 285.938);
+  --color-secondary-active: oklch(0.37 0.014 285.938);
+  --color-secondary-foreground: oklch(0.9 0.007 247.896);
+  --color-secondary-border: oklch(0.37 0.014 285.938);
+
+  /* primary / success / danger / warning / info の色相は変えない。
+   * 意味と色の対応を light/dark で揃えるため（design-system/colors.md の原則）。 */
+}
+
+/* ==========================================================================
+ * @base-ui/react 用のカスタムバリアント
+ * node_modules/shadcn/dist/tailwind.css から必要な 9 個だけ転記している。
+ * `@import "shadcn/tailwind.css"` は不要な @utility を大量に持ち込むためしない。
+ * ========================================================================== */
+
+@custom-variant data-open {
+  &:where([data-state="open"]),
+  &:where([data-open]:not([data-open="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-closed {
+  &:where([data-state="closed"]),
+  &:where([data-closed]:not([data-closed="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-checked {
+  &:where([data-state="checked"]),
+  &:where([data-checked]:not([data-checked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-unchecked {
+  &:where([data-state="unchecked"]),
+  &:where([data-unchecked]:not([data-unchecked="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-selected {
+  &:where([data-selected="true"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-disabled {
+  &:where([data-disabled="true"]),
+  &:where([data-disabled]:not([data-disabled="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-active {
+  &:where([data-state="active"]),
+  &:where([data-active]:not([data-active="false"])) {
+    @slot;
+  }
+}
+
+@custom-variant data-horizontal {
+  &:where([data-orientation="horizontal"]) {
+    @slot;
+  }
+}
+
+@custom-variant data-vertical {
+  &:where([data-orientation="vertical"]) {
+    @slot;
+  }
+}
+
+/* ==========================================================================
+ * 共有コンポーネントクラス
+ *
+ * markupから使う「素の HTML + class」の部品。
+ * React application の中では対応する Dx コンポーネントを使う。
+ *   btn-primary  ↔ <ApplicationButton variant="primary">
+ *   input-field  ↔ <ApplicationInput>
+ *   card         ↔ <ApplicationCard>
+ *
+ * 見本は Storybook の Foundations を参照。
+ * ========================================================================== */
+
+@layer components {
+  /* ========================================
+   * ボタンコンポーネント（カラートークン使用）
+   * ======================================== */
+
+  .btn-primary {
+    @apply px-5 py-2.5 text-sm font-medium rounded-lg
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+    background-color: var(--color-primary);
+    color: var(--color-primary-foreground);
+    &:hover {
+      background-color: var(--color-primary-hover);
+    }
+    &:active {
+      background-color: var(--color-primary-active);
+    }
+    &:focus {
+      box-shadow: 0 0 0 2px var(--color-primary);
+    }
+  }
+
+  .btn-secondary {
+    @apply px-5 py-2.5 text-sm font-medium rounded-lg
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+    background-color: var(--color-secondary);
+    color: var(--color-secondary-foreground);
+    border: 1px solid var(--color-secondary-border);
+    &:hover {
+      background-color: var(--color-secondary-hover);
+    }
+    &:active {
+      background-color: var(--color-secondary-active);
+    }
+    &:focus {
+      box-shadow: 0 0 0 2px var(--color-secondary-border);
+    }
+  }
+
+  .btn-success {
+    @apply px-5 py-2.5 text-sm font-medium rounded-lg
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+    background-color: var(--color-success);
+    color: var(--color-success-foreground);
+    &:hover {
+      background-color: var(--color-success-hover);
+    }
+    &:active {
+      background-color: var(--color-success-active);
+    }
+    &:focus {
+      box-shadow: 0 0 0 2px var(--color-success);
+    }
+  }
+
+  .btn-danger {
+    @apply px-5 py-2.5 text-sm font-medium rounded-lg
+           focus:outline-none focus:ring-2 focus:ring-offset-2
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+    background-color: var(--color-danger);
+    color: var(--color-danger-foreground);
+    &:hover {
+      background-color: var(--color-danger-hover);
+    }
+    &:active {
+      background-color: var(--color-danger-active);
+    }
+    &:focus {
+      box-shadow: 0 0 0 2px var(--color-danger);
+    }
+  }
+
+  /* フォーム入力フィールド */
+  .input-field {
+    @apply w-full px-3.5 py-2.5 text-sm rounded-lg
+           placeholder:text-muted-foreground
+           focus:outline-none focus:ring-2
+           transition-colors;
+    background-color: var(--color-card);
+    color: var(--color-foreground);
+    border: 1px solid var(--color-input);
+    &:focus {
+      border-color: var(--color-ring);
+      box-shadow: 0 0 0 2px var(--color-ring);
+    }
+  }
+
+  select.input-field {
+    @apply appearance-none bg-no-repeat;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='m6 8 4 4 4-4'/%3E%3C/svg%3E");
+    background-position: right 0.5rem center;
+    background-size: 1.5em 1.5em;
+    padding-right: 2.5rem;
+  }
+
+  .btn-lg {
+    @apply px-6 py-3 text-base font-medium rounded-lg
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+  }
+
+  .btn-sm {
+    @apply px-3 py-1.5 text-xs font-medium rounded-lg
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+  }
+
+  .btn-xs {
+    @apply px-2.5 py-1 text-xs font-medium rounded-lg
+           transition-colors inline-flex items-center justify-center cursor-pointer;
+  }
+
+  .badge {
+    @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .avatar-sm {
+    @apply w-5 h-5 rounded-full flex items-center justify-center font-medium flex-shrink-0 text-[10px];
+  }
+
+  .avatar-md {
+    @apply w-7 h-7 rounded-full flex items-center justify-center font-medium flex-shrink-0 text-xs;
+  }
+
+  .avatar-lg {
+    @apply w-9 h-9 rounded-full flex items-center justify-center font-medium flex-shrink-0 text-sm;
+  }
+
+  .card {
+    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-4;
+  }
+
+  .card-sm {
+    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-3;
+  }
+
+  .card-lg {
+    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6;
+  }
+
+  /* application Template 側の一覧テーブル（the layout guidance: レイアウト系 UI は application 所有） */
+  .data-table {
+    @apply w-full text-sm border-collapse;
+  }
+
+  .data-table thead {
+    @apply text-left text-xs font-medium text-muted-foreground uppercase;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .data-table th {
+    @apply px-4 py-2.5;
+  }
+
+  .data-table td {
+    @apply px-4 py-2.5;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .data-table tbody tr:hover {
+    background-color: var(--color-accent);
+  }
+}

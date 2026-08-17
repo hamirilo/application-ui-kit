@@ -1,0 +1,26 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { AlertCircle, Check, Plus, Search, Trash2 } from 'lucide-react'
+
+<Meta title="Foundations/Icons" />
+
+# Icons
+
+Use named exports from lucide-react for application icons.
+
+## Rules
+
+- Import only the icons used by a story or component.
+- Use currentColor through semantic text tokens; do not hard-code SVG colors.
+- Give icon-only controls an accessible aria-label.
+- Use an icon to support meaning, not as the only way to communicate a critical action.
+
+## Examples
+
+<div className="flex items-center gap-4 text-foreground">
+  <Plus className="h-4 w-4" aria-hidden="true" />
+  <Search className="h-4 w-4" aria-hidden="true" />
+  <Check className="h-4 w-4" aria-hidden="true" />
+  <AlertCircle className="h-4 w-4" aria-hidden="true" />
+  <Trash2 className="h-4 w-4" aria-hidden="true" />
+</div>
+
