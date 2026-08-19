@@ -74,7 +74,10 @@ export interface ApplicationDatePickerProps {
   className?: string;
 }
 
-function formatValue(mode: ApplicationDatePickerMode, value?: ApplicationDatePickerValue): string | null {
+function formatValue(
+  mode: ApplicationDatePickerMode,
+  value?: ApplicationDatePickerValue,
+): string | null {
   if (!value) return null;
 
   if (mode === "multiple") {

@@ -122,7 +122,9 @@ export const ApplicationNavItem = React.forwardRef<
         </span>
       )}
 
-      {active && <ApplicationActiveIndicator layoutId={layoutId} className={currentStyle.indicator} />}
+      {active && (
+        <ApplicationActiveIndicator layoutId={layoutId} className={currentStyle.indicator} />
+      )}
     </>
   );
 

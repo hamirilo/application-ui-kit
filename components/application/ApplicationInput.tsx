@@ -10,7 +10,8 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 
-export interface ApplicationInputProps extends Omit<React.ComponentPropsWithoutRef<"input">, "size"> {
+export interface ApplicationInputProps
+  extends Omit<React.ComponentPropsWithoutRef<"input">, "size"> {
   /**
    * エラー状態。true にすると枠線が danger 色になる。
    *

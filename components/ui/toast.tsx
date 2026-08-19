@@ -7,7 +7,9 @@ import { cn } from '../../lib/utils'
 
 const ToastProvider = ToastPrimitive.Provider
 
-const ToastPortal = ToastPrimitive.Portal
+// 型注釈が無いと、宣言ファイルの生成時に base-ui の内部パスを参照した型が推論され
+// TS2742 になる (dist/types を出せなくなる)。
+const ToastPortal: React.FC<ToastPrimitive.Portal.Props> = ToastPrimitive.Portal
 
 const ToastViewport = React.forwardRef<
   HTMLDivElement,

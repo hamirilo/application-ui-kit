@@ -6,6 +6,7 @@
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
+    "build": "vite build && tsc -p tsconfig.build.json",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
@@ -15,18 +16,18 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "types": "./components/application/index.ts",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/types/components/application/index.d.ts",
   "exports": {
-    ".": "./components/application/index.ts",
+    ".": {
+      "types": "./dist/types/components/application/index.d.ts",
+      "import": "./dist/index.js"
+    },
     "./styles.css": "./tokens/theme.css",
     "./tokens/*": "./tokens/*"
   },
-  "files": [
-    "components",
-    "hooks",
-    "lib",
-    "tokens"
-  ],
+  "files": ["dist", "components", "hooks", "lib", "tokens"],
   "dependencies": {
     "@base-ui/react": "^1.6.0",
     "class-variance-authority": "^0.7.1",
