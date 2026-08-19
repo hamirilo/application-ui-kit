@@ -50,6 +50,29 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
 
+### 配布物
+
+`bun run build` が dist/ を作ります。JS は vite の library build、型定義は tsc が出力します。
+
+    dist/index.js                                     ES module 本体
+    dist/types/components/application/index.d.ts      型定義
+
+利用側は dist だけをimportします。TypeScriptのビルド設定を持たないアプリ（Django + Vite の Islands 構成など）でもそのまま使えるようにするためです。
+
+一方 components/ も配布物に含めます。tokens/theme.css の `@source "../components"` が、パッケージ内の .tsx が使うTailwindクラスを利用側のビルドに拾わせるために参照します。
+
+### 取得
+
+GitHub Packages配信のため、利用側には `read:packages` 権限のトークンが要ります。
+
+    # 利用側リポジトリの .npmrc
+    @hamirilo:registry=https://npm.pkg.github.com
+    //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
+
+### 公開
+
+GitHub Releaseをpublishすると `.github/workflows/publish.yml` が公開します。タグは `v<version>` とし、package.json の version と一致させてください（不一致はワークフローが検出して止めます）。
+
 ## 資産を追加するとき
 
 1. 複数アプリで再利用できる汎用UIか確認する。

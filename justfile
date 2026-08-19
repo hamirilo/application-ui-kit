@@ -5,6 +5,10 @@ check:
     bun run typecheck
     bun run test
     bun run lint
+    bun run build
+
+build:
+    bun run build
 
 typecheck:
     bun run typecheck

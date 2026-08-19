@@ -1,0 +1,62 @@
+name: Publish
+
+# GitHub Packages へ公開する。
+#
+# 発火は GitHub Release の publish 時。タグと package.json の version が
+# 食い違ったまま公開されないよう、事前に突き合わせる。
+# 手動実行 (workflow_dispatch) では package.json の version をそのまま使う。
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    name: npm publish
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bun のセットアップ
+        uses: oven-sh/setup-bun@v2
+
+      - name: 依存のインストール
+        run: bun install --frozen-lockfile
+
+      # 公開物が壊れていないことを、publish の前に必ず通す。
+      - name: 検証
+        run: |
+          bun run typecheck
+          bun run test
+          bun run lint
+
+      - name: build
+        run: bun run build
+
+      - name: タグと version の一致を確認
+        if: github.event_name == 'release'
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="$(node -p "require('./package.json').version")"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::タグ ($TAG) と package.json の version ($VERSION) が一致しません"
+            exit 1
+          fi
+
+      # publish は bun ではなく npm で行う (GitHub Packages の認証は .npmrc 経由)。
+      - name: Node のセットアップ
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          registry-url: "https://npm.pkg.github.com"
+          scope: "@hamirilo"
+
+      - name: publish
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

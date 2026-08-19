@@ -1,0 +1,46 @@
+name: CI
+
+# PR ごとに型検査・テスト・静的解析・配布物のビルドを実行する。
+# ローカルの一括チェックは `just check` だが、CI では bun の script を直接呼ぶ。
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    name: 型検査・テスト・ビルド
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: bun のセットアップ
+        uses: oven-sh/setup-bun@v2
+
+      # 依存はすべて public レジストリから取得できる。
+      - name: 依存のインストール
+        run: bun install --frozen-lockfile
+
+      - name: typecheck
+        run: bun run typecheck
+
+      - name: test
+        run: bun run test
+
+      - name: lint
+        run: bun run lint
+
+      # 配布物 (dist/index.js と型定義) が壊れていないことを見る。
+      # 利用側は dist だけを import するため、ここが通らないと publish できない。
+      - name: build
+        run: bun run build
