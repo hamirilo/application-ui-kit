@@ -42,33 +42,34 @@ export interface ApplicationSearchInputProps
  * />
  * ```
  */
-export const ApplicationSearchInput = React.forwardRef<HTMLInputElement, ApplicationSearchInputProps>(
-  ({ className, onClear, value, ...props }, ref) => {
-    const hasValue = value !== undefined && value !== "";
+export const ApplicationSearchInput = React.forwardRef<
+  HTMLInputElement,
+  ApplicationSearchInputProps
+>(({ className, onClear, value, ...props }, ref) => {
+  const hasValue = value !== undefined && value !== "";
 
-    return (
-      <ApplicationInput
-        ref={ref}
-        type="search"
-        value={value}
-        className={cn("[&::-webkit-search-cancel-button]:hidden", className)}
-        leftIcon={<Search className="h-4 w-4" />}
-        rightIcon={
-          onClear && hasValue ? (
-            <button
-              type="button"
-              onClick={onClear}
-              aria-label="検索キーワードをクリア"
-              className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
-            >
-              <X className="h-3.5 w-3.5" />
-            </button>
-          ) : undefined
-        }
-        {...props}
-      />
-    );
-  },
-);
+  return (
+    <ApplicationInput
+      ref={ref}
+      type="search"
+      value={value}
+      className={cn("[&::-webkit-search-cancel-button]:hidden", className)}
+      leftIcon={<Search className="h-4 w-4" />}
+      rightIcon={
+        onClear && hasValue ? (
+          <button
+            type="button"
+            onClick={onClear}
+            aria-label="検索キーワードをクリア"
+            className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+          >
+            <X className="h-3.5 w-3.5" />
+          </button>
+        ) : undefined
+      }
+      {...props}
+    />
+  );
+});
 
 ApplicationSearchInput.displayName = "ApplicationSearchInput";
