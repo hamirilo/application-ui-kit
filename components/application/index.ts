@@ -45,6 +45,13 @@ export type { ApplicationInputProps } from "./ApplicationInput";
 export { ApplicationSelect } from "./ApplicationSelect";
 export type { ApplicationSelectProps, ApplicationSelectItem } from "./ApplicationSelect";
 
+export {
+  ApplicationCombobox,
+  APPLICATION_COMBOBOX_CREATE_PREFIX,
+  splitCreatedValues,
+} from "./ApplicationCombobox";
+export type { ApplicationComboboxProps, ApplicationComboboxItem } from "./ApplicationCombobox";
+
 export { ApplicationCheckbox } from "./ApplicationCheckbox";
 export type { ApplicationCheckboxProps } from "./ApplicationCheckbox";
 
