@@ -1,8 +1,9 @@
 {
   "name": "@hamirilo/application-ui-kit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Shared React application UI components, semantic design tokens, and Storybook specification",
   "type": "module",
+  "sideEffects": false,
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
@@ -16,13 +17,13 @@
   "publishConfig": {
     "registry": "https://npm.pkg.github.com"
   },
-  "main": "./dist/index.js",
-  "module": "./dist/index.js",
+  "main": "./dist/components/application/index.js",
+  "module": "./dist/components/application/index.js",
   "types": "./dist/types/components/application/index.d.ts",
   "exports": {
     ".": {
       "types": "./dist/types/components/application/index.d.ts",
-      "import": "./dist/index.js"
+      "import": "./dist/components/application/index.js"
     },
     "./styles.css": "./tokens/theme.css",
     "./tokens/*": "./tokens/*"

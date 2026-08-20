@@ -29,10 +29,17 @@ export default defineConfig({
     lib: {
       entry: fileURLToPath(new URL("./components/application/index.ts", import.meta.url)),
       formats: ["es"],
-      fileName: () => "index.js",
     },
     rollupOptions: {
       external: isExternal,
+      output: {
+        // コンポーネントごとにファイルを分ける。全部入りの 1 ファイルにすると、
+        // 利用側が 2 つ import しただけで framer-motion や base-ui まで巻き込む
+        // (React.forwardRef の呼び出しが副作用とみなされ、tree-shaking が効かない)。
+        preserveModules: true,
+        preserveModulesRoot: ".",
+        entryFileNames: "[name].js",
+      },
     },
     sourcemap: true,
     emptyOutDir: true,
