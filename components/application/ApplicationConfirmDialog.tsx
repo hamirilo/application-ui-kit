@@ -1,5 +1,5 @@
 /**
- * ApplicationConfirmDialog - shared UI libraryの確認ダイアログコンポーネント
+ * ApplicationConfirmDialog - 共有 UI ライブラリの確認ダイアログコンポーネント
  *
  * 削除・編集・公開・アーカイブなど、ユーザーの操作確認が必要な場面で使用します。
  * ApplicationDialog をベースに、確認ダイアログ専用の Props を提供します。

@@ -62,7 +62,7 @@ const meta = {
 | 場面 | 代わりに使うもの |
 |---|---|
 | 選択肢が 2〜十数個で固定 | \`ApplicationSelect\` |
-| markup（.html） | \`<select class="input-field">\` |
+| テンプレート（.html） | \`<select class="input-field">\` |
 | 選択肢が 2 つで排他 | \`ApplicationCheckbox\` かラジオボタン |
 | 日付を選ぶ | \`ApplicationDatePicker\` |
 

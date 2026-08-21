@@ -1,5 +1,5 @@
 /**
- * ApplicationDropdown - shared UI libraryのドロップダウンメニューコンポーネント
+ * ApplicationDropdown - 共有 UI ライブラリのドロップダウンメニューコンポーネント
  *
  * 行アクション（編集・削除・複製など）や、テーブル・カード上のメニューボタンで使用します。
  * shadcn/ui の DropdownMenu をラップし、`items` 配列を渡すだけで構築できる簡潔な API を提供します。

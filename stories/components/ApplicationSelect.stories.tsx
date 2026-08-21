@@ -30,7 +30,7 @@ const DEPARTMENTS: ApplicationSelectItem[] = [
  *
  * <important>
  * 選択肢が十数個を超える、または検索が必要な場合は使わない。
- * React は ApplicationCombobox、application は application-specific select を使う。
+ * React 側は ApplicationCombobox、テンプレート側はネイティブの `<select>` を使う。
  * </important>
  */
 const meta = {
@@ -59,8 +59,8 @@ OS 標準のドロップダウンではグループ見出しや無効項目の�
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html） | \`<select class="input-field">\` |
-| 選択肢が多い / 検索が必要（社員・部署・取引先） | application-specific select（application） / \`ApplicationCombobox\`（React） |
+| テンプレート（.html） | \`<select class="input-field">\` |
+| 選択肢が多い / 検索が必要（社員・部署・取引先） | \`ApplicationCombobox\`（React） / ネイティブの \`<select>\`（テンプレート） |
 | 選択肢が 2 つで排他 | \`ApplicationCheckbox\` かラジオボタン（1 クリックで済む） |
 | 複数選択したい | \`ApplicationCombobox\` の \`multiple\`、または少数ならチェックボックスのリスト |
 | 日付を選ぶ | \`ApplicationDatePicker\` |

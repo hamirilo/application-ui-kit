@@ -6,8 +6,8 @@ import { ApplicationButton, ApplicationCard, ApplicationDropdown } from "../../c
  * ApplicationCard はコンテンツをひとまとまりに見せるための枠。
  *
  * <important>
- * markup（.html）では `<div class="card">` を使う。
- * ApplicationCard は React application の中でだけ使う。見本は Foundations を参照。
+ * テンプレート（.html）では `<div class="card">` を使う。
+ * ApplicationCard は React コンポーネントの中でだけ使う。見本は Foundations を参照。
  * </important>
  */
 const meta = {
@@ -26,14 +26,14 @@ CSS クラスの \`.card\` / \`.card-sm\` / \`.card-lg\` と**同じ見た目**�
 
 ## 使う場面
 
-- React application 内で情報をグループ化する
+- React コンポーネント内で情報をグループ化する
 - フォーム・一覧・サマリーの入れ物
 
 ## 使わない場面
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html） | \`<div class="card">\` |
+| テンプレート（.html） | \`<div class="card">\` |
 | カードの中にさらにカード | ネスト禁止。内側は \`border-t\` の区切りか \`bg-muted\` の区画にする |
 | 業務固有のカード（VideoCard / EmployeeCard など） | 各アプリで実装する。中身の意味が業務ごとに違うため共通化しない（ただし外枠に ApplicationCard を使うのは良い） |
 | クリックできる一覧項目 | カードではなくテーブル（\`ApplicationTable\`）かリストを検討する。カードは並べると走査しにくい |

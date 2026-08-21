@@ -1,8 +1,8 @@
 /**
- * ApplicationInput - shared UI libraryのテキスト入力コンポーネント
+ * ApplicationInput - 共有 UI ライブラリのテキスト入力コンポーネント
  *
- * 見た目は markupの `input-field` クラスに揃えている。
- * 同じ画面に application rendering フォームと React application が並んでも段差が出ないようにするため。
+ * 見た目は CSS クラスの `input-field` に揃えている。
+ * 同じ画面にサーバーレンダリングのフォームと React コンポーネントが並んでも段差が出ないようにするため。
  *
  * 画面側では ApplicationInput のみを使用し、素の <input> にクラスを直書きしないでください。
  */

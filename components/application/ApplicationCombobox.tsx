@@ -1,7 +1,7 @@
 /**
  * ApplicationCombobox - 検索と新規作成ができるセレクト
  *
- * 見た目は ApplicationSelect（= markup の `select.input-field`）に揃えている。
+ * 見た目は ApplicationSelect（= テンプレートの `select.input-field`）に揃えている。
  *
  * <important>
  * 選択肢が十数個までで検索が要らない場合は ApplicationSelect を使う。

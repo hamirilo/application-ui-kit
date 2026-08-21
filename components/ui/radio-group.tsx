@@ -7,29 +7,6 @@ import { cn } from '../../lib/utils'
 
 const RadioGroup = RadioGroupPrimitive
 
-/**
- * Base UI の Radio をラップした基底ラジオボタン（丸 + ドット表示）。
- * `ApplicationRadioGroup` のような縦/横に並ぶリスト表現で使う。
- */
-const RadioItem = React.forwardRef<HTMLSpanElement, RadioPrimitive.Root.Props>(
-  ({ className, ...props }, ref) => (
-    <RadioPrimitive.Root
-      ref={ref}
-      className={cn(
-        "flex h-4 w-4 shrink-0 items-center justify-center rounded-full border border-input bg-background transition-colors",
-        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2",
-        "data-checked:border-primary",
-        "data-disabled:cursor-not-allowed data-disabled:opacity-50",
-        className
-      )}
-      {...props}
-    >
-      <RadioPrimitive.Indicator className="h-2 w-2 rounded-full bg-primary data-unchecked:hidden" />
-    </RadioPrimitive.Root>
-  )
-)
-RadioItem.displayName = "RadioItem"
-
 const radioGroupItemVariants = cva(
   "inline-flex cursor-pointer items-center justify-center gap-1.5 border border-input bg-background text-sm font-medium text-foreground shadow-sm transition-colors -ml-px first:ml-0 first:rounded-l-md last:rounded-r-md hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
   {
@@ -77,4 +54,4 @@ const RadioGroupItem = React.forwardRef<HTMLElement, RadioGroupItemProps>(
 )
 RadioGroupItem.displayName = "RadioGroupItem"
 
-export { RadioGroup, RadioItem, RadioGroupItem, radioGroupItemVariants }
+export { RadioGroup, RadioGroupItem, radioGroupItemVariants }

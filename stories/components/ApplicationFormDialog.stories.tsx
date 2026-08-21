@@ -49,7 +49,7 @@ const meta = {
 | 確認だけ（入力なし） | \`ApplicationConfirmDialog\` |
 | 入力項目が多い / 段階的な入力が必要 | **専用ページへ遷移する。** モーダル内スクロールのフォームは入力ミスに気付けない |
 | ファイルアップロードが主目的 | ドロップ領域を含む専用画面。モーダルは領域が狭い |
-| markup（.html） | application rendering でフォーム partial を差し込む。React application を新設しない |
+| テンプレート（.html） |サーバーレンダリングでフォーム partial を差し込む。React コンポーネントを新設しない |
 | 入力途中で他の情報を参照したくなるフォーム | ページにする。モーダルは背後を隠してしまう |
 
 ## Props
@@ -67,20 +67,20 @@ const meta = {
 | \`disabled\` | 入力を無効化する（権限がない場合など） |
 | \`maxWidth\` | \`sm\` / \`md\` / \`lg\`（既定） / \`xl\` / \`2xl\` |
 
-## application との連携
+## サーバーとの連携
 
-React application からの送信は fetch で行い、**request security トークンを必ず付ける**。
+React コンポーネントからの送信は fetch で行い、**CSRF トークンを必ず付ける**。
 
 \`\`\`tsx
-const request-security = document.querySelector<HTMLInputElement>('[name=request-securitymiddlewaretoken]')?.value ?? ''
+const csrf = document.querySelector<HTMLInputElement>('[name=csrfmiddlewaretoken]')?.value ?? ''
 
 const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
   setLoading(true)
   try {
     const res = await fetch('/requests/create/', {
       method: 'POST',
-      headers: { 'X-request securityToken': request-security },
-      body: new FormData(e.currentTarget),   // name 属性がそのまま application のフィールド名になる
+      headers: { 'X-CSRFToken': csrf },
+      body: new FormData(e.currentTarget),   // name 属性がそのままサーバー側のフィールド名になる
     })
     if (!res.ok) throw new Error('保存に失敗しました')
     setOpen(false)

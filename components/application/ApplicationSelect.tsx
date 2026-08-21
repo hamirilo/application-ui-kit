@@ -1,11 +1,11 @@
 /**
- * ApplicationSelect - shared UI libraryのセレクトボックス
+ * ApplicationSelect - 共有 UI ライブラリのセレクトボックス
  *
- * 見た目は markupの `select.input-field` に揃えている。
+ * 見た目は CSS クラスの `select.input-field` に揃えている。
  *
  * <important>
  * 選択肢が多く検索が必要な場合（部署選択・社員選択など）は ApplicationSelect を使わない。
- * React 側は ApplicationCombobox、application 側は application-specific select を使う。
+ * React 側は ApplicationCombobox、テンプレート側はネイティブの `<select>` を使う。
  * ApplicationSelect は選択肢が十数個までの用途に限る。
  * </important>
  */

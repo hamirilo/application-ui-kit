@@ -5,7 +5,7 @@ import { ApplicationFormField, ApplicationTextarea } from "../../components/appl
  * ApplicationTextarea は複数行テキスト入力の唯一のコンポーネント。
  *
  * <important>
- * これは **React application の中でだけ** 使う。
+ * これは **React コンポーネントの中でだけ** 使う。
  * application フォームでは widget に `class="input-field"` を指定する。
  * </important>
  */
@@ -30,7 +30,7 @@ const meta = {
 | 場面 | 代わりに使うもの |
 |---|---|
 | 1 行の入力 | \`ApplicationInput\` |
-| markup（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
+| テンプレート（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
 
 ## 注意事項
 
