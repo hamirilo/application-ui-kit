@@ -1,11 +1,11 @@
 /**
- * ApplicationCard - shared UI libraryのカードコンポーネント
+ * ApplicationCard - 共有 UI ライブラリのカードコンポーネント
  *
- * 見た目は markupの `.card` / `.card-sm` / `.card-lg` に揃えている。
+ * 見た目は CSS クラスの `.card` / `.card-sm` / `.card-lg` に揃えている。
  *
  * <important>
- * markup（.html）では `<div class="card">` を使う。
- * ApplicationCard は React application の中でだけ使う。
+ * テンプレート（.html）では `<div class="card">` を使う。
+ * ApplicationCard は React コンポーネントの中でだけ使う。
  * </important>
  */
 

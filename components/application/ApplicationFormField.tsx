@@ -1,7 +1,7 @@
 /**
  * ApplicationFormField - ラベル + 入力 + エラー + ヘルプをまとめるフォーム部品
  *
- * markupの `includes/molecules/form_field.html` の React 版。
+ * CSS クラスの `includes/molecules/form_field.html` の React 版。
  * 余白・必須マーク・エラー表示のルールをここに集約し、画面ごとのばらつきを防ぐ。
  *
  * 余白は design-system/components.md の規約に合わせて固定している:

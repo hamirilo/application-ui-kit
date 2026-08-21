@@ -105,18 +105,18 @@
  *
  * Tailwind v4 のデフォルトでは `dark:` が @media (prefers-color-scheme: dark)
  * にコンパイルされる。それだと OS がダークモードのユーザーに対して
- * components/ui/* の `dark:` だけが勝手に効き、markup側は
+ * components/ui/* の `dark:` だけが勝手に効き、テンプレート側は
  * `bg-white` 直書きのままなので画面が半分だけ暗くなって破綻する。
  *
  * そこでクラス方式に変更し、`<html class="dark">` を付けたときだけ
  * 有効になるオプトイン方式にする。付けない限り従来通りライトのまま。
  *
  * <important>
- * ダークモードは「構造の用意」段階。既存の markupと
- * 既存 Dx コンポーネントは `bg-white` / `text-gray-900` 直書きのため
- * まだダークで破綻する。破綻箇所は Storybook の Dark 切替で確認できる。
- * 新規コンポーネントはセマンティックトークン
- * （bg-card / text-foreground / border-border）のみを使い dark-ready にする。
+ * このリポジトリのコンポーネントと共有コンポーネントクラスは、セマンティック
+ * トークン（bg-card / text-foreground / border-border）のみを使って
+ * dark-ready にしてある。生の `bg-white` / `text-gray-900` を追加してはいけない。
+ * 一方、利用側アプリのテンプレートが生の色を直書きしている場合はそこだけ
+ * 暗くならず破綻する。破綻箇所は Storybook の Dark 切替で確認できる。
  * </important>
  * ========================================================================== */
 
@@ -220,8 +220,8 @@
 /* ==========================================================================
  * 共有コンポーネントクラス
  *
- * markupから使う「素の HTML + class」の部品。
- * React application の中では対応する Dx コンポーネントを使う。
+ * テンプレートから使う「素の HTML + class」の部品。
+ * React コンポーネントの中では対応する Application コンポーネントを使う。
  *   btn-primary  ↔ <ApplicationButton variant="primary">
  *   input-field  ↔ <ApplicationInput>
  *   card         ↔ <ApplicationCard>
@@ -369,7 +369,7 @@
     @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6;
   }
 
-  /* application Template 側の一覧テーブル（the layout guidance: レイアウト系 UI は application 所有） */
+  /* テンプレート側の一覧テーブル（レイアウト系 UI はテンプレート側が所有する方針） */
   .data-table {
     @apply w-full text-sm border-collapse;
   }

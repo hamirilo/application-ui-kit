@@ -1,5 +1,5 @@
 /**
- * ApplicationProgress - shared UI libraryのプログレスバー
+ * ApplicationProgress - 共有 UI ライブラリのプログレスバー
  *
  * ファイルアップロード・複数ステップの処理の進捗表示に使う。
  * 完了までの見込みが分からない処理には使わない（`ApplicationSpinner` を使う）。

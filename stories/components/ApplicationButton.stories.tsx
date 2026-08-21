@@ -6,8 +6,8 @@ import { ApplicationButton } from "../../components/application";
  * ApplicationButton は画面上のあらゆるアクションに使う唯一のボタンコンポーネント。
  *
  * <important>
- * これは **React application の中でだけ** 使う。
- * markup（.html）では `<button class="btn-primary">` を使う。
+ * これは **React コンポーネントの中でだけ** 使う。
+ * テンプレート（.html）では `<button class="btn-primary">` を使う。
  * 見本は Foundations を参照。
  * </important>
  */
@@ -26,14 +26,14 @@ const meta = {
 
 ## 使う場面
 
-- React application 内のあらゆるクリック操作
+- React コンポーネント内のあらゆるクリック操作
 - フォーム送信・ダイアログの確定 / キャンセル
 
 ## 使わない場面
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html）内のボタン | \`<button class="btn-primary">\` |
+| テンプレート（.html）内のボタン | \`<button class="btn-primary">\` |
 | 画面遷移するだけのリンク | \`<a>\` + \`variant="link"\`。見た目がボタンでも意味がリンクなら \`<a>\` を使う |
 | アイコンだけの小さな操作（テーブル行内など） | \`variant="ghost"\` + \`size="sm"\` |
 | shadcn/ui の \`Button\` を直接使う | 禁止。必ず ApplicationButton を経由する（the UI Kit rule） |

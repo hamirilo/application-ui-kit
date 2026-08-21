@@ -44,3 +44,8 @@ jobs:
       # 利用側は dist だけを import するため、ここが通らないと publish できない。
       - name: build
         run: bun run build
+
+      # Storybook は仕様書そのもの。.storybook/ や tokens/theme.css の
+      # 崩れは typecheck では捕まらないため、ビルドが通ることを見る。
+      - name: build-storybook
+        run: bun run build-storybook

@@ -6,7 +6,7 @@ import { ApplicationFormField, ApplicationInput } from "../../components/applica
  * ApplicationInput はテキスト入力の唯一のコンポーネント。
  *
  * <important>
- * これは **React application の中でだけ** 使う。
+ * これは **React コンポーネントの中でだけ** 使う。
  * application フォームでは widget に `class="input-field"` を指定する。
  * 見本は Foundations を参照。
  * </important>
@@ -23,23 +23,23 @@ const meta = {
 
 入力欄の見た目・フォーカスリング・エラー表現を 1 箇所に集約する。
 application の \`input-field\` クラスと同じ余白（\`px-3.5 py-2.5\`）・角丸（\`rounded-lg\`）に
-揃えてあるため、同じ画面に application rendering フォームと React application が並んでも段差が出ない。
+揃えてあるため、同じ画面にサーバーレンダリングのフォームと React コンポーネントが並んでも段差が出ない。
 
 ## 使う場面
 
-- React application 内のテキスト・メール・数値・パスワード入力
+- React コンポーネント内のテキスト・メール・数値・パスワード入力
 - 検索ボックス（\`leftIcon\` に検索アイコン）
 
 ## 使わない場面
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
+| テンプレート（.html）の入力欄 | widget に \`class="input-field"\` を指定 |
 | ラベル・エラー・ヘルプも必要 | \`ApplicationFormField\` で包む（余白と aria が自動で付く） |
 | 複数行の入力 | \`<textarea className="input-field">\`（React 版は未提供） |
 | 選択肢から選ぶ | \`ApplicationSelect\` |
 | 日付の入力 | \`ApplicationDatePicker\` |
-| 検索して選ぶ（社員選択など） | application-specific select（application） / Autocomplete（React） |
+| 検索して選ぶ（社員選択など） | Tom Select 等の選択ライブラリ（テンプレート） / Autocomplete（React） |
 
 ## 注意事項
 

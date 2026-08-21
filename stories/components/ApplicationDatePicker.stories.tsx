@@ -37,7 +37,7 @@ const meta = {
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html） | flatpickr（\`input-field flatpickr-input\` クラス）。React application を新設しない |
+| テンプレート（.html） | flatpickr（\`input-field flatpickr-input\` クラス）。React コンポーネントを新設しない |
 | 日時（時刻まで）が必要 | 時刻の入力は未対応。日付 + 別途 \`<input type="time">\` を組み合わせる |
 | 生年月日の入力 | カレンダーで何十年も遡るのは苦しい。年・月・日の \`ApplicationSelect\` か素のテキスト入力を検討 |
 | 「今日」「今週」のような相対指定 | ボタンによるプリセットを併設する（Story の \`WithPresets\` を参照） |

@@ -46,7 +46,7 @@ const meta = {
 | 入力を伴う確認（理由を書かせる等） | \`ApplicationFormDialog\` |
 | 元に戻せる操作（並び替え、下書き保存） | 確認しない。実行して \`ApplicationToast\` で伝える |
 | 操作の結果を知らせるだけ | \`ApplicationToast\`。確認ダイアログは「問い」であり「報告」ではない |
-| markup（.html） | application rendering の確認 partial か、各プロジェクトのモーダル。React application を新設しない |
+| テンプレート（.html） |サーバーレンダリングの確認 partial か、各プロジェクトのモーダル。React コンポーネントを新設しない |
 | 同じ操作を連続で行う画面（一覧の各行を次々消す） | 確認が邪魔になる。まとめて選択 → 1 回確認に設計を変える |
 
 ## Props

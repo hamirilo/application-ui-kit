@@ -6,7 +6,7 @@ import { ApplicationPagination, ApplicationTable } from "../../components/applic
  * ApplicationPagination は一覧・テーブルの下に置くページ送り UI。
  *
  * <important>
- * ページ番号の計算や現在ページの保持は画面側（またはサーバー側の application rendering）の責務。
+ * ページ番号の計算や現在ページの保持は画面側（またはサーバー側のレンダリング）の責務。
  * このコンポーネントは見た目とキーボード操作だけを提供する。
  * </important>
  */
@@ -24,14 +24,14 @@ const meta = {
 
 ## 使う場面
 
-- \`ApplicationTable\` の下（React application でのページング）
+- \`ApplicationTable\` の下（React コンポーネントでのページング）
 - 検索結果・履歴一覧の下
 
 ## 使わない場面
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html）の一覧 | \`includes/molecules/pagination.html\`（既存の application rendering 版） |
+| テンプレート（.html）の一覧 | \`includes/molecules/pagination.html\`（既存のサーバーレンダリング版） |
 | 件数が少なくページングが不要 | 使わない（\`totalPages <= 1\` では自動的に何も描画されない） |
 | 無限スクロール | 使わない（別途実装） |
 

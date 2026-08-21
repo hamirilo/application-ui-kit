@@ -1,5 +1,5 @@
 /**
- * ApplicationDialog - shared UI libraryの汎用ダイアログコンポーネント
+ * ApplicationDialog - 共有 UI ライブラリの汎用ダイアログコンポーネント
  *
  * shadcn/ui の Dialog をラップし、プロジェクト標準のダイアログ UI を提供します。
  * 画面側では ApplicationDialog のみを使用し、shadcn/ui の Dialog を直接使用しないでください。

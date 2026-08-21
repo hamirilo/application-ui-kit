@@ -16,9 +16,9 @@ const withTheme: Decorator = (Story, context) => {
   }, [theme])
 
   return (
-    <div className="dx-preview font-sans p-6">
+    <div className="app-preview font-sans p-6">
       <Story />
-      {/* トーストは全ページ常時マウントが前提（実アプリでは base.html） */}
+      {/* トーストは常時マウントが前提（実アプリではルートレイアウトに 1 つ） */}
       <ApplicationToaster />
     </div>
   )
@@ -69,9 +69,8 @@ const preview: Preview = {
     options: {
       storySort: {
         order: [
-          'Introduction',
           'Foundations',
-          ['Colors', 'Typography', 'Spacing', 'Radius & Shadow', 'Icons', 'CSS Classes'],
+          ['Colors', 'Typography', 'Spacing', 'Radius & Shadow', 'Icons'],
           'Components',
           'Patterns',
         ],
