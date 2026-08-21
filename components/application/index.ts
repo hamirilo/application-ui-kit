@@ -1,16 +1,16 @@
 /**
- * Application UI Kit Library - shared UI component library
+ * Application UI Kit Library - 共有 UI コンポーネントライブラリ
  *
- * shadcn/ui をラップしたshared UI component collectionです。
+ * shadcn/ui をラップした共有 UI コンポーネント群です。
  * 画面側では Application UI Kit コンポーネントのみを使用し、shadcn/ui を直接使用しないでください。
  *
  * 各コンポーネントの仕様・使用例・使わない場面は Storybook を参照してください。
  *   bun run storybook
  *
  * <important>
- * このファイルをプロジェクトへコピーする際は、export している .tsx と
- * その下請け（components/ui/*）を必ず同時にコピーしてください。
- * index.ts だけを更新すると解決できない import が発生します。
+ * このファイルが配布物のエントリです。ここに export を追加したら、
+ * その .tsx と下請け（components/ui/*）が同じコミットに含まれていることを
+ * 確認してください。`bun run build` が通らない export は publish できません。
  * </important>
  */
 

@@ -1,8 +1,17 @@
 /**
- * ApplicationToast - shared toast notification API.
+ * ApplicationToast - 共有 UI ライブラリのトースト通知コンポーネント
  *
- * Mount ApplicationToaster once near the application root, then call the
- * typed methods from React event handlers or application services.
+ * shadcn/ui の Toast をラップし、簡潔な API でトースト通知を表示する。
+ * アプリ内の通知はすべて ApplicationToast に一本化する。
+ *
+ * `ApplicationToaster` をアプリのルート付近に 1 つだけマウントし、
+ * React のイベントハンドラやサービス層から下記のメソッドを呼ぶ。
+ *
+ *   ApplicationToast.success('保存しました')
+ *   ApplicationToast.error('保存に失敗しました', 'ネットワークエラーです')
+ *
+ * アイコンは variant に応じて Toaster 側（components/ui/toaster.tsx）が
+ * 自動で描画する。title / description には必ずプレーンな文字列を渡す。
  */
 
 import { toast as shadcnToast } from "../../hooks/use-toast";

@@ -35,13 +35,13 @@ application の \`includes/molecules/form_field.html\` の React 版。
 
 ## 使う場面
 
-- React application 内のすべてのフォーム項目
+- React コンポーネント内のすべてのフォーム項目
 
 ## 使わない場面
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| markup（.html） | \`{% include 'includes/molecules/form_field.html' %}\` |
+| テンプレート（.html） | \`{% include 'includes/molecules/form_field.html' %}\` |
 | ラベルが不要な入力（検索ボックス、テーブル内のインライン編集） | \`ApplicationInput\` 単体 + \`aria-label\` |
 | チェックボックス | \`ApplicationCheckbox\`（ラベルを自前で持っているため二重になる） |
 

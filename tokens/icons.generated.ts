@@ -2,14 +2,14 @@
  * アイコン一覧（Heroicons v2 outline）
  *
  * <important>
- * このファイルは自動生成物。手で編集しない。
- * SSOT は the original source 内の shared icon source の ICONS。
- * アイコンを追加・変更したら icons_templatetag.py を直し、下記コマンドで再生成する。
- *
- *   npm run gen:icons
+ * このファイルは、テンプレート側のアイコンヘルパーが持つ定義から書き出した
+ * ベンダリング物。生成スクリプトはこのリポジトリには含まれない。
+ * アイコンを追加・変更するときは、まず利用側のアイコンヘルパー
+ * （SSOT）を直し、その出力をこのファイルへ反映する。
  * </important>
  *
- * markupでは `{% icon "plus" size="sm" %}` を使う（このファイルは使わない）。
+ * テンプレートでは `{% icon "plus" size="sm" %}` のようなヘルパー経由で使う
+ * （このファイルは使わない）。
  * Storybook の Foundations/Icons が一覧を描画するために TS 版を持っている。
  */
 

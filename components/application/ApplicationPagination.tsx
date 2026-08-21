@@ -1,5 +1,5 @@
 /**
- * ApplicationPagination - shared UI libraryのページネーション
+ * ApplicationPagination - 共有 UI ライブラリのページネーション
  *
  * ApplicationTable など一覧の下に置く。ページ番号は 1 始まり。
  *

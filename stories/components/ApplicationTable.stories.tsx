@@ -89,7 +89,7 @@ const COLUMNS: ApplicationTableColumn<Request>[] = [
  * ApplicationTable は列定義とデータを渡して一覧を描画するコンポーネント。
  *
  * <important>
- * application の一覧は application rendering + テンプレートで描画する。ApplicationTable は使わない。
+ * サーバーレンダリング側の一覧はテンプレートで描画する。ApplicationTable は使わない。
  * テンプレート側の見本は Foundations の「テーブル」を参照。
  * </important>
  */
@@ -109,14 +109,14 @@ const meta = {
 
 ## 使う場面
 
-- React application 内の一覧表示
+- React コンポーネント内の一覧表示
 - 数十行程度までの表
 
 ## 使わない場面
 
 | 場面 | 代わりに使うもの |
 |---|---|
-| application の一覧画面 | application rendering + テンプレート（\`{% for %}\`）。Foundations の HTML を使う |
+| サーバーレンダリングの一覧画面 | テンプレートの \`{% for %}\` で描画。Foundations の HTML を使う |
 | ソート・ページング・絞り込みの実装 | **ApplicationTable は持たない。** 業務ロジックなのでアプリ側で実装し、結果を \`rows\` に渡す |
 | 数百行以上の表示 | 仮想スクロールやページングを別途検討する（ApplicationTable は全行を描画する） |
 | 数値の集計・編集ができる表 | 表計算的な UI が必要。ApplicationTable の範囲外 |

@@ -1,5 +1,5 @@
 /**
- * ApplicationFormDialog - shared UI libraryのフォームダイアログコンポーネント
+ * ApplicationFormDialog - 共有 UI ライブラリのフォームダイアログコンポーネント
  *
  * フォーム入力を含むダイアログで使用します。
  * ApplicationDialog をベースに、フォーム送信・バリデーション機能を提供します。

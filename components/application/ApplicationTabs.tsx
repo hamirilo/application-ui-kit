@@ -1,5 +1,5 @@
 /**
- * ApplicationTabs - shared UI libraryのタブ切り替えコンポーネント
+ * ApplicationTabs - 共有 UI ライブラリのタブ切り替えコンポーネント
  *
  * 同じ階層にある複数のビューを切り替えるために使う。
  * URL やページ遷移を伴う切り替えにはリンク + ナビゲーションを使い、

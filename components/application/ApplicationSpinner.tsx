@@ -1,5 +1,5 @@
 /**
- * ApplicationSpinner - shared UI libraryのローディングインジケーター
+ * ApplicationSpinner - 共有 UI ライブラリのローディングインジケーター
  *
  * ボタン内のローディングは ApplicationButton の `loading` prop を使う。
  * ApplicationSpinner はページ・カード・セクション単位の読み込み中表示で使う。

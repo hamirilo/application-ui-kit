@@ -1,5 +1,5 @@
 /**
- * ApplicationSearchInput - shared UI libraryの検索入力コンポーネント
+ * ApplicationSearchInput - 共有 UI ライブラリの検索入力コンポーネント
  *
  * ApplicationInput + 検索アイコン + クリアボタンをまとめたもの。
  * 一覧・テーブルの上に置くフィルタ用検索欄で使う。

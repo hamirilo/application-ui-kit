@@ -1,5 +1,5 @@
 /**
- * ApplicationButton - shared UI libraryのボタンコンポーネント
+ * ApplicationButton - 共有 UI ライブラリのボタンコンポーネント
  *
  * shadcn/ui の Button をラップし、プロジェクト固有のバリアント・スタイルを提供します。
  * 画面側では ApplicationButton のみを使用し、shadcn/ui の Button を直接使用しないでください。

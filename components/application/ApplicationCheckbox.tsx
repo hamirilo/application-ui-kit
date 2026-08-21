@@ -1,5 +1,5 @@
 /**
- * ApplicationCheckbox - shared UI libraryのチェックボックス
+ * ApplicationCheckbox - 共有 UI ライブラリのチェックボックス
  *
  * ラベルとチェックボックスを紐づけた状態で提供する。
  * ラベルのクリックでもトグルできる（クリック領域が小さいと押しにくいため）。
