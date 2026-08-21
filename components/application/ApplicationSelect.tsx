@@ -5,7 +5,7 @@
  *
  * <important>
  * 選択肢が多く検索が必要な場合（部署選択・社員選択など）は ApplicationSelect を使わない。
- * テンプレート側はネイティブの `<select>`、React 側は @base-ui/react の Autocomplete を検討する。
+ * React 側は ApplicationCombobox、テンプレート側はネイティブの `<select>` を使う。
  * ApplicationSelect は選択肢が十数個までの用途に限る。
  * </important>
  */

@@ -30,7 +30,7 @@ const DEPARTMENTS: ApplicationSelectItem[] = [
  *
  * <important>
  * 選択肢が十数個を超える、または検索が必要な場合は使わない。
- * テンプレート側は Tom Select 等の選択ライブラリ、React 側は @base-ui/react の Autocomplete を使う。
+ * React 側は ApplicationCombobox、テンプレート側はネイティブの `<select>` を使う。
  * </important>
  */
 const meta = {
@@ -60,9 +60,9 @@ OS 標準のドロップダウンではグループ見出しや無効項目の�
 | 場面 | 代わりに使うもの |
 |---|---|
 | テンプレート（.html） | \`<select class="input-field">\` |
-| 選択肢が多い / 検索が必要（社員・部署・取引先） | Tom Select 等の選択ライブラリ（テンプレート） / Autocomplete（React） |
+| 選択肢が多い / 検索が必要（社員・部署・取引先） | \`ApplicationCombobox\`（React） / ネイティブの \`<select>\`（テンプレート） |
 | 選択肢が 2 つで排他 | \`ApplicationCheckbox\` かラジオボタン（1 クリックで済む） |
-| 複数選択したい | 現状未提供。チェックボックスのリストで代替する |
+| 複数選択したい | \`ApplicationCombobox\` の \`multiple\`、または少数ならチェックボックスのリスト |
 | 日付を選ぶ | \`ApplicationDatePicker\` |
 
 ## Props

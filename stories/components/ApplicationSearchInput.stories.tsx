@@ -32,7 +32,7 @@ const meta = {
 | 場面 | 代わりに使うもの |
 |---|---|
 | 選択肢から選ぶ絞り込み | \`ApplicationSelect\` |
-| 社員・取引先など候補から選ぶ検索 | Tom Select 等の選択ライブラリ（テンプレート） / Autocomplete（React） |
+| 社員・取引先など候補から選ぶ検索 | \`ApplicationCombobox\`（React） / ネイティブの \`<select>\`（テンプレート） |
 
 ## 注意事項
 

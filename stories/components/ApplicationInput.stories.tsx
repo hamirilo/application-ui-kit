@@ -39,7 +39,7 @@ application の \`input-field\` クラスと同じ余白（\`px-3.5 py-2.5\`）�
 | 複数行の入力 | \`<textarea className="input-field">\`（React 版は未提供） |
 | 選択肢から選ぶ | \`ApplicationSelect\` |
 | 日付の入力 | \`ApplicationDatePicker\` |
-| 検索して選ぶ（社員選択など） | Tom Select 等の選択ライブラリ（テンプレート） / Autocomplete（React） |
+| 検索して選ぶ（社員選択など） | \`ApplicationCombobox\`（React） / ネイティブの \`<select>\`（テンプレート） |
 
 ## 注意事項
 
