@@ -1,5 +1,5 @@
 /**
- * ApplicationTable - shared UI libraryのテーブルコンポーネント
+ * ApplicationTable - 共有 UI ライブラリのテーブルコンポーネント
  *
  * 列定義（columns）とデータ（rows）を渡すと、ヘッダー・行・空状態を
  * 一貫した見た目で描画する。空状態の文言を必ず指定させることで
@@ -8,7 +8,7 @@
  * <important>
  * これは「見た目の共通化」だけを担う。ソート・ページング・フィルタは
  * 業務ロジックなので各アプリ側で実装し、その結果を rows に渡す。
- * application 側の一覧は application rendering + テンプレートで描画し、ApplicationTable は使わない。
+ * サーバーレンダリング側の一覧はテンプレートで描画し、ApplicationTable は使わない。
  * </important>
  */
 

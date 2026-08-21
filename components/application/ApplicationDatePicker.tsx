@@ -1,5 +1,5 @@
 /**
- * ApplicationDatePicker - shared UI libraryの日付選択コンポーネント
+ * ApplicationDatePicker - 共有 UI ライブラリの日付選択コンポーネント
  *
  * shadcn/ui の Calendar（react-day-picker）+ Popover をラップし、
  * 単一日付選択（mode="single"）・日付範囲選択（mode="range"）・

@@ -45,7 +45,7 @@ const meta = {
 | 操作が 1〜2 個 | ボタンを直接置く。1 個の操作をメニューに隠すと 2 クリックになる |
 | 主要な操作（新規作成など） | 画面上部に \`ApplicationButton variant="primary"\` で常時表示する |
 | ページ間の移動 | ナビゲーション。メニューに \`<a>\` を詰めるとリンクだと分からない |
-| markup（.html） | application JavaScript の \`x-show\` によるメニュー partial。React application を新設しない |
+| テンプレート（.html） | テンプレート側の JS（\`x-show\` 等）によるメニュー partial。React コンポーネントを新設しない |
 | 項目が 10 個以上 | 分類が必要。検索できる UI か、専用画面を検討する |
 
 ## Props

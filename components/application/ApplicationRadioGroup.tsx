@@ -1,5 +1,5 @@
 /**
- * ApplicationRadioGroup - shared UI libraryのラジオボタングループ（縦並び・ドット表示）
+ * ApplicationRadioGroup - 共有 UI ライブラリのラジオボタングループ（縦並び・ドット表示）
  *
  * 排他的な選択（どれか1つ）を、フォームの選択肢として縦並びに表示する。
  * 隣接ボタンが1本の枠に見える見た目が欲しい場合は `ApplicationButtonGroup` を使う。
@@ -105,7 +105,7 @@ export const ApplicationRadioGroup = React.forwardRef<HTMLDivElement, Applicatio
         className={cn("flex", ORIENTATION_CLASS[orientation], className)}
       >
         {items.map((item) => {
-          const autoId = `${name ?? "dx-radio"}-${item.value}`;
+          const autoId = `${name ?? "application-radio"}-${item.value}`;
           const descId = item.description ? `${autoId}-desc` : undefined;
 
           return (

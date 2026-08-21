@@ -1,5 +1,5 @@
 /**
- * ApplicationTextarea - shared UI libraryの複数行テキスト入力コンポーネント
+ * ApplicationTextarea - 共有 UI ライブラリの複数行テキスト入力コンポーネント
  *
  * 見た目は ApplicationInput（`input-field` クラス相当）に揃えている。
  * 画面側では ApplicationTextarea のみを使用し、素の <textarea> にクラスを直書きしないでください。

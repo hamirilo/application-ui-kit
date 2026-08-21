@@ -166,7 +166,7 @@ export function IconGrid() {
 /**
  * CSS クラスの見本。
  *
- * `sample` に素の HTML 文字列を渡す。markupに
+ * `sample` に素の HTML 文字列を渡す。テンプレートに
  * そのままコピーできる形にしておくため、React 要素ではなく文字列で持つ。
  */
 export function ClassSample({

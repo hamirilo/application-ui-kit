@@ -1,5 +1,5 @@
 /**
- * ApplicationBadge - shared UI libraryのバッジ（ステータス表示）コンポーネント
+ * ApplicationBadge - 共有 UI ライブラリのバッジ（ステータス表示）コンポーネント
  *
  * 色の意味は design-system/colors.md の「ドメインステータスカラーの設計パターン」に揃えている。
  *
