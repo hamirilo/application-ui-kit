@@ -66,18 +66,24 @@ CSS クラスと Application コンポーネントで対応しています。
 <SpecTable
   head={['部品', 'CSS クラス', 'React', '内側余白']}
   rows={[
-    ['カード（小）', <Code>card-sm</Code>, <Code>{'padding="sm"'}</Code>, <Code>p-3</Code>],
-    ['カード（標準）', <Code>card</Code>, <Code>{'padding="md"'}</Code>, <Code>p-4</Code>],
-    ['カード（大）', <Code>card-lg</Code>, <Code>{'padding="lg"'}</Code>, <Code>p-6</Code>],
-    ['ボタン（標準）', <Code>btn-primary</Code>, <Code>{'size="md"'}</Code>, <Code>px-5 py-2.5</Code>],
-    ['ボタン（小）', <Code>btn-sm</Code>, <Code>{'size="sm"'}</Code>, <Code>px-3 py-1.5</Code>],
-    ['ボタン（大）', <Code>btn-lg</Code>, <Code>{'size="lg"'}</Code>, <Code>px-6 py-3</Code>],
-    ['入力欄', <Code>input-field</Code>, <Code>ApplicationInput</Code>, <Code>px-3.5 py-2.5</Code>],
+    ['カード（小）', <Code>card-sm</Code>, <Code>{'<Card className="p-3">'}</Code>, <Code>p-3</Code>],
+    ['カード（標準）', <Code>card</Code>, <Code>{'<Card>'}</Code>, <Code>p-4</Code>],
+    ['カード（大）', <Code>card-lg</Code>, <Code>{'<Card className="p-6">'}</Code>, <Code>p-6</Code>],
+    ['ボタン（極小・24px）', <Code>btn-xs</Code>, <Code>{'size="xs"'}</Code>, <Code>h-6 px-2.5</Code>],
+    ['ボタン（小・28px）', <Code>btn-sm</Code>, <Code>{'size="sm"'}</Code>, <Code>h-7 px-3</Code>],
+    ['ボタン（標準・32px）', <Code>btn-primary</Code>, '省略時', <Code>h-8 px-4</Code>],
+    ['ボタン（大・40px）', <Code>btn-lg</Code>, <Code>{'size="lg"'}</Code>, <Code>h-10 px-5</Code>],
+    ['入力欄（32px）', <Code>input-field</Code>, <Code>ApplicationInput</Code>, <Code>h-8 px-3</Code>],
     ['バッジ', <Code>badge</Code>, '—', <Code>px-2 py-0.5</Code>],
   ]}
 />
 
 これらの余白は `tokens/theme.css` に定義済みです。
+
+コントロールの高さは **24 / 28 / 32 / 40px** の4段階で、ボタンと入力欄は同じ高さに揃えています。
+主要なUIライブラリ（Ant Design、Fluent UI、shadcn/ui の全スタイル）が例外なくこの原則を採っており、
+崩すと横並びにしたときに段差が出ます。高さは padding ではなく `h-*` で固定しているため、
+枠線の有無で高さが変わりません。
 **クラスを使えば自動で適用されるので、上から余白を打ち消さないでください**
 （`class="card p-2"` のような上書きは、後で `card` を直したときに追従しません）。
 
