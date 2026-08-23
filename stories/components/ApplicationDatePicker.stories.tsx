@@ -4,9 +4,10 @@ import type { DateRange } from "react-day-picker";
 import { ApplicationButton, ApplicationDatePicker, ApplicationFormField } from "../../components/application";
 
 /**
- * ApplicationDatePicker は日付を選ぶコンポーネント。
+ * ApplicationDatePicker は日付を選ぶ・入力するコンポーネント。
  *
  * <important>
+ * カレンダーからの選択に加えて、キーボードによる直接入力（`2026/08/23`, `2026-08-23`, `20260823`, `2026年8月23日` 等）に対応しています。
  * 表示は「2026年7月31日」形式（`yyyy年M月d日`）、カレンダーは日本語ロケール。
  * `value` / `onChange` の型はモードによって変わる（下記 Props 参照）。
  * </important>
@@ -21,17 +22,19 @@ const meta = {
         component: `
 ## 目的
 
-日付入力の表記・ロケール・選択操作を統一する。
+日付入力の表記・ロケール・選択操作・テキスト入力を統一する。
 \`<input type="date">\` はブラウザによって表記も操作も違うため、
 **業務上重要な日付は必ずこのコンポーネントを使う**。
 
+カレンダーからのマウス・タッチ選択だけでなく、**キーボードによるテキスト直接入力**にも対応しています。
+
 ## 使う場面
 
-| モード | 用途 |
-|---|---|
-| \`single\` | 単一の日付（希望納期、実施日、期限） |
-| \`range\` | 期間（集計対象の開始〜終了、休暇の申請期間） |
-| \`multiple\` | 連続しない複数日（日程調整の候補日、出勤希望日） |
+| モード | 用途 | 直接入力の例 |
+|---|---|---|
+| \`single\` | 単一の日付（希望納期、実施日、期限） | \`2026/08/23\`, \`2026-08-23\`, \`20260823\`, \`2026年8月23日\` |
+| \`range\` | 期間（集計対象の開始〜終了、休暇の申請期間） | \`2026/08/01 〜 2026/08/31\`, \`2026-08-01 - 2026-08-31\` |
+| \`multiple\` | 連続しない複数日（日程調整の候補日、出勤希望日） | \`2026/08/01, 2026/08/05\` |
 
 ## 使わない場面
 
@@ -39,7 +42,7 @@ const meta = {
 |---|---|
 | テンプレート（.html） | flatpickr（\`input-field flatpickr-input\` クラス）。React コンポーネントを新設しない |
 | 日時（時刻まで）が必要 | 時刻の入力は未対応。日付 + 別途 \`<input type="time">\` を組み合わせる |
-| 生年月日の入力 | カレンダーで何十年も遡るのは苦しい。年・月・日の \`ApplicationSelect\` か素のテキスト入力を検討 |
+| 生年月日の入力 | カレンダーで何十年も遡るのは苦しい。直接入力または年・月・日の \`ApplicationSelect\` を検討 |
 | 「今日」「今週」のような相対指定 | ボタンによるプリセットを併設する（Story の \`WithPresets\` を参照） |
 | 過去の日付を大量に絞り込む一覧 | \`range\` + プリセットの併用。カレンダー単独では手数が多い |
 
@@ -52,8 +55,9 @@ const meta = {
 | \`onChange\` | \`(value) => void\` | 値の変更。**モードに応じてキャストが必要** |
 | \`placeholder\` | \`string\` | 未選択時の表示（既定 \`日付を選択\`） |
 | \`disabled\` | \`boolean\` | 無効化 |
-| \`minDate\` / \`maxDate\` | \`Date\` | 選択可能な範囲。範囲外はカレンダー上で選べなくなる |
-| \`className\` | \`string\` | トリガーボタンへの追加クラス（幅の指定など） |
+| \`error\` | \`boolean\` | エラー状態（枠線が赤色になり \`aria-invalid\` が付く） |
+| \`minDate\` / \`maxDate\` | \`Date\` | 選択可能な範囲。範囲外はカレンダー上で選べず、直接入力でも弾かれます |
+| \`className\` | \`string\` | 入力フィールドへの追加クラス（幅の指定など） |
 
 モードごとの型の扱い:
 
@@ -71,6 +75,14 @@ const [dates, setDates] = useState<Date[]>([])
 <ApplicationDatePicker mode="multiple" value={dates} onChange={(v) => setDates((v as Date[]) ?? [])} />
 \`\`\`
 
+## 直接入力とキーボード操作
+
+- **フォーマットの自動パース**: \`YYYY/MM/DD\`, \`YYYY-MM-DD\`, \`YYYYMMDD\`, \`YYYY年M月D日\` などの入力を柔軟に解釈します。
+- **Enter キー**: 入力中のテキストを確定し、カレンダーを閉じます。
+- **Escape キー**: カレンダーを閉じます。
+- **↓ キー**: 入力欄フォーカス中に下矢印キーでカレンダーを開きます。
+- **フォーカスアウト（Blur）**: 入力中のテキストをパースして正規形式（\`yyyy年M月d日\`）に整形します。不正な文字列の場合は元の値にリセットされます。
+
 ## 注意事項
 
 - **\`mode\` と \`value\` の型を必ず一致させる。**
@@ -78,17 +90,15 @@ const [dates, setDates] = useState<Date[]>([])
 - **\`range\` は \`to\` が未確定の状態がある。** 1 回目のクリックで \`from\` のみが入り、
   トリガーには「2026年7月1日 〜」と表示される。
   **送信前に \`to\` の有無を検証する**こと
-- \`single\` は選択と同時にカレンダーが閉じるが、
+- \`single\` はカレンダー選択時に自動で閉じるが、
   **\`range\` と \`multiple\` は閉じない**（連続で選ぶため）。
-  閉じるのは外側クリックか \`Esc\`
-- \`multiple\` のトリガーは「5日選択（7/1, 7/2, 7/3 他2件）」の形に畳まれる（先頭 3 件まで列挙）
+  閉じるのは外側クリックか \`Esc\` / \`Enter\`
 - **application へ送るときは文字列に変換する。**
   \`format(date, 'yyyy-MM-dd')\` を使う。\`toISOString()\` は UTC に変換されるため、
   日本時間の早朝が前日になる
 - **未選択と「今日」を混同しない。** \`value\` の初期値に \`new Date()\` を入れると、
   利用者が選んでいないのに日付が入った状態になる。任意項目では \`undefined\` から始める
-- \`minDate\` / \`maxDate\` はカレンダー側の制限。**サーバー側の検証は別途必須**
-- トリガーは \`input-field\` クラスを使っているため、\`ApplicationInput\` と同じ高さで並ぶ
+- \`minDate\` / \`maxDate\` はカレンダー側・入力パース側の制限。**サーバー側の検証は別途必須**
         `,
       },
     },
@@ -99,6 +109,7 @@ const [dates, setDates] = useState<Date[]>([])
     onChange: { table: { disable: true } },
     placeholder: { control: "text" },
     disabled: { control: "boolean" },
+    error: { control: "boolean" },
     minDate: { table: { disable: true } },
     maxDate: { table: { disable: true } },
   },
@@ -377,3 +388,55 @@ export const WithPresets: Story = {
     );
   },
 };
+
+/**
+ * 直接入力（キーボード入力）。
+ *
+ * 入力欄に `2026/08/23`, `2026-08-23`, `20260823`, `2026年8月23日` 等をタイピングして
+ * `Enter` またはフォーカスアウトすると自動でパース・整形されます。
+ */
+export const DirectInput: Story = {
+  render: (args) => {
+    const [date, setDate] = React.useState<Date | undefined>(undefined);
+    return (
+      <div className="space-y-3">
+        <ApplicationFormField
+          label="直接入力のテスト"
+          helpText="2026/08/23 や 20260823 と入力して Enter または外側をクリックしてください"
+        >
+          <ApplicationDatePicker
+            {...args}
+            mode="single"
+            value={date}
+            onChange={(v) => setDate(v as Date | undefined)}
+            placeholder="例: 2026/08/23 または 20260823"
+            className="w-80"
+          />
+        </ApplicationFormField>
+        <p className="text-sm text-muted-foreground">
+          確定値: {date ? date.toLocaleDateString("ja-JP") : "（未選択）"}
+        </p>
+      </div>
+    );
+  },
+};
+
+/**
+ * エラー状態。
+ */
+export const ErrorState: Story = {
+  render: (args) => (
+    <div className="space-y-3">
+      <ApplicationFormField label="生年月日" required error="正しい日付を入力してください">
+        <ApplicationDatePicker
+          {...args}
+          mode="single"
+          error
+          placeholder="日付を選択"
+          className="w-64"
+        />
+      </ApplicationFormField>
+    </div>
+  ),
+};
+
