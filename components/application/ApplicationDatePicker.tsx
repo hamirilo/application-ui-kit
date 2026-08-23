@@ -19,7 +19,7 @@ import { Calendar } from "../ui/calendar";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "../ui/input-group";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 
-const DISPLAY_FORMAT = "yyyy年M月d日";
+const DISPLAY_FORMAT = "yyyy-MM-dd";
 const SHORT_FORMAT = "M/d";
 
 /** multiple モードでトリガーに列挙する最大日数（超過分は「他N件」に畳む） */

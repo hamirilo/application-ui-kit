@@ -76,30 +76,17 @@ describe("ApplicationDatePicker parsing functions", () => {
 
   describe("parseMultipleString", () => {
     it("カンマや読点区切りの複数日付をパースしてソートする", () => {
-      const dates = parseMultipleString("2026/08/10, 2026/08/01、2026/08/05");
-      expect(dates).toHaveLength(3);
-      expect(dates?.[0].getDate()).toBe(1);
-      expect(dates?.[1].getDate()).toBe(5);
-      expect(dates?.[2].getDate()).toBe(10);
-    });
-
-    it("重複日付は除外される", () => {
-      const dates = parseMultipleString("2026/08/01, 2026/08/01");
-      expect(dates).toHaveLength(1);
-    });
-  });
-
-  describe("formatValue", () => {
+      const dates = parseMultipleString("2026/08/10, 2026/08/01�  describe("formatValue", () => {
     it("single モードで正しくフォーマットする", () => {
       const d = new Date(2026, 7, 23);
-      expect(formatValue("single", d)).toBe("2026年8月23日");
+      expect(formatValue("single", d)).toBe("2026-08-23");
     });
 
     it("range モードで正しくフォーマットする", () => {
       const from = new Date(2026, 7, 1);
       const to = new Date(2026, 7, 31);
-      expect(formatValue("range", { from, to })).toBe("2026年8月1日 〜 2026年8月31日");
-      expect(formatValue("range", { from, to: undefined })).toBe("2026年8月1日 〜");
+      expect(formatValue("range", { from, to })).toBe("2026-08-01 〜 2026-08-31");
+      expect(formatValue("range", { from, to: undefined })).toBe("2026-08-01 〜");
     });
 
     it("multiple モードで正しくフォーマットする", () => {
@@ -127,7 +114,7 @@ describe("ApplicationDatePicker Component", () => {
     expect(calledDate.getFullYear()).toBe(2026);
     expect(calledDate.getMonth()).toBe(7);
     expect(calledDate.getDate()).toBe(23);
-    expect(input.value).toBe("2026年8月23日");
+    expect(input.value).toBe("2026-08-23");
   });
 
   it("フォーカスが外れた（blur）ときに入力値がパースされて反映される", async () => {
@@ -142,7 +129,24 @@ describe("ApplicationDatePicker Component", () => {
     expect(onChange).toHaveBeenCalledTimes(1);
     const calledDate = onChange.mock.calls[0][0] as Date;
     expect(calledDate.getDate()).toBe(15);
-    expect(input.value).toBe("2026年8月15日");
+    expect(input.value).toBe("2026-08-15");
+  });
+
+  it("range モードでキーボードから期間を入力できる", async () => {
+    const onChange = vi.fn();
+    render(<ApplicationDatePicker mode="range" onChange={onChange} placeholder="期間を選択" />);
+
+    const input = screen.getByPlaceholderText("期間を選択") as HTMLInputElement;
+    fireEvent.focus(input);
+    fireEvent.change(input, { target: { value: "2026/08/01 〜 2026/08/10" } });
+    fireEvent.keyDown(input, { key: "Enter" });
+
+    expect(onChange).toHaveBeenCalledTimes(1);
+    const calledRange = onChange.mock.calls[0][0];
+    expect(calledRange.from.getDate()).toBe(1);
+    expect(calledRange.to.getDate()).toBe(10);
+    expect(input.value).toBe("2026-08-01 〜 2026-08-10");
+  });");
   });
 
   it("range モードでキーボードから期間を入力できる", async () => {
