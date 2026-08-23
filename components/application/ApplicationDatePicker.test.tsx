@@ -70,7 +70,7 @@ describe("ApplicationDatePicker parsing functions", () => {
     it("開始日と終了日が逆転している場合は自動で昇順に並べる", () => {
       const r = parseRangeString("2026/08/31 〜 2026/08/01");
       expect(r?.from?.getDate()).toBe(1);
-      expect(r?.to).toBeUndefined();
+      expect(r?.to?.getDate()).toBe(31);
     });
   });
 
