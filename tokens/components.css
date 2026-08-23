@@ -66,11 +66,16 @@
   }
 
   /* サイズはテンプレートの .btn-* と 1:1 で対応させる（実測で一致を確認済み）。
-   *   xs 24px / sm 28px / default 40px / lg 48px、角丸はすべて 8px。
-   * ここを変えるときは theme.css の .btn-xs / .btn-sm / .btn-primary / .btn-lg も
-   * 同時に直すこと。片方だけ直すと React とテンプレートで段差が出る。 */
+   *   xs 24px / sm 28px / default 32px / lg 40px、角丸はすべて 8px。
+   *
+   * <important>
+   * ボタンの高さは入力欄（.cn-input / .cn-select-trigger）と同じ 32px に揃える。
+   * 主要な UI ライブラリ（Ant Design / Fluent UI / shadcn の全スタイル）は
+   * 例外なくボタン高 = 入力欄高になっており、崩すと横並びで段差が出る。
+   * ここを変えるときは入力系と theme.css の .btn-* / .input-field も同時に直すこと。
+   * </important> */
   .cn-button-size-default {
-    @apply h-10 px-5 text-sm;
+    @apply h-8 px-4 text-sm;
   }
 
   .cn-button-size-xs {
@@ -82,11 +87,11 @@
   }
 
   .cn-button-size-lg {
-    @apply h-12 px-6 text-base [&_svg:not([class*='size-'])]:size-5;
+    @apply h-10 px-5 text-sm;
   }
 
   .cn-button-size-icon {
-    @apply size-10;
+    @apply size-8;
   }
 
   .cn-button-size-icon-xs {
@@ -98,7 +103,7 @@
   }
 
   .cn-button-size-icon-lg {
-    @apply size-12 [&_svg:not([class*='size-'])]:size-5;
+    @apply size-10;
   }
 
   /* ========================================================================
@@ -171,7 +176,7 @@
    * ====================================================================== */
 
   .cn-input {
-    @apply w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm
+    @apply w-full rounded-lg border border-input bg-card h-8 px-3 text-sm
            text-foreground transition-colors
            placeholder:text-muted-foreground
            focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
@@ -180,7 +185,7 @@
   }
 
   .cn-textarea {
-    @apply w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm
+    @apply w-full rounded-lg border border-input bg-card px-3 py-1.5 text-sm
            text-foreground transition-colors
            placeholder:text-muted-foreground
            focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
@@ -372,7 +377,7 @@
 
   .cn-select-trigger {
     @apply flex w-full items-center justify-between gap-2 rounded-lg border border-input
-           bg-card px-3.5 py-2.5 text-sm text-foreground transition-colors
+           bg-card h-8 px-3 text-sm text-foreground transition-colors
            focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2
            focus-visible:ring-ring
            data-[popup-open]:border-ring
@@ -583,7 +588,7 @@
 
   .cn-combobox-chips {
     @apply flex w-full flex-wrap items-center gap-1 rounded-lg border border-input bg-card
-           px-2 py-1.5 transition-colors
+           min-h-8 px-2 py-1 transition-colors
            focus-within:border-ring focus-within:ring-2 focus-within:ring-ring;
   }
 
@@ -759,7 +764,7 @@
   /* nova は h-8 の低い入力欄を前提にしている。このリポジトリの入力欄は
    * .cn-input（px-3.5 py-2.5）なので、アイコンの有無で高さが変わらないよう揃える。 */
   .cn-input-group {
-    @apply w-full rounded-lg border border-input bg-card transition-colors
+    @apply h-8 w-full rounded-lg border border-input bg-card transition-colors
            focus-within:border-ring focus-within:ring-2 focus-within:ring-ring
            has-[[aria-invalid=true]]:border-danger
            has-disabled:cursor-not-allowed has-disabled:bg-muted has-disabled:opacity-60
@@ -779,11 +784,11 @@
   }
 
   .cn-input-group-addon-align-inline-end {
-    @apply pr-3.5 has-[>button]:mr-[-0.3rem];
+    @apply pr-3 has-[>button]:mr-[-0.3rem];
   }
 
   .cn-input-group-addon-align-inline-start {
-    @apply pl-3.5 has-[>button]:ml-[-0.3rem];
+    @apply pl-3 has-[>button]:ml-[-0.3rem];
   }
 
   .cn-input-group-button {
@@ -803,7 +808,7 @@
   }
 
   .cn-input-group-input {
-    @apply flex-1 border-0 bg-transparent px-3.5 py-2.5 shadow-none outline-none
+    @apply h-full flex-1 border-0 bg-transparent px-3 py-0 shadow-none outline-none
            focus-visible:border-0 focus-visible:ring-0;
   }
 
@@ -812,7 +817,7 @@
   }
 
   .cn-input-group-textarea {
-    @apply flex-1 resize-none border-0 bg-transparent px-3.5 py-2.5 shadow-none outline-none
+    @apply flex-1 resize-none border-0 bg-transparent px-3 py-1.5 shadow-none outline-none
            focus-visible:border-0 focus-visible:ring-0;
   }
 
@@ -980,15 +985,15 @@
   }
 
   .cn-toggle-size-default {
-    @apply h-10 min-w-10 px-5 text-sm;
+    @apply h-8 min-w-8 px-4 text-sm;
   }
 
   .cn-toggle-size-lg {
-    @apply h-12 min-w-12 px-6 text-base;
+    @apply h-10 min-w-10 px-5 text-sm;
   }
 
-  /* サイズは nova（h-7/h-8/h-9）ではなく、このリポジトリのボタンスケール
-   * （.cn-button-size-* と同じ h-8/h-9/h-10）に揃える。
+  /* サイズは nova ではなく、このリポジトリのボタンスケール
+   * （.cn-button-size-* と同じ 28/32/40px）に揃える。
    * ApplicationButtonGroup と ApplicationButton が並んだときに段差が出ないため。 */
   .cn-toggle-size-sm {
     @apply h-7 min-w-7 px-3 text-xs [&_svg:not([class*='size-'])]:size-3.5;
