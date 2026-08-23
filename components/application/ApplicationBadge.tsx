@@ -1,17 +1,19 @@
 /**
  * ApplicationBadge - 共有 UI ライブラリのバッジ（ステータス表示）コンポーネント
  *
- * 色の意味は design-system/colors.md の「ドメインステータスカラーの設計パターン」に揃えている。
+ * shadcn/ui の Badge を土台に、業務ステータス向けの色調（tone）を載せたもの。
+ * shadcn/ui の variant（default / secondary / destructive / outline / ghost / link）は
+ * 「役割」の表現で、ドメインの状態（未対応・対応中・完了…）を表せないため tone を持つ。
  *
  * <important>
- * バッジは色だけに意味を持たせない。現状セマンティックカラーは WCAG AA 未達
- * （design-system/accessibility.md）のため、必ず文字（「完了」「未対応」等）で
- * 意味が読み取れるようにする。
+ * バッジは色だけに意味を持たせない。セマンティックカラーは WCAG AA 未達のため、
+ * 必ず文字（「完了」「未対応」等）で意味が読み取れるようにする。
  * </important>
  */
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { Badge } from "../ui/badge";
 
 export type ApplicationBadgeTone =
   | "new"
@@ -22,8 +24,7 @@ export type ApplicationBadgeTone =
   | "pending"
   | "neutral";
 
-export interface ApplicationBadgeProps
-  extends Omit<React.ComponentPropsWithoutRef<"span">, "className"> {
+export interface ApplicationBadgeProps extends React.ComponentPropsWithoutRef<"span"> {
   /**
    * 意味に対応した色調
    * - new: 新規・未対応・要注意（Yellow）
@@ -39,8 +40,6 @@ export interface ApplicationBadgeProps
 
   /** 先頭に表示するアイコン */
   icon?: React.ReactNode;
-
-  className?: string;
 }
 
 const TONE_CLASS: Record<ApplicationBadgeTone, string> = {
@@ -65,23 +64,23 @@ const TONE_CLASS: Record<ApplicationBadgeTone, string> = {
  * <ApplicationBadge tone={statusToneMap[row.status]}>{row.statusLabel}</ApplicationBadge>
  *
  * // アイコン付き
- * <ApplicationBadge tone="danger" icon={<AlertCircle className="h-3 w-3" />}>エラー</ApplicationBadge>
+ * <ApplicationBadge tone="danger" icon={<AlertCircleIcon />}>エラー</ApplicationBadge>
  * ```
  */
 export const ApplicationBadge = React.forwardRef<HTMLSpanElement, ApplicationBadgeProps>(
-  ({ tone = "neutral", icon, children, ...props }, ref) => {
+  ({ tone = "neutral", icon, children, className, ...props }, ref) => {
     return (
-      <span
+      <Badge
         ref={ref}
-        className={cn(
-          "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium",
-          TONE_CLASS[tone],
-        )}
+        // ghost を土台にして tone のユーティリティで色を上書きする。
+        // tone は utilities レイヤーなので、cn-badge-variant-* より後勝ちになる。
+        variant="ghost"
+        className={cn(TONE_CLASS[tone], className)}
         {...props}
       >
         {icon}
         {children}
-      </span>
+      </Badge>
     );
   },
 );

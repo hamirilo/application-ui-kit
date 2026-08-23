@@ -190,7 +190,8 @@ export const ApplicationDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={handleOpenChange}>
-      <DialogContent className={maxWidthClass} hideCloseButton={confirmLoading}>
+      {/* 処理中は × を消す。閉じられると処理結果が伝わらないまま画面から消えるため。 */}
+      <DialogContent className={maxWidthClass} showCloseButton={!confirmLoading}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description && <DialogDescription>{description}</DialogDescription>}

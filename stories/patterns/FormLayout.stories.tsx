@@ -3,7 +3,10 @@ import * as React from "react";
 import type { DateRange } from "react-day-picker";
 import {
   ApplicationButton,
-  ApplicationCard,
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
   ApplicationCheckbox,
   ApplicationDatePicker,
   ApplicationFormField,
@@ -34,7 +37,7 @@ const meta = {
 | 決めごと | ルール |
 |---|---|
 | 縦の間隔 | 各項目に \`mb-*\` を付けず、**親に \`space-y-4\`** |
-| セクション分け | \`ApplicationCard\` の \`title\` で区切る。項目が 6 個を超えたら分ける |
+| セクション分け | \`Card\` の \`title\` で区切る。項目が 6 個を超えたら分ける |
 | 必須表示 | \`ApplicationFormField required\`（\`*\` + \`（必須）\`）。「任意」は \`helpText\` に書く |
 | ボタンの位置 | 最下部・右寄せ。**キャンセルが左、主アクションが右** |
 | ボタンの区切り | \`border-t border-border pt-4\` |
@@ -147,13 +150,17 @@ export const SingleColumn: Story = {
 /**
  * セクションに分ける形。
  *
- * 項目が 6 個を超えたら `ApplicationCard` の `title` で区切る。
+ * 項目が 6 個を超えたら `Card` の `CardTitle` で区切る。
  * **カードを入れ子にしない**ため、セクションは並列に置く。
  */
 export const WithSections: Story = {
   render: () => (
     <form className="max-w-3xl space-y-4">
-      <ApplicationCard title="基本情報">
+      <Card>
+        <CardHeader>
+          <CardTitle>基本情報</CardTitle>
+        </CardHeader>
+        <CardContent>
         <div className="space-y-4">
           <ApplicationFormField label="件名" required helpText="50 文字以内">
             <ApplicationInput name="title" placeholder="例: 備品購入の申請" required />
@@ -168,9 +175,14 @@ export const WithSections: Story = {
             </ApplicationFormField>
           </div>
         </div>
-      </ApplicationCard>
+      </CardContent>
+      </Card>
 
-      <ApplicationCard title="金額と納期">
+      <Card>
+        <CardHeader>
+          <CardTitle>金額と納期</CardTitle>
+        </CardHeader>
+        <CardContent>
         <div className="space-y-4">
           <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
             <ApplicationFormField label="金額" required helpText="税込">
@@ -184,9 +196,14 @@ export const WithSections: Story = {
             <ApplicationInput name="vendor" placeholder="例: 〇〇商事" />
           </ApplicationFormField>
         </div>
-      </ApplicationCard>
+      </CardContent>
+      </Card>
 
-      <ApplicationCard title="通知">
+      <Card>
+        <CardHeader>
+          <CardTitle>通知</CardTitle>
+        </CardHeader>
+        <CardContent>
         <div className="space-y-3">
           <ApplicationCheckbox
             name="notify_approver"
@@ -199,7 +216,8 @@ export const WithSections: Story = {
             description="申請内容を記載したメールが登録アドレスに届きます。"
           />
         </div>
-      </ApplicationCard>
+      </CardContent>
+      </Card>
 
       <div className="flex items-center justify-between gap-2 border-t border-border pt-4">
         <ApplicationButton variant="ghost" type="button">
@@ -229,7 +247,11 @@ export const TwoColumn: Story = {
   render: () => (
     <form className="grid max-w-5xl grid-cols-1 gap-4 lg:grid-cols-3">
       <div className="space-y-4 lg:col-span-2">
-        <ApplicationCard title="申請内容">
+        <Card>
+        <CardHeader>
+          <CardTitle>申請内容</CardTitle>
+        </CardHeader>
+        <CardContent>
           <div className="space-y-4">
             <ApplicationFormField label="件名" required>
               <ApplicationInput name="title" defaultValue="備品購入（モニター 2 台）" required />
@@ -246,7 +268,8 @@ export const TwoColumn: Story = {
               />
             </ApplicationFormField>
           </div>
-        </ApplicationCard>
+        </CardContent>
+      </Card>
 
         <div className="flex items-center justify-end gap-2 border-t border-border pt-4">
           <ApplicationButton variant="secondary" type="button">
@@ -259,7 +282,11 @@ export const TwoColumn: Story = {
       </div>
 
       <div className="space-y-4">
-        <ApplicationCard title="ステータス" padding="sm">
+        <Card className="p-3">
+        <CardHeader>
+          <CardTitle>ステータス</CardTitle>
+        </CardHeader>
+        <CardContent>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between gap-2">
               <dt className="text-muted-foreground">申請番号</dt>
@@ -276,15 +303,21 @@ export const TwoColumn: Story = {
               <dd className="text-foreground">2026-07-30 14:22</dd>
             </div>
           </dl>
-        </ApplicationCard>
+        </CardContent>
+      </Card>
 
-        <ApplicationCard title="承認フロー" padding="sm">
+        <Card className="p-3">
+        <CardHeader>
+          <CardTitle>承認フロー</CardTitle>
+        </CardHeader>
+        <CardContent>
           <ol className="space-y-2 text-sm text-muted-foreground">
             <li>1. 課長承認</li>
             <li>2. 部長承認（10 万円以上）</li>
             <li>3. 経理確認</li>
           </ol>
-        </ApplicationCard>
+        </CardContent>
+      </Card>
       </div>
     </form>
   ),

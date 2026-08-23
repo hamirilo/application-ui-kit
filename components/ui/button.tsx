@@ -1,30 +1,37 @@
-import * as React from "react"
 import { Button as ButtonPrimitive } from "@base-ui/react/button"
 import { cva, type VariantProps } from "class-variance-authority"
 
-import { cn } from '../../lib/utils'
+import { cn } from "../../lib/utils"
 
+// <important>
+// このファイルは shadcn/ui (base) の button をそのまま取り込んだもの。
+// 唯一の差分は `success` バリアントの追加で、これは意図的な拡張:
+// このリポジトリは --color-success トークンと .btn-success（テンプレート用）を
+// 持つため、shadcn の 6 バリアントだけでは表現できない。
+// 上流を取り込み直すときは、この 1 行だけ再適用すること。
+// </important>
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "cn-button group/button inline-flex shrink-0 items-center justify-center whitespace-nowrap transition-all outline-none select-none disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow hover:bg-primary/90",
-        destructive:
-          "bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
-        outline:
-          "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground",
-        secondary:
-          "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80",
-        ghost: "text-foreground hover:bg-accent hover:text-accent-foreground",
-        link: "text-primary underline-offset-4 hover:underline",
+        default: "cn-button-variant-default",
+        outline: "cn-button-variant-outline",
+        secondary: "cn-button-variant-secondary",
+        ghost: "cn-button-variant-ghost",
+        destructive: "cn-button-variant-destructive",
+        link: "cn-button-variant-link",
+        success: "cn-button-variant-success",
       },
       size: {
-        default: "h-9 px-4 py-2",
-        sm: "h-8 rounded-md px-3 text-xs",
-        lg: "h-10 rounded-md px-8",
-        icon: "h-9 w-9",
+        default: "cn-button-size-default",
+        xs: "cn-button-size-xs",
+        sm: "cn-button-size-sm",
+        lg: "cn-button-size-lg",
+        icon: "cn-button-size-icon",
+        "icon-xs": "cn-button-size-icon-xs",
+        "icon-sm": "cn-button-size-icon-sm",
+        "icon-lg": "cn-button-size-icon-lg",
       },
     },
     defaultVariants: {
@@ -34,29 +41,19 @@ const buttonVariants = cva(
   }
 )
 
-export interface ButtonProps
-  extends Omit<ButtonPrimitive.Props, "className">,
-    VariantProps<typeof buttonVariants> {
-  className?: string
+function Button({
+  className,
+  variant = "default",
+  size = "default",
+  ...props
+}: ButtonPrimitive.Props & VariantProps<typeof buttonVariants>) {
+  return (
+    <ButtonPrimitive
+      data-slot="button"
+      className={cn(buttonVariants({ variant, size, className }))}
+      {...props}
+    />
+  )
 }
-
-/**
- * Base UI の Button をラップした基底ボタン。
- *
- * 要素を差し替える場合は Radix の `asChild` ではなく Base UI の `render` を使う:
- *   <Button render={<a href="/foo" />}>リンク</Button>
- */
-const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <ButtonPrimitive
-        ref={ref}
-        className={cn(buttonVariants({ variant, size, className }))}
-        {...props}
-      />
-    )
-  }
-)
-Button.displayName = "Button"
 
 export { Button, buttonVariants }

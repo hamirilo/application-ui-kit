@@ -1,123 +1,200 @@
+"use client"
+
 import * as React from "react"
 import { Select as SelectPrimitive } from "@base-ui/react/select"
-import { Check, ChevronDown } from "lucide-react"
 
-import { cn } from '../../lib/utils'
+import { cn } from "../../lib/utils"
+import { CheckIcon, ChevronDownIcon, ChevronUpIcon } from "lucide-react"
 
 const Select = SelectPrimitive.Root
 
-const SelectGroup = SelectPrimitive.Group
+function SelectGroup({ className, ...props }: SelectPrimitive.Group.Props) {
+  return (
+    <SelectPrimitive.Group
+      data-slot="select-group"
+      className={cn("cn-select-group", className)}
+      {...props}
+    />
+  )
+}
 
-const SelectValue = SelectPrimitive.Value
+function SelectValue({ className, ...props }: SelectPrimitive.Value.Props) {
+  return (
+    <SelectPrimitive.Value
+      data-slot="select-value"
+      className={cn("cn-select-value", className)}
+      {...props}
+    />
+  )
+}
 
-const SelectGroupLabel = SelectPrimitive.GroupLabel
-
-/**
- * トリガー（閉じているときに見える部分）。
- *
- * 見た目は CSS クラスの `select.input-field` に揃えている
- * （padding / border-radius / border 色 / フォーカスリング）。
- * 揃えている理由: 同じ画面に htmx 版の select と React 版の ApplicationSelect が
- * 並んだときに段差が出ないようにするため。
- */
-const SelectTrigger = React.forwardRef<
-  HTMLButtonElement,
-  SelectPrimitive.Trigger.Props
->(({ className, children, ...props }, ref) => (
-  <SelectPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "flex w-full items-center justify-between gap-2 rounded-lg border border-input bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors",
-      "focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring",
-      "data-disabled:cursor-not-allowed data-disabled:opacity-50 data-disabled:bg-muted",
-      "data-[popup-open]:border-ring",
-      className
-    )}
-    {...props}
-  >
-    {children}
-    <SelectPrimitive.Icon className="shrink-0 text-muted-foreground">
-      <ChevronDown className="h-4 w-4" />
-    </SelectPrimitive.Icon>
-  </SelectPrimitive.Trigger>
-))
-SelectTrigger.displayName = "SelectTrigger"
-
-/**
- * ドロップダウン本体。Portal + Positioner + Popup をまとめている。
- * DropdownMenuContent と同じ構成にしてある。
- */
-const SelectContent = React.forwardRef<
-  HTMLDivElement,
-  SelectPrimitive.Popup.Props &
-    Pick<SelectPrimitive.Positioner.Props, "align" | "side" | "sideOffset">
->(({ className, align = "start", side, sideOffset = 4, ...props }, ref) => (
-  <SelectPrimitive.Portal>
-    <SelectPrimitive.Positioner
-      align={align}
-      side={side}
-      sideOffset={sideOffset}
-      className="z-50 outline-none"
-      // トリガーと同じ幅にする（select の挙動として自然なため）
-      alignItemWithTrigger={false}
-    >
-      <SelectPrimitive.Popup
-        ref={ref}
-        className={cn(
-          "max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)] overflow-y-auto rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg",
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
-          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className
-        )}
-        {...props}
-      />
-    </SelectPrimitive.Positioner>
-  </SelectPrimitive.Portal>
-))
-SelectContent.displayName = "SelectContent"
-
-const SelectItem = React.forwardRef<HTMLDivElement, SelectPrimitive.Item.Props>(
-  ({ className, children, ...props }, ref) => (
-    <SelectPrimitive.Item
-      ref={ref}
+function SelectTrigger({
+  className,
+  size = "default",
+  children,
+  ...props
+}: SelectPrimitive.Trigger.Props & {
+  size?: "sm" | "default"
+}) {
+  return (
+    <SelectPrimitive.Trigger
+      data-slot="select-trigger"
+      data-size={size}
       className={cn(
-        "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors",
-        "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
-        "data-disabled:pointer-events-none data-disabled:opacity-50",
+        "cn-select-trigger flex w-fit items-center justify-between whitespace-nowrap outline-none disabled:cursor-not-allowed disabled:opacity-50 *:data-[slot=select-value]:line-clamp-1 *:data-[slot=select-value]:flex *:data-[slot=select-value]:items-center [&_svg]:pointer-events-none [&_svg]:shrink-0",
         className
       )}
       {...props}
     >
-      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        <SelectPrimitive.ItemIndicator>
-          <Check className="h-4 w-4" />
-        </SelectPrimitive.ItemIndicator>
-      </span>
-      <SelectPrimitive.ItemText>{children}</SelectPrimitive.ItemText>
+      {children}
+      <SelectPrimitive.Icon
+        render={
+          <ChevronDownIcon
+            className="cn-select-trigger-icon pointer-events-none"
+          />
+        }
+      />
+    </SelectPrimitive.Trigger>
+  )
+}
+
+function SelectContent({
+  className,
+  children,
+  side = "bottom",
+  sideOffset = 4,
+  align = "center",
+  alignOffset = 0,
+  alignItemWithTrigger = true,
+  ...props
+}: SelectPrimitive.Popup.Props &
+  Pick<
+    SelectPrimitive.Positioner.Props,
+    "align" | "alignOffset" | "side" | "sideOffset" | "alignItemWithTrigger"
+  >) {
+  return (
+    <SelectPrimitive.Portal>
+      <SelectPrimitive.Positioner
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
+        alignItemWithTrigger={alignItemWithTrigger}
+        className="isolate z-50"
+      >
+        <SelectPrimitive.Popup
+          data-slot="select-content"
+          data-align-trigger={alignItemWithTrigger}
+          className={cn(
+            "cn-select-content cn-select-content-logical cn-menu-target cn-menu-translucent relative isolate z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto data-[align-trigger=true]:animate-none",
+            className
+          )}
+          {...props}
+        >
+          <SelectScrollUpButton />
+          <SelectPrimitive.List>{children}</SelectPrimitive.List>
+          <SelectScrollDownButton />
+        </SelectPrimitive.Popup>
+      </SelectPrimitive.Positioner>
+    </SelectPrimitive.Portal>
+  )
+}
+
+function SelectLabel({
+  className,
+  ...props
+}: SelectPrimitive.GroupLabel.Props) {
+  return (
+    <SelectPrimitive.GroupLabel
+      data-slot="select-label"
+      className={cn("cn-select-label", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectItem({
+  className,
+  children,
+  ...props
+}: SelectPrimitive.Item.Props) {
+  return (
+    <SelectPrimitive.Item
+      data-slot="select-item"
+      className={cn(
+        "cn-select-item relative flex w-full cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        className
+      )}
+      {...props}
+    >
+      <SelectPrimitive.ItemText className="cn-select-item-text shrink-0 whitespace-nowrap">
+        {children}
+      </SelectPrimitive.ItemText>
+      <SelectPrimitive.ItemIndicator
+        render={<span className="cn-select-item-indicator" />}
+      >
+        <CheckIcon
+          className="cn-select-item-indicator-icon pointer-events-none"
+        />
+      </SelectPrimitive.ItemIndicator>
     </SelectPrimitive.Item>
   )
-)
-SelectItem.displayName = "SelectItem"
+}
 
-const SelectSeparator = React.forwardRef<
-  HTMLDivElement,
-  SelectPrimitive.Separator.Props
->(({ className, ...props }, ref) => (
-  <SelectPrimitive.Separator
-    ref={ref}
-    className={cn("-mx-1 my-1 h-px bg-border", className)}
-    {...props}
-  />
-))
-SelectSeparator.displayName = "SelectSeparator"
+function SelectSeparator({
+  className,
+  ...props
+}: SelectPrimitive.Separator.Props) {
+  return (
+    <SelectPrimitive.Separator
+      data-slot="select-separator"
+      className={cn("cn-select-separator pointer-events-none", className)}
+      {...props}
+    />
+  )
+}
+
+function SelectScrollUpButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollUpArrow>) {
+  return (
+    <SelectPrimitive.ScrollUpArrow
+      data-slot="select-scroll-up-button"
+      className={cn("cn-select-scroll-up-button top-0 w-full", className)}
+      {...props}
+    >
+      <ChevronUpIcon
+      />
+    </SelectPrimitive.ScrollUpArrow>
+  )
+}
+
+function SelectScrollDownButton({
+  className,
+  ...props
+}: React.ComponentProps<typeof SelectPrimitive.ScrollDownArrow>) {
+  return (
+    <SelectPrimitive.ScrollDownArrow
+      data-slot="select-scroll-down-button"
+      className={cn("cn-select-scroll-down-button bottom-0 w-full", className)}
+      {...props}
+    >
+      <ChevronDownIcon
+      />
+    </SelectPrimitive.ScrollDownArrow>
+  )
+}
 
 export {
   Select,
-  SelectGroup,
-  SelectGroupLabel,
-  SelectValue,
-  SelectTrigger,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
+  SelectScrollDownButton,
+  SelectScrollUpButton,
   SelectSeparator,
+  SelectTrigger,
+  SelectValue,
 }

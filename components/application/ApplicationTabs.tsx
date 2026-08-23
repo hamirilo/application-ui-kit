@@ -7,7 +7,7 @@
  */
 
 import * as React from "react";
-import { Tabs, TabsList, TabsPanel, TabsTab } from "../ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "../ui/tabs";
 
 export interface ApplicationTabItem {
   /** タブの一意な値 */
@@ -64,18 +64,18 @@ export const ApplicationTabs = React.forwardRef<HTMLDivElement, ApplicationTabsP
       >
         <TabsList>
           {items.map((item) => (
-            <TabsTab key={item.value} value={item.value} disabled={item.disabled}>
+            <TabsTrigger key={item.value} value={item.value} disabled={item.disabled}>
               <span className="inline-flex items-center gap-1.5">
                 {item.icon}
                 {item.label}
               </span>
-            </TabsTab>
+            </TabsTrigger>
           ))}
         </TabsList>
         {items.map((item) => (
-          <TabsPanel key={item.value} value={item.value}>
+          <TabsContent key={item.value} value={item.value}>
             {item.content}
-          </TabsPanel>
+          </TabsContent>
         ))}
       </Tabs>
     );

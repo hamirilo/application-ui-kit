@@ -8,6 +8,6 @@
     "outDir": "dist/types",
     "rootDir": "."
   },
-  "include": ["components/**/*", "hooks/**/*", "lib/**/*", "vite-env.d.ts"],
+  "include": ["components/**/*", "lib/**/*", "vite-env.d.ts"],
   "exclude": ["node_modules", "storybook-static", "**/*.test.ts", "**/*.test.tsx", "stories/**/*"]
 }

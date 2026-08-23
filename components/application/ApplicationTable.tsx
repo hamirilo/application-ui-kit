@@ -14,6 +14,16 @@
 
 import type * as React from "react";
 import { cn } from "../../lib/utils";
+import { Empty, EmptyDescription, EmptyHeader, EmptyTitle } from "../ui/empty";
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "../ui/table";
 
 export interface ApplicationTableColumn<T> {
   /** 列のキー（React の key に使う） */
@@ -106,71 +116,56 @@ export function ApplicationTable<T>({
   const isEmpty = rows.length === 0;
 
   return (
-    <div
-      className={cn("w-full overflow-x-auto rounded-xl border border-border bg-card", className)}
-    >
-      <table className="w-full border-collapse text-sm">
-        {caption && <caption className="sr-only">{caption}</caption>}
+    <Table className={className}>
+      {caption && <TableCaption className="sr-only">{caption}</TableCaption>}
 
-        <thead>
-          <tr className="border-b border-border bg-muted">
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                scope="col"
-                className={cn(
-                  "px-4 py-2.5 text-xs font-semibold text-muted-foreground",
-                  ALIGN_CLASS[col.align ?? "left"],
-                  col.className,
-                  col.headerClassName,
-                )}
-              >
-                {col.header}
-              </th>
-            ))}
-          </tr>
-        </thead>
+      <TableHeader>
+        <TableRow>
+          {columns.map((col) => (
+            <TableHead
+              key={col.key}
+              scope="col"
+              className={cn(ALIGN_CLASS[col.align ?? "left"], col.className, col.headerClassName)}
+            >
+              {col.header}
+            </TableHead>
+          ))}
+        </TableRow>
+      </TableHeader>
 
-        <tbody>
-          {isEmpty ? (
-            <tr>
-              {/* 空状態は design-system/components.md の empty_state と同じ構成 */}
-              <td colSpan={columns.length} className="px-4 py-12 text-center">
-                <p className="text-sm font-medium text-muted-foreground">{emptyMessage}</p>
-                {emptySubMessage && (
-                  <p className="mt-1 text-xs text-muted-foreground">{emptySubMessage}</p>
-                )}
-              </td>
-            </tr>
-          ) : (
-            rows.map((row, i) => (
-              <tr
-                key={rowKey ? rowKey(row, i) : i}
-                onClick={onRowClick ? () => onRowClick(row, i) : undefined}
-                className={cn(
-                  "border-b border-border last:border-0",
-                  onRowClick &&
-                    "cursor-pointer transition-colors hover:bg-accent focus-within:bg-accent",
-                )}
-              >
-                {columns.map((col) => (
-                  <td
-                    key={col.key}
-                    className={cn(
-                      "px-4 py-2.5 text-foreground",
-                      ALIGN_CLASS[col.align ?? "left"],
-                      col.className,
-                    )}
-                  >
-                    {col.cell(row, i)}
-                  </td>
-                ))}
-              </tr>
-            ))
-          )}
-        </tbody>
-      </table>
-    </div>
+      <TableBody>
+        {isEmpty ? (
+          <TableRow>
+            <TableCell colSpan={columns.length} className="py-12">
+              {/* 空状態は shadcn/ui の Empty に揃える */}
+              <Empty>
+                <EmptyHeader>
+                  <EmptyTitle>{emptyMessage}</EmptyTitle>
+                  {emptySubMessage && <EmptyDescription>{emptySubMessage}</EmptyDescription>}
+                </EmptyHeader>
+              </Empty>
+            </TableCell>
+          </TableRow>
+        ) : (
+          rows.map((row, i) => (
+            <TableRow
+              key={rowKey ? rowKey(row, i) : i}
+              onClick={onRowClick ? () => onRowClick(row, i) : undefined}
+              className={cn(onRowClick && "cursor-pointer hover:bg-accent focus-within:bg-accent")}
+            >
+              {columns.map((col) => (
+                <TableCell
+                  key={col.key}
+                  className={cn(ALIGN_CLASS[col.align ?? "left"], col.className)}
+                >
+                  {col.cell(row, i)}
+                </TableCell>
+              ))}
+            </TableRow>
+          ))
+        )}
+      </TableBody>
+    </Table>
   );
 }
 

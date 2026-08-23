@@ -16,8 +16,8 @@ import {
   Select,
   SelectContent,
   SelectGroup,
-  SelectGroupLabel,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
@@ -139,8 +139,16 @@ export const ApplicationSelect = React.forwardRef<HTMLButtonElement, Application
       return out;
     }, [items]);
 
+    // Base UI は値 → ラベルの対応を Root の items から引く。
+    // 渡さないとトリガーに value がそのまま出る（"mid" のように内部値が見えてしまう）。
+    const valueLabels = React.useMemo(
+      () => items.map(({ value: v, label }) => ({ value: v, label })),
+      [items],
+    );
+
     return (
       <Select
+        items={valueLabels}
         value={value}
         defaultValue={defaultValue}
         onValueChange={onValueChange as (v: unknown) => void}
@@ -160,9 +168,7 @@ export const ApplicationSelect = React.forwardRef<HTMLButtonElement, Application
           {groups.map((group, gi) =>
             group.name ? (
               <SelectGroup key={`${group.name}-${gi}`}>
-                <SelectGroupLabel className="px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-                  {group.name}
-                </SelectGroupLabel>
+                <SelectLabel>{group.name}</SelectLabel>
                 {group.items.map((item) => (
                   <SelectItem key={item.value} value={item.value} disabled={item.disabled}>
                     {item.label}

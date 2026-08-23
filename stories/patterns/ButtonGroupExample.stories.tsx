@@ -4,7 +4,7 @@ import * as React from "react";
 import {
   ApplicationButtonGroup,
   type ApplicationButtonGroupItem,
-  ApplicationCard,
+  Card,
   ApplicationFormField,
 } from "../../components/application";
 
@@ -68,7 +68,7 @@ export const ShippingMethod: Story = {
     const [value, setValue] = React.useState("standard");
 
     return (
-      <ApplicationCard title="配送方法">
+      <Card title="配送方法">
         <div className="max-w-md space-y-3">
           <ApplicationFormField label="配送方法" required>
             <ApplicationButtonGroup
@@ -83,7 +83,7 @@ export const ShippingMethod: Story = {
             選択中: <code className="rounded bg-muted px-1.5 py-0.5 text-xs">{value}</code>
           </p>
         </div>
-      </ApplicationCard>
+      </Card>
     );
   },
 };
@@ -104,7 +104,7 @@ export const SizeSelector: Story = {
     const [value, setValue] = React.useState("m");
 
     return (
-      <ApplicationCard title="サイズを選択">
+      <Card title="サイズを選択">
         <div className="max-w-md space-y-3">
           <ApplicationFormField label="サイズ" required helpText="XL は現在欠品中です">
             <ApplicationButtonGroup
@@ -117,7 +117,7 @@ export const SizeSelector: Story = {
             />
           </ApplicationFormField>
         </div>
-      </ApplicationCard>
+      </Card>
     );
   },
 };

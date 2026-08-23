@@ -7,8 +7,7 @@
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { Radio } from "../ui/radio";
-import { RadioGroup } from "../ui/radio-group";
+import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
 
 export interface ApplicationRadioGroupItem {
   /** 選択時の値 */
@@ -110,7 +109,7 @@ export const ApplicationRadioGroup = React.forwardRef<HTMLDivElement, Applicatio
 
           return (
             <div key={item.value} className="flex items-start gap-2">
-              <Radio
+              <RadioGroupItem
                 id={autoId}
                 value={item.value}
                 disabled={item.disabled}

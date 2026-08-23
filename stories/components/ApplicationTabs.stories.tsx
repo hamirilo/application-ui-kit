@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Bell, Settings, User } from "lucide-react";
 import * as React from "react";
-import { ApplicationCard, ApplicationTabs } from "../../components/application";
+import { Card, ApplicationTabs } from "../../components/application";
 
 /**
  * ApplicationTabs は同一画面内で複数のビューを切り替えるためのコンポーネント。
@@ -152,11 +152,11 @@ export const Controlled: Story = {
   },
 };
 
-/** ApplicationCard の中で使う実際の使い方。 */
+/** Card の中で使う実際の使い方。 */
 export const WithCard: Story = {
   render: () => (
-    <ApplicationCard title="申請 #1024">
+    <Card title="申請 #1024">
       <ApplicationTabs items={BASIC_ITEMS} />
-    </ApplicationCard>
+    </Card>
   ),
 };

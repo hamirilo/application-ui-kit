@@ -3,15 +3,26 @@
  *
  * ApplicationTable など一覧の下に置く。ページ番号は 1 始まり。
  *
+ * shadcn/ui の Pagination はリンク（`<a href>`）前提で、ページ番号の省略記号を
+ * 自分で組み立てる必要がある。こちらはコールバック（onPageChange）で動く SPA 向けで、
+ * 省略記号のレンジ計算を内蔵している。マークアップは shadcn/ui の nav > ul > li に揃える。
+ *
  * <important>
  * ページ番号の計算・現在ページの保持は画面側（またはサーバー）の責務。
  * このコンポーネントは見た目とキーボード操作だけを提供する。
  * </important>
  */
 
-import { ChevronLeft, ChevronRight, MoreHorizontal } from "lucide-react";
+import { ChevronLeftIcon, ChevronRightIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { Button } from "../ui/button";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+} from "../ui/pagination";
 
 export interface ApplicationPaginationProps {
   /** 現在のページ（1 始まり） */
@@ -63,67 +74,53 @@ export const ApplicationPagination = React.forwardRef<HTMLElement, ApplicationPa
     const items = getPageRange(page, totalPages, siblingCount);
 
     return (
-      <nav
-        ref={ref}
-        aria-label="ページネーション"
-        className={cn("flex items-center justify-center gap-1", className)}
-      >
-        <button
-          type="button"
-          aria-label="前のページ"
-          disabled={page <= 1}
-          onClick={() => onPageChange(page - 1)}
-          className={cn(
-            "inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors",
-            "hover:bg-accent hover:text-foreground",
-            "disabled:pointer-events-none disabled:opacity-40",
-          )}
-        >
-          <ChevronLeft className="h-4 w-4" />
-        </button>
-
-        {items.map((item, i) =>
-          item === "ellipsis" ? (
-            <span
-              key={`ellipsis-${i}`}
-              aria-hidden="true"
-              className="inline-flex h-8 w-8 items-center justify-center text-muted-foreground"
+      <Pagination ref={ref} aria-label="ページネーション" className={cn(className)}>
+        <PaginationContent className="gap-1">
+          <PaginationItem>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="前のページ"
+              disabled={page <= 1}
+              onClick={() => onPageChange(page - 1)}
             >
-              <MoreHorizontal className="h-4 w-4" />
-            </span>
-          ) : (
-            <button
-              key={item}
-              type="button"
-              aria-label={`${item} ページ目`}
-              aria-current={item === page ? "page" : undefined}
-              onClick={() => onPageChange(item)}
-              className={cn(
-                "inline-flex h-8 w-8 items-center justify-center rounded-lg text-sm font-medium transition-colors",
-                item === page
-                  ? "bg-primary text-primary-foreground"
-                  : "text-foreground hover:bg-accent",
-              )}
-            >
-              {item}
-            </button>
-          ),
-        )}
+              <ChevronLeftIcon />
+            </Button>
+          </PaginationItem>
 
-        <button
-          type="button"
-          aria-label="次のページ"
-          disabled={page >= totalPages}
-          onClick={() => onPageChange(page + 1)}
-          className={cn(
-            "inline-flex h-8 w-8 items-center justify-center rounded-lg text-muted-foreground transition-colors",
-            "hover:bg-accent hover:text-foreground",
-            "disabled:pointer-events-none disabled:opacity-40",
+          {items.map((item, i) =>
+            item === "ellipsis" ? (
+              <PaginationItem key={`ellipsis-${i}`}>
+                <PaginationEllipsis />
+              </PaginationItem>
+            ) : (
+              <PaginationItem key={item}>
+                <Button
+                  variant={item === page ? "default" : "ghost"}
+                  size="icon-sm"
+                  aria-label={`${item} ページ目`}
+                  aria-current={item === page ? "page" : undefined}
+                  onClick={() => onPageChange(item)}
+                >
+                  {item}
+                </Button>
+              </PaginationItem>
+            ),
           )}
-        >
-          <ChevronRight className="h-4 w-4" />
-        </button>
-      </nav>
+
+          <PaginationItem>
+            <Button
+              variant="ghost"
+              size="icon-sm"
+              aria-label="次のページ"
+              disabled={page >= totalPages}
+              onClick={() => onPageChange(page + 1)}
+            >
+              <ChevronRightIcon />
+            </Button>
+          </PaginationItem>
+        </PaginationContent>
+      </Pagination>
     );
   },
 );

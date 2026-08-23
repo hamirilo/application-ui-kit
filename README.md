@@ -21,6 +21,34 @@ StorybookをUIの視覚的な仕様・使用例として扱います。新しい
 
 tokens/theme.css がスタイルTokenの入口です。コンポーネントではraw colorではなく、bg-primary、text-foreground、border-borderなどのsemantic tokenを使います。アプリごとのブランド差分はアプリ側のToken overrideで表現し、コンポーネント実装を複製しないでください。
 
+## shadcn/ui との関係
+
+components/ui/ は shadcn/ui（Base UIベース）をそのまま取り込んだものです。見た目は `.tsx` に直書きせず、`cn-button-variant-default` のような **cn-\* クラス**を介して tokens/components.css が持ちます。
+
+    components/ui/*.tsx      構造。shadcn/ui のソースをそのまま置く
+    tokens/components.css    見た目。cn-* クラスの定義（このリポジトリが所有）
+    tokens/theme.css         Token と、テンプレート用クラス（.btn-primary 等）
+
+上流の style（style-nova.css 等）は取り込みません。このリポジトリは独自の見た目を持つため、cn-* の定義を自前で持ち、上流とはクラス名の契約だけを共有します。
+
+### components/ui/ に入れた独自差分
+
+上流を取り込み直すときは、次の差分を再適用してください。各ファイルの該当箇所に `<important>` コメントがあります。
+
+| ファイル | 差分 | 理由 |
+| --- | --- | --- |
+| ui/button.tsx | `success` バリアント | --color-success と .btn-success に対応するものが上流にない |
+| ui/toggle.tsx | `primary` バリアント | ApplicationButtonGroup の「選択中をprimary色で塗る」表現に必要 |
+| ui/combobox.tsx | ComboboxChip の `removeLabel` | 上流の削除ボタンにアクセシブルな名前が付かない |
+| ui/toast.tsx | 閉じるボタンのラベルを日本語化 | 上流は "Close toast" 固定 |
+
+### 公開APIの2種類
+
+- `Application*` — このリポジトリがAPIを設計したもの。items配列やcolumns/rowsのようなprops API、非同期ダイアログ、日本語の既定ラベルなど、shadcn/uiにないvalueを持つものだけを置きます。
+- shadcn/ui の名前のまま re-export しているもの（`Card` / `Spinner` / `Textarea` / `Field` / `Empty` / `Item` 等）。ラップする理由がないため素のまま公開しています。APIは[shadcn/uiのドキュメント](https://ui.shadcn.com/docs/components)と同じです。
+
+ラップは「足せるvalueがあるとき」だけ行ってください。名前を付け替えるだけのラッパーは作らないでください。
+
 ## 品質確認（推奨）
 
 このリポジトリでは、アプリ全体の性能スコアを保証するのではなく、コンポーネントとStory単位の品質を確認します。アプリ全体のLighthouseや主要導線の確認は、[品質確認プレイブック](https://github.com/hamirilo/ai-dev-playbook/blob/main/playbooks/quality-checks.md)に従って利用側アプリで実施してください。
@@ -76,10 +104,13 @@ GitHub Releaseをpublishすると `.github/workflows/publish.yml` が公開し�
 ## 資産を追加するとき
 
 1. 複数アプリで再利用できる汎用UIか確認する。
-2. components/application/に実装し、components/ui/は下請けprimitiveに限定する。
-3. Tokenはtokens/theme.cssを更新する。
-4. Storybookに目的、状態、使い方、使わない場面を追加する。
-5. typecheck、test、lint、Storybook buildを確認する。
+2. shadcn/uiに相当物がないか確認する（`npx shadcn@latest add <name>` で components/ui/ に入れられる）。
+   相当物があり、足せるvalueがないなら、ラップせず index.ts から re-export するだけにする。
+3. ラップする場合は components/application/ に実装し、何を足したのかをファイル冒頭に書く。
+4. 見た目は tokens/components.css の cn-* に置き、.tsx にクラスを直書きしない。
+   テンプレート用クラス（tokens/theme.css の @layer components）も併せて揃える。
+5. Storybookに目的、状態、使い方、使わない場面を追加する。
+6. typecheck、test、lint、Storybook buildを確認する。
 
 実装の詳細な手順や昇格判断はPlaybookを参照してください。
 

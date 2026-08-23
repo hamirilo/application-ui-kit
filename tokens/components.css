@@ -1,0 +1,1022 @@
+/* ==========================================================================
+ * Application UI Kit — shadcn/ui (gen3) コンポーネントスキン
+ *
+ * ★ components/ui/*.tsx が参照する `cn-*` クラスの定義元。
+ *
+ * shadcn/ui の gen3 は「構造は .tsx / 見た目は cn-* クラス」に分離する。
+ * 上流は style-nova.css 等の style ファイルでこの層を配るが、このリポジトリは
+ * 独自の見た目を持つため、上流の style は取り込まず**このファイルで所有する**。
+ * 上流 style を @import して差分だけ上書きする形にはしない（二重管理になるため）。
+ *
+ * <important>
+ * 既存コンポーネント（button / input / card / select / dialog 等）は
+ * 移行前の見た目をそのまま移設している。ここを変えると全プロジェクトに波及する。
+ *
+ * テンプレート（.html）用の .btn-primary / .input-field / .card は
+ * theme.css の @layer components 側にあり、こことは別系統。両方を揃えて直すこと。
+ * </important>
+ *
+ * 上流を参照するとき:
+ *   https://github.com/shadcn-ui/ui/tree/main/apps/v4/registry/styles/style-nova.css
+ * ========================================================================== */
+
+@layer components {
+  /* ========================================================================
+   * MARK: Button — 移行前の components/ui/button.tsx から移設
+   * ====================================================================== */
+
+  .cn-button {
+    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg
+           text-sm font-medium transition-colors outline-none
+           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+           disabled:pointer-events-none disabled:opacity-50
+           data-disabled:pointer-events-none data-disabled:opacity-50
+           [&_svg]:pointer-events-none [&_svg]:shrink-0
+           [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-button-variant-default {
+    @apply bg-primary text-primary-foreground shadow hover:bg-primary/90;
+  }
+
+  .cn-button-variant-destructive {
+    @apply bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90;
+  }
+
+  .cn-button-variant-outline {
+    @apply border border-input bg-background shadow-sm
+           hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .cn-button-variant-secondary {
+    @apply bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80;
+  }
+
+  .cn-button-variant-ghost {
+    @apply text-foreground hover:bg-accent hover:text-accent-foreground;
+  }
+
+  .cn-button-variant-link {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+
+  /* success は shadcn 標準にないバリアント。btn-success（theme.css）と色を揃える。 */
+  .cn-button-variant-success {
+    @apply bg-success text-success-foreground shadow-sm hover:bg-success-hover;
+  }
+
+  /* サイズはテンプレートの .btn-* と 1:1 で対応させる（実測で一致を確認済み）。
+   *   xs 24px / sm 28px / default 40px / lg 48px、角丸はすべて 8px。
+   * ここを変えるときは theme.css の .btn-xs / .btn-sm / .btn-primary / .btn-lg も
+   * 同時に直すこと。片方だけ直すと React とテンプレートで段差が出る。 */
+  .cn-button-size-default {
+    @apply h-10 px-5 text-sm;
+  }
+
+  .cn-button-size-xs {
+    @apply h-6 px-2.5 text-xs;
+  }
+
+  .cn-button-size-sm {
+    @apply h-7 px-3 text-xs;
+  }
+
+  .cn-button-size-lg {
+    @apply h-12 px-6 text-base [&_svg:not([class*='size-'])]:size-5;
+  }
+
+  .cn-button-size-icon {
+    @apply size-10;
+  }
+
+  .cn-button-size-icon-xs {
+    @apply size-6;
+  }
+
+  .cn-button-size-icon-sm {
+    @apply size-7;
+  }
+
+  .cn-button-size-icon-lg {
+    @apply size-12 [&_svg:not([class*='size-'])]:size-5;
+  }
+
+  /* ========================================================================
+   * MARK: Badge — theme.css の .badge と同じ形状
+   * ====================================================================== */
+
+  .cn-badge {
+    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+
+  .cn-badge-variant-default {
+    @apply bg-primary text-primary-foreground;
+  }
+
+  .cn-badge-variant-secondary {
+    @apply bg-secondary text-secondary-foreground;
+  }
+
+  .cn-badge-variant-destructive {
+    @apply bg-destructive text-destructive-foreground;
+  }
+
+  .cn-badge-variant-outline {
+    @apply border border-border text-foreground;
+  }
+
+  .cn-badge-variant-ghost {
+    @apply bg-muted text-muted-foreground;
+  }
+
+  .cn-badge-variant-link {
+    @apply text-primary underline-offset-4 hover:underline;
+  }
+
+  /* ========================================================================
+   * MARK: Card — theme.css の .card と同じ（rounded-xl / shadow-sm / p-4）
+   * ====================================================================== */
+
+  .cn-card {
+    @apply flex flex-col rounded-xl border border-border bg-card p-4
+           text-card-foreground shadow-sm;
+  }
+
+  .cn-card-header {
+    @apply mb-3 flex items-start justify-between gap-3;
+  }
+
+  .cn-card-title {
+    @apply text-base font-semibold leading-tight;
+  }
+
+  .cn-card-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .cn-card-action {
+    @apply shrink-0;
+  }
+
+  .cn-card-content {
+    @apply flex-1;
+  }
+
+  .cn-card-footer {
+    @apply mt-4 flex items-center justify-end gap-2 border-t border-border pt-3;
+  }
+
+  /* ========================================================================
+   * MARK: Input / Textarea — theme.css の .input-field と同じ
+   * ====================================================================== */
+
+  .cn-input {
+    @apply w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm
+           text-foreground transition-colors
+           placeholder:text-muted-foreground
+           focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
+           aria-invalid:border-danger aria-invalid:focus-visible:ring-danger
+           disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60;
+  }
+
+  .cn-textarea {
+    @apply w-full rounded-lg border border-input bg-card px-3.5 py-2.5 text-sm
+           text-foreground transition-colors
+           placeholder:text-muted-foreground
+           focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
+           aria-invalid:border-danger aria-invalid:focus-visible:ring-danger
+           disabled:cursor-not-allowed disabled:bg-muted disabled:opacity-60;
+  }
+
+  .cn-label {
+    @apply flex items-center gap-2 text-sm font-medium text-foreground leading-none
+           select-none data-disabled:cursor-not-allowed data-disabled:opacity-60;
+  }
+
+  /* ========================================================================
+   * MARK: Checkbox / Radio — 移行前の見た目を維持
+   * ====================================================================== */
+
+  .cn-checkbox {
+    @apply size-4 shrink-0 rounded border border-input bg-background transition-colors
+           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+           data-checked:border-primary data-checked:bg-primary
+           data-checked:text-primary-foreground
+           data-indeterminate:border-primary data-indeterminate:bg-primary
+           data-indeterminate:text-primary-foreground
+           disabled:cursor-not-allowed disabled:opacity-50
+           data-disabled:cursor-not-allowed data-disabled:opacity-50;
+  }
+
+  .cn-checkbox-indicator {
+    @apply flex items-center justify-center text-current [&_svg]:size-3.5;
+  }
+
+  /* 並び方向は利用側（ApplicationRadioGroup の orientation）が決めるため、
+   * ここでは方向を固定しない。上流も同様。 */
+  .cn-radio-group {
+    @apply w-full;
+  }
+
+  .cn-radio-group-item {
+    @apply size-4 shrink-0 items-center justify-center rounded-full border border-input
+           bg-background transition-colors
+           focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
+           data-checked:border-primary
+           disabled:cursor-not-allowed disabled:opacity-50
+           data-disabled:cursor-not-allowed data-disabled:opacity-50;
+  }
+
+  .cn-radio-group-indicator {
+    @apply flex size-full items-center justify-center data-unchecked:hidden;
+  }
+
+  .cn-radio-group-indicator-icon {
+    @apply block size-2 rounded-full bg-primary;
+  }
+
+  /* ========================================================================
+   * MARK: Tabs — 移行前は line 形状のみ。default も line に揃える。
+   * ====================================================================== */
+
+  .cn-tabs {
+    @apply w-full;
+  }
+
+  .cn-tabs-list {
+    @apply inline-flex items-center gap-1 border-b border-border;
+  }
+
+  .cn-tabs-list-variant-default {
+    @apply bg-transparent;
+  }
+
+  .cn-tabs-list-variant-line {
+    @apply bg-transparent;
+  }
+
+  .cn-tabs-trigger {
+    @apply -mb-px inline-flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2
+           text-sm font-medium text-muted-foreground transition-colors
+           hover:text-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           focus-visible:ring-offset-2
+           data-active:border-primary data-active:text-primary
+           data-disabled:cursor-not-allowed data-disabled:opacity-50;
+  }
+
+  .cn-tabs-content {
+    @apply pt-4 outline-none;
+  }
+
+  /* ========================================================================
+   * MARK: Progress
+   * ====================================================================== */
+
+  .cn-progress-root {
+    @apply w-full;
+  }
+
+  .cn-progress-track {
+    @apply relative h-2 w-full overflow-hidden rounded-full bg-muted;
+  }
+
+  .cn-progress-indicator {
+    @apply h-full rounded-full bg-primary transition-[width] duration-300;
+  }
+
+  .cn-progress-label {
+    @apply text-sm text-foreground;
+  }
+
+  .cn-progress-value {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* ========================================================================
+   * MARK: Dialog
+   * ====================================================================== */
+
+  .cn-dialog-overlay {
+    @apply fixed inset-0 z-50 bg-black/80
+           data-open:animate-in data-open:fade-in-0
+           data-closed:animate-out data-closed:fade-out-0;
+  }
+
+  .cn-dialog-content {
+    @apply fixed left-1/2 top-1/2 z-50 grid w-full max-w-lg -translate-x-1/2 -translate-y-1/2
+           gap-4 rounded-lg border border-border bg-background p-6 shadow-lg outline-none
+           duration-200
+           data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+           data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
+  }
+
+  .cn-dialog-header {
+    @apply flex flex-col gap-1.5 text-center sm:text-left;
+  }
+
+  .cn-dialog-title {
+    @apply text-lg font-semibold leading-none tracking-tight;
+  }
+
+  .cn-dialog-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .cn-dialog-footer {
+    @apply flex flex-col-reverse gap-2 sm:flex-row sm:justify-end;
+  }
+
+  .cn-dialog-close {
+    @apply absolute right-4 top-4 rounded-sm text-muted-foreground opacity-70
+           transition-opacity hover:opacity-100
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           focus-visible:ring-offset-2
+           disabled:pointer-events-none [&_svg]:size-4;
+  }
+
+  /* ========================================================================
+   * MARK: Popover
+   * ====================================================================== */
+
+  .cn-popover-content {
+    @apply w-auto rounded-md border border-border bg-popover p-4 text-popover-foreground
+           shadow-md outline-none
+           data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+           data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95
+           data-[side=bottom]:slide-in-from-top-2
+           data-[side=left]:slide-in-from-right-2
+           data-[side=right]:slide-in-from-left-2
+           data-[side=top]:slide-in-from-bottom-2;
+  }
+
+  .cn-popover-content-logical {
+    @apply z-50;
+  }
+
+  .cn-popover-header {
+    @apply mb-2 flex flex-col gap-1;
+  }
+
+  .cn-popover-title {
+    @apply text-sm font-semibold leading-none;
+  }
+
+  .cn-popover-description {
+    @apply text-sm text-muted-foreground;
+  }
+
+  /* ========================================================================
+   * MARK: Select — トリガーは .input-field と同じ形状
+   * ====================================================================== */
+
+  .cn-select-trigger {
+    @apply flex w-full items-center justify-between gap-2 rounded-lg border border-input
+           bg-card px-3.5 py-2.5 text-sm text-foreground transition-colors
+           focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2
+           focus-visible:ring-ring
+           data-[popup-open]:border-ring
+           aria-invalid:border-danger
+           data-disabled:cursor-not-allowed data-disabled:bg-muted data-disabled:opacity-50;
+  }
+
+  .cn-select-trigger-icon {
+    @apply size-4 shrink-0 text-muted-foreground;
+  }
+
+  .cn-select-value {
+    @apply truncate text-left;
+  }
+
+  .cn-select-content-logical {
+    @apply z-50 outline-none;
+  }
+
+  .cn-select-content {
+    @apply max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)]
+           overflow-y-auto rounded-lg border border-border bg-popover p-1
+           text-popover-foreground shadow-lg
+           data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+           data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
+  }
+
+  .cn-select-group {
+    @apply py-1;
+  }
+
+  .cn-select-label {
+    @apply px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground;
+  }
+
+  .cn-select-item {
+    @apply relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2
+           text-sm outline-none transition-colors
+           data-highlighted:bg-accent data-highlighted:text-accent-foreground
+           data-disabled:pointer-events-none data-disabled:opacity-50;
+  }
+
+  .cn-select-item-text {
+    @apply truncate;
+  }
+
+  .cn-select-item-indicator {
+    @apply absolute left-2 flex size-3.5 items-center justify-center;
+  }
+
+  .cn-select-item-indicator-icon {
+    @apply size-4;
+  }
+
+  .cn-select-separator {
+    @apply -mx-1 my-1 h-px bg-border;
+  }
+
+  .cn-select-scroll-up-button,
+  .cn-select-scroll-down-button {
+    @apply flex cursor-default items-center justify-center py-1 text-muted-foreground;
+  }
+
+  /* ========================================================================
+   * MARK: Dropdown Menu
+   * ====================================================================== */
+
+  .cn-dropdown-menu-content-logical {
+    @apply z-50 outline-none;
+  }
+
+  .cn-dropdown-menu-content {
+    @apply min-w-[8rem] overflow-hidden rounded-lg border border-border bg-popover p-1
+           text-popover-foreground shadow-lg
+           data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+           data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
+  }
+
+  .cn-dropdown-menu-item {
+    @apply relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5
+           text-sm outline-none transition-colors
+           data-highlighted:bg-accent data-highlighted:text-accent-foreground
+           data-disabled:pointer-events-none data-disabled:opacity-50
+           [&_svg]:pointer-events-none [&_svg]:shrink-0
+           [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-dropdown-menu-checkbox-item,
+  .cn-dropdown-menu-radio-item {
+    @apply relative flex cursor-default select-none items-center gap-2 rounded-sm py-1.5 pl-8
+           pr-2 text-sm outline-none transition-colors
+           data-highlighted:bg-accent data-highlighted:text-accent-foreground
+           data-disabled:pointer-events-none data-disabled:opacity-50;
+  }
+
+  .cn-dropdown-menu-item-indicator {
+    @apply absolute left-2 flex size-3.5 items-center justify-center [&_svg]:size-4;
+  }
+
+  .cn-dropdown-menu-label {
+    @apply px-2 py-1.5 text-xs font-semibold text-muted-foreground;
+  }
+
+  .cn-dropdown-menu-separator {
+    @apply -mx-1 my-1 h-px bg-border;
+  }
+
+  .cn-dropdown-menu-shortcut {
+    @apply ml-auto text-xs tracking-widest text-muted-foreground;
+  }
+
+  .cn-dropdown-menu-sub-trigger {
+    @apply flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm
+           outline-none
+           data-highlighted:bg-accent data-highlighted:text-accent-foreground
+           data-[popup-open]:bg-accent;
+  }
+
+  .cn-dropdown-menu-sub-content {
+    @apply min-w-[8rem] overflow-hidden rounded-lg border border-border bg-popover p-1
+           text-popover-foreground shadow-lg;
+  }
+
+  /* Base UI のメニュー系が内部で使う位置調整用フック。上流も既定では空。 */
+  .cn-menu-target {
+    @apply outline-none;
+  }
+
+  .cn-menu-translucent {
+    @apply supports-[backdrop-filter]:bg-popover/95 supports-[backdrop-filter]:backdrop-blur-sm;
+  }
+
+  /* ========================================================================
+   * MARK: Combobox
+   * ====================================================================== */
+
+  /* トリガーは InputGroupButton として描画されるため、枠や背景は持たせない。 */
+  .cn-combobox-trigger {
+    @apply inline-flex items-center justify-center text-muted-foreground
+           transition-colors hover:text-foreground;
+  }
+
+  .cn-combobox-trigger-icon {
+    @apply size-4 shrink-0 text-muted-foreground;
+  }
+
+  /* gen3 の ComboboxInput は InputGroup を描く。枠は .cn-input-group が持つので
+   * ここでは幅だけ整える（枠を足すと二重枠になる）。 */
+  .cn-combobox-input {
+    @apply w-full;
+  }
+
+  .cn-combobox-clear {
+    @apply inline-flex size-5 items-center justify-center rounded-full text-muted-foreground
+           transition-colors hover:bg-accent hover:text-foreground;
+  }
+
+  .cn-combobox-clear-icon {
+    @apply size-3.5;
+  }
+
+  .cn-combobox-content-logical {
+    @apply z-50 outline-none;
+  }
+
+  .cn-combobox-content {
+    @apply max-h-[min(24rem,var(--available-height))] min-w-[var(--anchor-width)]
+           overflow-hidden rounded-lg border border-border bg-popover p-1
+           text-popover-foreground shadow-lg
+           data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95
+           data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
+  }
+
+  .cn-combobox-list {
+    @apply max-h-72 overflow-y-auto;
+  }
+
+  .cn-combobox-group {
+    @apply py-1;
+  }
+
+  .cn-combobox-label {
+    @apply px-2 py-1.5 text-xs font-semibold uppercase tracking-wide text-muted-foreground;
+  }
+
+  .cn-combobox-item {
+    @apply relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2
+           text-sm outline-none transition-colors
+           data-highlighted:bg-accent data-highlighted:text-accent-foreground
+           data-disabled:pointer-events-none data-disabled:opacity-50;
+  }
+
+  .cn-combobox-item-indicator {
+    @apply absolute left-2 flex size-3.5 items-center justify-center;
+  }
+
+  .cn-combobox-item-indicator-icon {
+    @apply size-4;
+  }
+
+  .cn-combobox-empty {
+    @apply px-2 py-6 text-center text-sm text-muted-foreground;
+  }
+
+  .cn-combobox-separator {
+    @apply -mx-1 my-1 h-px bg-border;
+  }
+
+  .cn-combobox-chips {
+    @apply flex w-full flex-wrap items-center gap-1 rounded-lg border border-input bg-card
+           px-2 py-1.5 transition-colors
+           focus-within:border-ring focus-within:ring-2 focus-within:ring-ring;
+  }
+
+  .cn-combobox-chip {
+    @apply inline-flex items-center gap-1 rounded-md bg-muted px-2 py-0.5 text-xs
+           font-medium text-muted-foreground;
+  }
+
+  /* 見た目は 16px（移行前と同じ）だが、擬似要素で当たり判定を広げて
+   * 最小ターゲットサイズを確保する。cn-checkbox と同じ手法。 */
+  .cn-combobox-chip-remove {
+    @apply relative inline-flex size-4 shrink-0 items-center justify-center rounded-full
+           text-muted-foreground transition-colors
+           after:absolute after:-inset-1.5
+           hover:bg-background hover:text-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+
+  .cn-combobox-chip-indicator-icon {
+    @apply size-3;
+  }
+
+  .cn-combobox-chip-input {
+    @apply min-w-24 flex-1 bg-transparent text-sm outline-none
+           placeholder:text-muted-foreground;
+  }
+
+  /* ========================================================================
+   * MARK: Calendar
+   * ====================================================================== */
+
+  .cn-calendar {
+    @apply p-3;
+  }
+
+  .cn-calendar-caption {
+    @apply flex items-center justify-center gap-1 pt-1;
+  }
+
+  .cn-calendar-caption-label {
+    @apply text-sm font-medium;
+  }
+
+  .cn-calendar-dropdown-root {
+    @apply relative inline-flex items-center;
+  }
+
+  .cn-calendar-day-button {
+    @apply inline-flex size-8 items-center justify-center rounded-md text-sm
+           transition-colors hover:bg-accent hover:text-accent-foreground
+           data-selected:bg-primary data-selected:text-primary-foreground
+           data-disabled:pointer-events-none data-disabled:opacity-40;
+  }
+
+  /* ========================================================================
+   * MARK: Toast
+   * ====================================================================== */
+
+  .cn-toast {
+    @apply pointer-events-auto relative flex w-full items-start gap-3 rounded-lg border
+           border-border bg-popover p-4 text-popover-foreground shadow-lg
+           data-open:animate-in data-open:slide-in-from-bottom-2
+           data-closed:animate-out data-closed:fade-out-0;
+  }
+
+  /* ========================================================================
+   * MARK: 上流に既定定義がないフック用クラス
+   * .tsx が参照するが、上流 style / shadcn パッケージにも定義がない。
+   * 利用側が上書きするための拡張点なので、既定は無害な最小定義に留める。
+   * ====================================================================== */
+
+  .cn-font-heading {
+    @apply font-sans;
+  }
+
+  .cn-rtl-flip {
+    @apply rtl:-scale-x-100;
+  }
+
+  /* ========================================================================
+   * MARK: Field — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  .cn-field {
+    @apply data-[invalid=true]:text-destructive gap-2;
+  }
+
+  .cn-field-content {
+    @apply gap-0.5;
+  }
+
+  .cn-field-description {
+    @apply text-muted-foreground text-left text-sm [[data-variant=legend]+&]:-mt-1.5;
+  }
+
+  .cn-field-error {
+    @apply text-destructive text-sm;
+  }
+
+  .cn-field-group {
+    @apply gap-5 data-[slot=checkbox-group]:gap-3 *:data-[slot=field-group]:gap-4;
+  }
+
+  .cn-field-label {
+    @apply has-data-checked:bg-primary/5 has-data-checked:border-primary/30 dark:has-data-checked:border-primary/20 dark:has-data-checked:bg-primary/10 gap-2 leading-snug group-data-[disabled=true]/field:opacity-50 has-[>[data-slot=field]]:rounded-lg has-[>[data-slot=field]]:border has-[>[data-slot=field]]:not-has-[:disabled,[data-disabled]]:hover:bg-muted/50 has-[>[data-slot=field]]:has-[:focus-visible]:border-ring has-[>[data-slot=field]]:has-[:focus-visible]:ring-ring/50 has-[>[data-slot=field]]:has-[:focus-visible]:ring-3 *:data-[slot=field]:p-2.5;
+  }
+
+  .cn-field-legend {
+    @apply mb-1.5 font-medium data-[variant=label]:text-sm data-[variant=legend]:text-base;
+  }
+
+  .cn-field-separator {
+    @apply -my-2 h-5 text-sm group-data-[variant=outline]/field-group:-mb-2;
+  }
+
+  .cn-field-separator-content {
+    @apply text-muted-foreground px-2;
+  }
+
+  .cn-field-set {
+    @apply gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3;
+  }
+
+  .cn-field-title {
+    @apply gap-2 leading-snug text-sm font-medium group-data-[disabled=true]/field:opacity-50;
+  }
+
+  /* ========================================================================
+   * MARK: Empty — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  .cn-empty {
+    @apply gap-4 rounded-xl border-dashed p-6;
+  }
+
+  .cn-empty-content {
+    @apply gap-2.5 text-sm;
+  }
+
+  .cn-empty-description {
+    @apply text-sm/relaxed;
+  }
+
+  .cn-empty-header {
+    @apply gap-2;
+  }
+
+  .cn-empty-media {
+    @apply mb-2;
+  }
+
+  .cn-empty-media-default {
+    @apply bg-transparent;
+  }
+
+  .cn-empty-media-icon {
+    @apply bg-muted text-foreground flex size-8 shrink-0 items-center justify-center rounded-lg [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-empty-title {
+    @apply text-sm font-medium tracking-tight;
+  }
+
+  /* ========================================================================
+   * MARK: Input Group — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  /* nova は h-8 の低い入力欄を前提にしている。このリポジトリの入力欄は
+   * .cn-input（px-3.5 py-2.5）なので、アイコンの有無で高さが変わらないよう揃える。 */
+  .cn-input-group {
+    @apply w-full rounded-lg border border-input bg-card transition-colors
+           focus-within:border-ring focus-within:ring-2 focus-within:ring-ring
+           has-[[aria-invalid=true]]:border-danger
+           has-disabled:cursor-not-allowed has-disabled:bg-muted has-disabled:opacity-60
+           has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:flex-col;
+  }
+
+  .cn-input-group-addon {
+    @apply text-muted-foreground h-auto gap-2 py-1.5 text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-input-group-addon-align-block-end {
+    @apply px-2.5 pb-2 group-has-[>input]/input-group:pb-2 [.border-t]:pt-2;
+  }
+
+  .cn-input-group-addon-align-block-start {
+    @apply px-2.5 pt-2 group-has-[>input]/input-group:pt-2 [.border-b]:pb-2;
+  }
+
+  .cn-input-group-addon-align-inline-end {
+    @apply pr-3.5 has-[>button]:mr-[-0.3rem];
+  }
+
+  .cn-input-group-addon-align-inline-start {
+    @apply pl-3.5 has-[>button]:ml-[-0.3rem];
+  }
+
+  .cn-input-group-button {
+    @apply gap-2 text-sm;
+  }
+
+  .cn-input-group-button-size-icon-sm {
+    @apply size-8 p-0 has-[>svg]:p-0;
+  }
+
+  .cn-input-group-button-size-icon-xs {
+    @apply size-6 rounded-[calc(var(--radius)-3px)] p-0 has-[>svg]:p-0;
+  }
+
+  .cn-input-group-button-size-xs {
+    @apply h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5;
+  }
+
+  .cn-input-group-input {
+    @apply flex-1 border-0 bg-transparent px-3.5 py-2.5 shadow-none outline-none
+           focus-visible:border-0 focus-visible:ring-0;
+  }
+
+  .cn-input-group-text {
+    @apply text-muted-foreground gap-2 text-sm [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-input-group-textarea {
+    @apply flex-1 resize-none border-0 bg-transparent px-3.5 py-2.5 shadow-none outline-none
+           focus-visible:border-0 focus-visible:ring-0;
+  }
+
+  /* ========================================================================
+   * MARK: Item — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  .cn-item {
+    @apply [a]:hover:bg-muted rounded-lg border text-sm;
+  }
+
+  .cn-item-actions {
+    @apply gap-2;
+  }
+
+  .cn-item-content {
+    @apply gap-1 group-data-[size=xs]/item:gap-0;
+  }
+
+  .cn-item-description {
+    @apply text-muted-foreground text-left text-sm leading-normal group-data-[size=xs]/item:text-xs;
+  }
+
+  .cn-item-footer {
+    @apply gap-2;
+  }
+
+  .cn-item-group {
+    @apply gap-4 has-data-[size=sm]:gap-2.5 has-data-[size=xs]:gap-2;
+  }
+
+  .cn-item-header {
+    @apply gap-2;
+  }
+
+  .cn-item-media {
+    @apply gap-2 group-has-data-[slot=item-description]/item:translate-y-0.5 group-has-data-[slot=item-description]/item:self-start;
+  }
+
+  .cn-item-media-variant-default {
+    @apply bg-transparent;
+  }
+
+  .cn-item-media-variant-icon {
+    @apply [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-item-media-variant-image {
+    @apply size-10 overflow-hidden rounded-sm group-data-[size=sm]/item:size-8 group-data-[size=xs]/item:size-6 [&_img]:size-full [&_img]:object-cover;
+  }
+
+  .cn-item-separator {
+    @apply my-2;
+  }
+
+  .cn-item-size-default {
+    @apply gap-2.5 px-3 py-2.5;
+  }
+
+  .cn-item-size-sm {
+    @apply gap-2.5 px-3 py-2.5;
+  }
+
+  .cn-item-size-xs {
+    @apply gap-2 px-2.5 py-2 in-data-[slot=dropdown-menu-content]:p-0;
+  }
+
+  .cn-item-title {
+    @apply gap-2 text-sm leading-snug font-medium underline-offset-4;
+  }
+
+  .cn-item-variant-default {
+    @apply border-transparent;
+  }
+
+  .cn-item-variant-muted {
+    @apply bg-muted/50 border-transparent;
+  }
+
+  .cn-item-variant-outline {
+    @apply border-border;
+  }
+
+  /* ========================================================================
+   * MARK: Pagination — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  .cn-pagination-content {
+    @apply gap-0.5;
+  }
+
+  .cn-pagination-ellipsis {
+    @apply size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-pagination-next {
+    @apply pr-1.5!;
+  }
+
+  .cn-pagination-previous {
+    @apply pl-1.5!;
+  }
+
+  /* ========================================================================
+   * MARK: Table — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  /* nova の素の表ではなく、移行前の ApplicationTable の見た目
+   * （rounded-xl の枠 + bg-muted のヘッダー + px-4 py-2.5 のセル）に揃える。
+   * 行のホバーは onRowClick があるときだけ付けたいので、ここでは付けない。 */
+  .cn-table {
+    @apply w-full caption-bottom border-collapse text-sm;
+  }
+
+  .cn-table-body {
+    @apply [&_tr:last-child]:border-0;
+  }
+
+  .cn-table-caption {
+    @apply text-muted-foreground mt-4 text-sm;
+  }
+
+  .cn-table-cell {
+    @apply px-4 py-2.5 align-middle text-foreground [&:has([role=checkbox])]:pr-0;
+  }
+
+  .cn-table-container {
+    @apply relative w-full overflow-x-auto rounded-xl border border-border bg-card;
+  }
+
+  .cn-table-footer {
+    @apply bg-muted/50 border-t font-medium [&>tr]:last:border-b-0;
+  }
+
+  .cn-table-head {
+    @apply px-4 py-2.5 text-left align-middle text-xs font-semibold text-muted-foreground whitespace-nowrap [&:has([role=checkbox])]:pr-0;
+  }
+
+  .cn-table-header {
+    @apply [&_tr]:border-b [&_tr]:border-border [&_tr]:bg-muted;
+  }
+
+  .cn-table-row {
+    @apply border-b border-border transition-colors last:border-0 data-[state=selected]:bg-muted;
+  }
+
+  /* ========================================================================
+   * MARK: Toggle — shadcn/ui 標準（style-nova.css より移設）
+   *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
+   * ====================================================================== */
+
+  .cn-toggle {
+    @apply hover:text-foreground aria-pressed:bg-muted focus-visible:border-ring focus-visible:ring-ring/50 aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive data-[state=on]:bg-muted gap-1 rounded-lg text-sm font-medium transition-all [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-toggle-group {
+    @apply rounded-lg data-[size=sm]:rounded-[min(var(--radius-md),10px)];
+  }
+
+  .cn-toggle-group-item {
+    @apply group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-end]:pr-1.5 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-start]:pl-1.5 group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-lg group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-lg group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-lg group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-lg;
+  }
+
+  .cn-toggle-size-default {
+    @apply h-10 min-w-10 px-5 text-sm;
+  }
+
+  .cn-toggle-size-lg {
+    @apply h-12 min-w-12 px-6 text-base;
+  }
+
+  /* サイズは nova（h-7/h-8/h-9）ではなく、このリポジトリのボタンスケール
+   * （.cn-button-size-* と同じ h-8/h-9/h-10）に揃える。
+   * ApplicationButtonGroup と ApplicationButton が並んだときに段差が出ないため。 */
+  .cn-toggle-size-sm {
+    @apply h-7 min-w-7 px-3 text-xs [&_svg:not([class*='size-'])]:size-3.5;
+  }
+
+  .cn-toggle-variant-default {
+    @apply bg-transparent;
+  }
+
+  /* 上流にはないバリアント。選択中を primary 色で塗る segmented control 用。
+   * ApplicationButtonGroup の variant="primary" が使う。 */
+  .cn-toggle-variant-primary {
+    @apply border border-input bg-background
+           hover:bg-accent hover:text-accent-foreground
+           data-pressed:border-primary data-pressed:bg-primary
+           data-pressed:text-primary-foreground data-pressed:hover:bg-primary/90
+           aria-pressed:border-primary aria-pressed:bg-primary
+           aria-pressed:text-primary-foreground aria-pressed:hover:bg-primary/90;
+  }
+
+  .cn-toggle-variant-outline {
+    @apply border-input hover:bg-muted border bg-transparent;
+  }
+
+  /* nova は sm を定義していないため、xs と icon-sm から補間する。 */
+  .cn-input-group-button-size-sm {
+    @apply h-8 gap-1.5 px-2.5 [&>svg:not([class*='size-'])]:size-4;
+  }
+
+  /* cn-pagination / cn-pagination-link / cn-pagination-*-text および
+   * cn-field-orientation-* は .tsx 側にインラインで実体があるマーカークラス。
+   * 上流も CSS 定義を持たないため、ここでも定義しない。 */
+}
