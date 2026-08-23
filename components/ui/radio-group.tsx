@@ -1,57 +1,38 @@
-import * as React from "react"
-import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
+"use client"
+
 import { Radio as RadioPrimitive } from "@base-ui/react/radio"
-import { cva, type VariantProps } from "class-variance-authority"
+import { RadioGroup as RadioGroupPrimitive } from "@base-ui/react/radio-group"
 
-import { cn } from '../../lib/utils'
+import { cn } from "../../lib/utils"
 
-const RadioGroup = RadioGroupPrimitive
-
-const radioGroupItemVariants = cva(
-  "inline-flex cursor-pointer items-center justify-center gap-1.5 border border-input bg-background text-sm font-medium text-foreground shadow-sm transition-colors -ml-px first:ml-0 first:rounded-l-md last:rounded-r-md hover:bg-accent hover:text-accent-foreground focus-visible:z-10 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
-  {
-    variants: {
-      variant: {
-        primary:
-          "data-checked:z-10 data-checked:border-primary data-checked:bg-primary data-checked:text-primary-foreground data-checked:hover:bg-primary/90",
-        secondary:
-          "data-checked:z-10 data-checked:border-foreground data-checked:bg-accent data-checked:text-accent-foreground",
-      },
-      size: {
-        sm: "h-8 px-3 text-xs",
-        md: "h-9 px-4",
-        lg: "h-10 px-6",
-      },
-    },
-    defaultVariants: {
-      variant: "primary",
-      size: "md",
-    },
-  }
-)
-
-export interface RadioGroupItemProps
-  extends Omit<RadioPrimitive.Root.Props, "className">,
-    VariantProps<typeof radioGroupItemVariants> {
-  className?: string
+function RadioGroup({ className, ...props }: RadioGroupPrimitive.Props) {
+  return (
+    <RadioGroupPrimitive
+      data-slot="radio-group"
+      className={cn("cn-radio-group w-full", className)}
+      {...props}
+    />
+  )
 }
 
-/**
- * Base UI の Radio を「隣接ボタンが1本の枠に見える」segmented control 用にラップしたもの。
- * ドットインジケーターは表示せず、子要素（ラベル・アイコン）をそのままボタンの中身として描画する。
- * `ApplicationButtonGroup` で使う。
- */
-const RadioGroupItem = React.forwardRef<HTMLElement, RadioGroupItemProps>(
-  ({ className, variant, size, ...props }, ref) => {
-    return (
-      <RadioPrimitive.Root
-        ref={ref}
-        className={cn(radioGroupItemVariants({ variant, size, className }))}
-        {...props}
-      />
-    )
-  }
-)
-RadioGroupItem.displayName = "RadioGroupItem"
+function RadioGroupItem({ className, ...props }: RadioPrimitive.Root.Props) {
+  return (
+    <RadioPrimitive.Root
+      data-slot="radio-group-item"
+      className={cn(
+        "cn-radio-group-item group/radio-group-item peer relative aspect-square shrink-0 border outline-none after:absolute after:-inset-x-3 after:-inset-y-2 disabled:cursor-not-allowed disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      <RadioPrimitive.Indicator
+        data-slot="radio-group-indicator"
+        className="cn-radio-group-indicator"
+      >
+        <span className="cn-radio-group-indicator-icon" />
+      </RadioPrimitive.Indicator>
+    </RadioPrimitive.Root>
+  )
+}
 
-export { RadioGroup, RadioGroupItem, radioGroupItemVariants }
+export { RadioGroup, RadioGroupItem }

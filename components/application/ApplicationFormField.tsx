@@ -1,15 +1,17 @@
 /**
  * ApplicationFormField - ラベル + 入力 + エラー + ヘルプをまとめるフォーム部品
  *
- * CSS クラスの `includes/molecules/form_field.html` の React 版。
- * 余白・必須マーク・エラー表示のルールをここに集約し、画面ごとのばらつきを防ぐ。
+ * shadcn/ui の Field 一式（Field / FieldLabel / FieldError / FieldDescription）を土台に、
+ * id・aria-describedby・aria-invalid の結線を**自動で**行う。
  *
- * 余白は design-system/components.md の規約に合わせて固定している:
- *   ラベル下 mb-1.5 / エラー上 mt-1.5 / ヘルプ上 mt-1
+ * shadcn/ui の Field は compound で自由度が高い代わりに、この結線が利用者任せになる。
+ * 画面ごとに書き忘れるとエラーが支援技術に伝わらないため、ここで面倒を見る。
+ * 自由なレイアウトが必要な場合は Field を直接使ってよい。
  */
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
+import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
 
 export interface ApplicationFormFieldProps {
   /** ラベル文字列 */
@@ -28,16 +30,22 @@ export interface ApplicationFormFieldProps {
   helpText?: React.ReactNode;
 
   /**
-   * 入力欄。`<ApplicationInput>` / `<ApplicationSelect>` / `<textarea>` 等を渡す。
+   * 入力欄。`<ApplicationInput>` / `<ApplicationSelect>` / `<Textarea>` 等を渡す。
    * id / aria-describedby / aria-invalid は自動で注入される。
    */
   children: React.ReactElement;
 
   /**
    * 入力欄の id。省略時は自動生成する。
-   * application フォームと紐づける場合は `field.id_for_label` を渡す。
+   * サーバー側のフォームと紐づける場合は `field.id_for_label` を渡す。
    */
   htmlFor?: string;
+
+  /**
+   * ラベルと入力欄の並び
+   * @default "vertical"
+   */
+  orientation?: "vertical" | "horizontal" | "responsive";
 
   className?: string;
 }
@@ -51,7 +59,7 @@ export interface ApplicationFormFieldProps {
  *   <ApplicationInput placeholder="例: 〇〇の改善について" />
  * </ApplicationFormField>
  *
- * // エラー付き（error を渡すと子の ApplicationInput も自動で赤枠になる）
+ * // エラー付き（error を渡すと子も自動で aria-invalid になり赤枠になる）
  * <ApplicationFormField label="メールアドレス" error="形式が正しくありません">
  *   <ApplicationInput defaultValue="foo@" />
  * </ApplicationFormField>
@@ -69,6 +77,7 @@ export function ApplicationFormField({
   helpText,
   children,
   htmlFor,
+  orientation = "vertical",
   className,
 }: ApplicationFormFieldProps) {
   const autoId = React.useId();
@@ -88,9 +97,9 @@ export function ApplicationFormField({
   } as React.Attributes);
 
   return (
-    <div className={cn("w-full", className)}>
+    <Field orientation={orientation} className={cn("gap-1.5", className)}>
       {label && (
-        <label htmlFor={id} className="mb-1.5 block text-sm font-medium text-foreground">
+        <FieldLabel htmlFor={id}>
           {label}
           {required && (
             <>
@@ -101,23 +110,19 @@ export function ApplicationFormField({
               <span className="sr-only">（必須）</span>
             </>
           )}
-        </label>
+        </FieldLabel>
       )}
 
       {child}
 
       {error && (
-        <p id={errorId} role="alert" className="mt-1.5 text-sm text-danger">
+        <FieldError id={errorId} className="text-danger">
           {error}
-        </p>
+        </FieldError>
       )}
 
-      {helpText && (
-        <p id={helpId} className="mt-1 text-xs text-muted-foreground">
-          {helpText}
-        </p>
-      )}
-    </div>
+      {helpText && <FieldDescription id={helpId}>{helpText}</FieldDescription>}
+    </Field>
   );
 }
 

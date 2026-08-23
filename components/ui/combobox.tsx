@@ -1,246 +1,312 @@
-import * as React from "react"
-import { Combobox as ComboboxPrimitive } from "@base-ui/react/combobox"
-import { Check, ChevronDown, X } from "lucide-react"
+"use client"
 
-import { cn } from '../../lib/utils'
+import * as React from "react"
+import { Combobox as ComboboxPrimitive } from "@base-ui/react"
+
+import { cn } from "../../lib/utils"
+import { Button } from "./button"
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from "./input-group"
+import { CheckIcon, ChevronDownIcon, XIcon } from "lucide-react"
 
 const Combobox = ComboboxPrimitive.Root
 
-const ComboboxCollection = ComboboxPrimitive.Collection
+function ComboboxValue({ ...props }: ComboboxPrimitive.Value.Props) {
+  return <ComboboxPrimitive.Value data-slot="combobox-value" {...props} />
+}
 
-const ComboboxValue = ComboboxPrimitive.Value
-
-const ComboboxGroup = ComboboxPrimitive.Group
-
-const ComboboxGroupLabel = ComboboxPrimitive.GroupLabel
-
-/**
- * 入力欄を包む枠。
- *
- * 見た目は SelectTrigger に揃えている（padding / border-radius / border 色 /
- * フォーカスリング）。理由も同じで、同じ画面に select と combobox が並んだときに
- * 段差を出さないため。フォーカスリングは内側の input ではなくこの枠に出す。
- */
-const ComboboxFieldset = React.forwardRef<
-  HTMLDivElement,
-  React.ComponentPropsWithoutRef<"div"> & { disabled?: boolean; invalid?: boolean }
->(({ className, disabled, invalid, ...props }, ref) => (
-  <div
-    ref={ref}
-    data-disabled={disabled || undefined}
-    data-invalid={invalid || undefined}
-    className={cn(
-      "flex w-full items-center gap-2 rounded-lg border border-input bg-background px-3.5 py-2.5 text-sm text-foreground transition-colors",
-      "focus-within:border-ring focus-within:ring-2 focus-within:ring-ring",
-      "data-disabled:cursor-not-allowed data-disabled:opacity-50 data-disabled:bg-muted",
-      "data-invalid:border-danger data-invalid:focus-within:ring-danger",
-      className
-    )}
-    {...props}
-  />
-))
-ComboboxFieldset.displayName = "ComboboxFieldset"
-
-/**
- * 入力欄そのもの。枠は ComboboxFieldset が描くため、ここには border を持たせない。
- */
-const ComboboxInput = React.forwardRef<HTMLInputElement, ComboboxPrimitive.Input.Props>(
-  ({ className, ...props }, ref) => (
-    <ComboboxPrimitive.Input
-      ref={ref}
-      className={cn(
-        "min-w-16 flex-1 bg-transparent text-sm text-foreground outline-none",
-        "placeholder:text-muted-foreground",
-        "disabled:cursor-not-allowed",
-        className
-      )}
-      {...props}
-    />
-  )
-)
-ComboboxInput.displayName = "ComboboxInput"
-
-/**
- * 複数選択のチップ列。入力欄と同じ枠の中に並べる。
- */
-const ComboboxChips = React.forwardRef<HTMLDivElement, ComboboxPrimitive.Chips.Props>(
-  ({ className, ...props }, ref) => (
-    <ComboboxPrimitive.Chips
-      ref={ref}
-      className={cn("flex flex-1 flex-wrap items-center gap-1.5", className)}
-      {...props}
-    />
-  )
-)
-ComboboxChips.displayName = "ComboboxChips"
-
-const ComboboxChip = React.forwardRef<HTMLDivElement, ComboboxPrimitive.Chip.Props>(
-  ({ className, children, ...props }, ref) => (
-    <ComboboxPrimitive.Chip
-      ref={ref}
-      className={cn(
-        "flex items-center gap-1 rounded-full bg-muted py-0.5 pl-2.5 pr-1 text-xs text-foreground",
-        "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
-        className
-      )}
+function ComboboxTrigger({
+  className,
+  children,
+  ...props
+}: ComboboxPrimitive.Trigger.Props) {
+  return (
+    <ComboboxPrimitive.Trigger
+      data-slot="combobox-trigger"
+      className={cn("cn-combobox-trigger", className)}
       {...props}
     >
       {children}
-    </ComboboxPrimitive.Chip>
+      <ChevronDownIcon
+        className="cn-combobox-trigger-icon pointer-events-none"
+      />
+    </ComboboxPrimitive.Trigger>
   )
-)
-ComboboxChip.displayName = "ComboboxChip"
+}
 
-const ComboboxChipRemove = React.forwardRef<
-  HTMLButtonElement,
-  ComboboxPrimitive.ChipRemove.Props & { "aria-label": string }
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.ChipRemove
-    ref={ref}
-    className={cn(
-      "inline-flex h-4 w-4 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors",
-      "hover:bg-background hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-      className
-    )}
-    {...props}
-  >
-    <X className="h-3 w-3" />
-  </ComboboxPrimitive.ChipRemove>
-))
-ComboboxChipRemove.displayName = "ComboboxChipRemove"
-
-const ComboboxClear = React.forwardRef<
-  HTMLButtonElement,
-  ComboboxPrimitive.Clear.Props & { "aria-label": string }
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.Clear
-    ref={ref}
-    className={cn(
-      "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded-full text-muted-foreground transition-colors",
-      "hover:bg-muted hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-      className
-    )}
-    {...props}
-  >
-    <X className="h-3.5 w-3.5" />
-  </ComboboxPrimitive.Clear>
-))
-ComboboxClear.displayName = "ComboboxClear"
-
-const ComboboxTrigger = React.forwardRef<
-  HTMLButtonElement,
-  ComboboxPrimitive.Trigger.Props & { "aria-label": string }
->(({ className, ...props }, ref) => (
-  <ComboboxPrimitive.Trigger
-    ref={ref}
-    className={cn(
-      "inline-flex h-5 w-5 shrink-0 items-center justify-center rounded text-muted-foreground transition-colors",
-      "hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-      className
-    )}
-    {...props}
-  >
-    <ChevronDown className="h-4 w-4" />
-  </ComboboxPrimitive.Trigger>
-))
-ComboboxTrigger.displayName = "ComboboxTrigger"
-
-/**
- * ドロップダウン本体。Portal + Positioner + Popup をまとめている。
- * SelectContent と同じ構成にしてある。
- */
-const ComboboxContent = React.forwardRef<
-  HTMLDivElement,
-  ComboboxPrimitive.Popup.Props &
-    Pick<ComboboxPrimitive.Positioner.Props, "align" | "side" | "sideOffset">
->(({ className, align = "start", side, sideOffset = 4, ...props }, ref) => (
-  <ComboboxPrimitive.Portal>
-    <ComboboxPrimitive.Positioner
-      align={align}
-      side={side}
-      sideOffset={sideOffset}
-      className="z-50 outline-none"
+function ComboboxClear({ className, ...props }: ComboboxPrimitive.Clear.Props) {
+  return (
+    <ComboboxPrimitive.Clear
+      data-slot="combobox-clear"
+      render={<InputGroupButton variant="ghost" size="icon-xs" />}
+      className={cn("cn-combobox-clear", className)}
+      {...props}
     >
-      <ComboboxPrimitive.Popup
-        ref={ref}
-        className={cn(
-          "max-h-[min(24rem,var(--available-height))] w-[var(--anchor-width)] overflow-y-auto rounded-lg border border-border bg-popover p-1 text-popover-foreground shadow-lg",
-          "data-open:animate-in data-open:fade-in-0 data-open:zoom-in-95",
-          "data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95",
-          className
-        )}
+      <XIcon
+        className="cn-combobox-clear-icon pointer-events-none"
+      />
+    </ComboboxPrimitive.Clear>
+  )
+}
+
+function ComboboxInput({
+  className,
+  children,
+  disabled = false,
+  showTrigger = true,
+  showClear = false,
+  ...props
+}: ComboboxPrimitive.Input.Props & {
+  showTrigger?: boolean
+  showClear?: boolean
+}) {
+  return (
+    <InputGroup className={cn("cn-combobox-input w-auto", className)}>
+      <ComboboxPrimitive.Input
+        render={<InputGroupInput disabled={disabled} />}
         {...props}
       />
-    </ComboboxPrimitive.Positioner>
-  </ComboboxPrimitive.Portal>
-))
-ComboboxContent.displayName = "ComboboxContent"
-
-const ComboboxList = React.forwardRef<HTMLDivElement, ComboboxPrimitive.List.Props>(
-  ({ className, ...props }, ref) => (
-    <ComboboxPrimitive.List ref={ref} className={cn("outline-none", className)} {...props} />
-  )
-)
-ComboboxList.displayName = "ComboboxList"
-
-const ComboboxItem = React.forwardRef<HTMLDivElement, ComboboxPrimitive.Item.Props>(
-  ({ className, children, ...props }, ref) => (
-    <ComboboxPrimitive.Item
-      ref={ref}
-      className={cn(
-        "relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors",
-        "data-highlighted:bg-accent data-highlighted:text-accent-foreground",
-        "data-disabled:pointer-events-none data-disabled:opacity-50",
-        className
-      )}
-      {...props}
-    >
-      <span className="absolute left-2 flex h-3.5 w-3.5 items-center justify-center">
-        <ComboboxPrimitive.ItemIndicator>
-          <Check className="h-4 w-4" />
-        </ComboboxPrimitive.ItemIndicator>
-      </span>
+      <InputGroupAddon align="inline-end">
+        {showTrigger && (
+          <InputGroupButton
+            size="icon-xs"
+            variant="ghost"
+            render={<ComboboxTrigger />}
+            data-slot="input-group-button"
+            className="group-has-data-[slot=combobox-clear]/input-group:hidden data-pressed:bg-transparent"
+            disabled={disabled}
+          />
+        )}
+        {showClear && <ComboboxClear disabled={disabled} />}
+      </InputGroupAddon>
       {children}
-    </ComboboxPrimitive.Item>
+    </InputGroup>
   )
-)
-ComboboxItem.displayName = "ComboboxItem"
+}
 
-/**
- * 該当が無いときに出す文言。
- *
- * Base UI の仕様上、この要素自体は常にマウントしたままにする
- * （読み上げの変更通知が安定しなくなるため）。中身だけを出し分ける。
- */
-const ComboboxEmpty = React.forwardRef<HTMLDivElement, ComboboxPrimitive.Empty.Props>(
-  ({ className, ...props }, ref) => (
-    <ComboboxPrimitive.Empty
-      ref={ref}
+function ComboboxContent({
+  className,
+  side = "bottom",
+  sideOffset = 6,
+  align = "start",
+  alignOffset = 0,
+  anchor,
+  ...props
+}: ComboboxPrimitive.Popup.Props &
+  Pick<
+    ComboboxPrimitive.Positioner.Props,
+    "side" | "align" | "sideOffset" | "alignOffset" | "anchor"
+  >) {
+  return (
+    <ComboboxPrimitive.Portal>
+      <ComboboxPrimitive.Positioner
+        side={side}
+        sideOffset={sideOffset}
+        align={align}
+        alignOffset={alignOffset}
+        anchor={anchor}
+        className="isolate z-50"
+      >
+        <ComboboxPrimitive.Popup
+          data-slot="combobox-content"
+          data-chips={!!anchor}
+          className={cn(
+            "cn-combobox-content cn-combobox-content-logical cn-menu-target cn-menu-translucent group/combobox-content relative max-h-(--available-height) w-(--anchor-width) max-w-(--available-width) min-w-[calc(var(--anchor-width)+--spacing(7))] origin-(--transform-origin) data-[chips=true]:min-w-(--anchor-width)",
+            className
+          )}
+          {...props}
+        />
+      </ComboboxPrimitive.Positioner>
+    </ComboboxPrimitive.Portal>
+  )
+}
+
+function ComboboxList({ className, ...props }: ComboboxPrimitive.List.Props) {
+  return (
+    <ComboboxPrimitive.List
+      data-slot="combobox-list"
       className={cn(
-        "px-2 py-1.5 text-sm text-muted-foreground empty:m-0 empty:p-0",
+        "cn-combobox-list overflow-y-auto overscroll-contain",
         className
       )}
       {...props}
     />
   )
-)
-ComboboxEmpty.displayName = "ComboboxEmpty"
+}
+
+function ComboboxItem({
+  className,
+  children,
+  ...props
+}: ComboboxPrimitive.Item.Props) {
+  return (
+    <ComboboxPrimitive.Item
+      data-slot="combobox-item"
+      className={cn(
+        "cn-combobox-item relative flex w-full cursor-default items-center outline-hidden select-none data-disabled:pointer-events-none data-disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      <ComboboxPrimitive.ItemIndicator
+        render={<span className="cn-combobox-item-indicator" />}
+      >
+        <CheckIcon
+          className="cn-combobox-item-indicator-icon pointer-events-none"
+        />
+      </ComboboxPrimitive.ItemIndicator>
+    </ComboboxPrimitive.Item>
+  )
+}
+
+function ComboboxGroup({ className, ...props }: ComboboxPrimitive.Group.Props) {
+  return (
+    <ComboboxPrimitive.Group
+      data-slot="combobox-group"
+      className={cn("cn-combobox-group", className)}
+      {...props}
+    />
+  )
+}
+
+function ComboboxLabel({
+  className,
+  ...props
+}: ComboboxPrimitive.GroupLabel.Props) {
+  return (
+    <ComboboxPrimitive.GroupLabel
+      data-slot="combobox-label"
+      className={cn("cn-combobox-label", className)}
+      {...props}
+    />
+  )
+}
+
+function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
+  return (
+    <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />
+  )
+}
+
+function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
+  return (
+    <ComboboxPrimitive.Empty
+      data-slot="combobox-empty"
+      className={cn("cn-combobox-empty", className)}
+      {...props}
+    />
+  )
+}
+
+function ComboboxSeparator({
+  className,
+  ...props
+}: ComboboxPrimitive.Separator.Props) {
+  return (
+    <ComboboxPrimitive.Separator
+      data-slot="combobox-separator"
+      className={cn("cn-combobox-separator", className)}
+      {...props}
+    />
+  )
+}
+
+function ComboboxChips({
+  className,
+  ...props
+}: React.ComponentPropsWithRef<typeof ComboboxPrimitive.Chips> &
+  ComboboxPrimitive.Chips.Props) {
+  return (
+    <ComboboxPrimitive.Chips
+      data-slot="combobox-chips"
+      className={cn("cn-combobox-chips", className)}
+      {...props}
+    />
+  )
+}
+
+// <important>
+// `removeLabel` はこのリポジトリの独自拡張。上流の ChipRemove は XIcon だけを
+// 描画しており、削除ボタンにアクセシブルな名前が付かない（スクリーンリーダーでは
+// 「ボタン」としか読まれず、どのチップを外すのか分からない）。
+// 上流を取り込み直すときは、この prop を再適用すること。
+// </important>
+function ComboboxChip({
+  className,
+  children,
+  showRemove = true,
+  removeLabel,
+  ...props
+}: ComboboxPrimitive.Chip.Props & {
+  showRemove?: boolean
+  removeLabel?: string
+}) {
+  return (
+    <ComboboxPrimitive.Chip
+      data-slot="combobox-chip"
+      className={cn(
+        "cn-combobox-chip has-disabled:pointer-events-none has-disabled:cursor-not-allowed has-disabled:opacity-50",
+        className
+      )}
+      {...props}
+    >
+      {children}
+      {showRemove && (
+        <ComboboxPrimitive.ChipRemove
+          render={<Button variant="ghost" size="icon-xs" />}
+          className="cn-combobox-chip-remove"
+          data-slot="combobox-chip-remove"
+          aria-label={removeLabel}
+        >
+          <XIcon
+            className="cn-combobox-chip-indicator-icon pointer-events-none"
+          />
+        </ComboboxPrimitive.ChipRemove>
+      )}
+    </ComboboxPrimitive.Chip>
+  )
+}
+
+function ComboboxChipsInput({
+  className,
+  ...props
+}: ComboboxPrimitive.Input.Props) {
+  return (
+    <ComboboxPrimitive.Input
+      data-slot="combobox-chip-input"
+      className={cn(
+        "cn-combobox-chip-input min-w-16 flex-1 outline-none",
+        className
+      )}
+      {...props}
+    />
+  )
+}
+
+function useComboboxAnchor() {
+  return React.useRef<HTMLDivElement | null>(null)
+}
 
 export {
   Combobox,
-  ComboboxChip,
-  ComboboxChipRemove,
-  ComboboxChips,
-  ComboboxClear,
-  ComboboxCollection,
-  ComboboxContent,
-  ComboboxEmpty,
-  ComboboxFieldset,
-  ComboboxGroup,
-  ComboboxGroupLabel,
   ComboboxInput,
-  ComboboxItem,
+  ComboboxContent,
   ComboboxList,
+  ComboboxItem,
+  ComboboxGroup,
+  ComboboxLabel,
+  ComboboxCollection,
+  ComboboxEmpty,
+  ComboboxSeparator,
+  ComboboxChips,
+  ComboboxChip,
+  ComboboxChipsInput,
   ComboboxTrigger,
   ComboboxValue,
+  useComboboxAnchor,
 }

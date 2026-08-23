@@ -14,16 +14,13 @@ import * as React from "react";
 import {
   Combobox,
   ComboboxChip,
-  ComboboxChipRemove,
   ComboboxChips,
-  ComboboxClear,
+  ComboboxChipsInput,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxFieldset,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
-  ComboboxTrigger,
   ComboboxValue,
 } from "../ui/combobox";
 
@@ -317,42 +314,44 @@ export const ApplicationCombobox = React.forwardRef<HTMLInputElement, Applicatio
         name={name}
         required={required}
       >
-        <ComboboxFieldset disabled={disabled} invalid={error} className={className}>
-          {multiple ? (
-            <ComboboxChips>
-              <ComboboxValue>
-                {(selected: string[]) =>
-                  selected.map((selectedValue) => (
-                    <ComboboxChip key={selectedValue}>
-                      {labelOf(selectedValue)}
-                      <ComboboxChipRemove
-                        aria-label={`${labelOf(selectedValue)} を外す`}
-                        disabled={disabled}
-                      />
-                    </ComboboxChip>
-                  ))
-                }
-              </ComboboxValue>
-              <ComboboxInput
-                ref={ref}
-                id={id}
-                placeholder={placeholder}
-                aria-invalid={error || undefined}
-                {...aria}
-              />
-            </ComboboxChips>
-          ) : (
-            <ComboboxInput
+        {multiple ? (
+          <ComboboxChips className={className} data-invalid={error || undefined}>
+            <ComboboxValue>
+              {(selected: string[]) =>
+                selected.map((selectedValue) => (
+                  // 削除ボタンは ComboboxChip が内包する（showRemove の既定は true）。
+                  // removeLabel を渡さないと「ボタン」としか読まれないため必ず渡す。
+                  <ComboboxChip
+                    key={selectedValue}
+                    removeLabel={`${labelOf(selectedValue)} を外す`}
+                  >
+                    {labelOf(selectedValue)}
+                  </ComboboxChip>
+                ))
+              }
+            </ComboboxValue>
+            <ComboboxChipsInput
               ref={ref}
               id={id}
               placeholder={placeholder}
+              disabled={disabled}
               aria-invalid={error || undefined}
               {...aria}
             />
-          )}
-          {clearable && <ComboboxClear aria-label="選択を消す" disabled={disabled} />}
-          <ComboboxTrigger aria-label="選択肢を開く" disabled={disabled} />
-        </ComboboxFieldset>
+          </ComboboxChips>
+        ) : (
+          // gen3 の ComboboxInput は入力欄・開閉トリガー・クリアボタンを内包する
+          <ComboboxInput
+            ref={ref}
+            id={id}
+            placeholder={placeholder}
+            disabled={disabled}
+            showClear={clearable}
+            aria-invalid={error || undefined}
+            className={className}
+            {...aria}
+          />
+        )}
         <ComboboxContent>
           {/* 新規作成は Root の items に混ぜない。items の identity が変わると
               Base UI が入力値を選択値のラベルへ戻してしまい、1文字打つたびに

@@ -22,6 +22,11 @@
 @import "./motion.css";
 @import "./fonts.css";
 
+/* components/ui/*.tsx (shadcn/ui gen3) が参照する cn-* クラスのスキン。
+ * このファイルの @layer components（.btn-primary 等のテンプレート用クラス）とは別系統。
+ * 詳細は components.css の冒頭コメントを参照。 */
+@import "./components.css";
+
 /* パッケージ内の .tsx が使う Tailwind クラスを consumer のビルドに拾わせる。
  * Tailwind v4 は node_modules を自動走査しないため明示が必要。 */
 @source "../components";

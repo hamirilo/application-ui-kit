@@ -1,7 +1,8 @@
 /**
  * ApplicationToast - 共有 UI ライブラリのトースト通知コンポーネント
  *
- * shadcn/ui の Toast をラップし、簡潔な API でトースト通知を表示する。
+ * shadcn/ui の Toast（Base UI の toast manager）をラップし、
+ * どこからでも呼べる命令型 API にまとめている。
  * アプリ内の通知はすべて ApplicationToast に一本化する。
  *
  * `ApplicationToaster` をアプリのルート付近に 1 つだけマウントし、
@@ -10,32 +11,24 @@
  *   ApplicationToast.success('保存しました')
  *   ApplicationToast.error('保存に失敗しました', 'ネットワークエラーです')
  *
- * アイコンは variant に応じて Toaster 側（components/ui/toaster.tsx）が
- * 自動で描画する。title / description には必ずプレーンな文字列を渡す。
+ * アイコンは type に応じて Toaster 側（components/ui/toast.tsx）が自動で描画する。
+ * title / description には必ずプレーンな文字列を渡す。
  */
 
-import { toast as shadcnToast } from "../../hooks/use-toast";
+import { toast as toastManager } from "../ui/toast";
 
+/** 通知の種類。shadcn/ui の toast type と 1:1 で対応する。 */
 export type ApplicationToastType = "success" | "error" | "warning" | "info";
 
 export interface ApplicationToastOptions {
   title?: string;
   description?: string;
   type?: ApplicationToastType;
+  /** 自動で閉じるまでのミリ秒 */
   duration?: number;
 }
 
 const DEFAULT_DURATION = 5000;
-
-const VARIANT_MAP: Record<
-  ApplicationToastType,
-  "default" | "destructive" | "success" | "warning" | "info"
-> = {
-  success: "success",
-  error: "destructive",
-  warning: "warning",
-  info: "info",
-};
 
 function showToast(
   type: ApplicationToastType,
@@ -43,11 +36,11 @@ function showToast(
   description?: string,
   duration?: number,
 ) {
-  shadcnToast({
+  toastManager.add({
     title,
     description,
-    variant: VARIANT_MAP[type],
-    duration: duration ?? DEFAULT_DURATION,
+    type,
+    timeout: duration ?? DEFAULT_DURATION,
   });
 }
 
@@ -70,4 +63,4 @@ export const ApplicationToast = {
   },
 };
 
-export { Toaster as ApplicationToaster } from "../ui/toaster";
+export { Toaster as ApplicationToaster } from "../ui/toast";

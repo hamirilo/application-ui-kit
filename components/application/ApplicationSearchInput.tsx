@@ -1,7 +1,7 @@
 /**
  * ApplicationSearchInput - 共有 UI ライブラリの検索入力コンポーネント
  *
- * ApplicationInput + 検索アイコン + クリアボタンをまとめたもの。
+ * shadcn/ui の InputGroup に検索アイコンとクリアボタンを組み合わせたもの。
  * 一覧・テーブルの上に置くフィルタ用検索欄で使う。
  *
  * <important>
@@ -10,18 +10,21 @@
  * </important>
  */
 
-import { Search, X } from "lucide-react";
+import { SearchIcon, XIcon } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { ApplicationInput, type ApplicationInputProps } from "./ApplicationInput";
+import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "../ui/input-group";
 
 export interface ApplicationSearchInputProps
-  extends Omit<ApplicationInputProps, "leftIcon" | "rightIcon" | "type"> {
+  extends Omit<React.ComponentPropsWithoutRef<"input">, "size" | "type"> {
   /**
    * クリアボタンを押したときのコールバック。
    * 渡すと値がある間だけクリアボタン（×）が表示される。
    */
   onClear?: () => void;
+
+  /** ラッパー（InputGroup）に付けるクラス */
+  className?: string;
 }
 
 /**
@@ -49,26 +52,33 @@ export const ApplicationSearchInput = React.forwardRef<
   const hasValue = value !== undefined && value !== "";
 
   return (
-    <ApplicationInput
-      ref={ref}
-      type="search"
-      value={value}
-      className={cn("[&::-webkit-search-cancel-button]:hidden", className)}
-      leftIcon={<Search className="h-4 w-4" />}
-      rightIcon={
-        onClear && hasValue ? (
-          <button
-            type="button"
+    <InputGroup className={className}>
+      <InputGroupAddon align="inline-start" aria-hidden="true">
+        <SearchIcon />
+      </InputGroupAddon>
+
+      <InputGroupInput
+        ref={ref}
+        type="search"
+        value={value}
+        // ブラウザ標準の × は位置もサイズも揃わないため隠し、クリアボタンに一本化する
+        className={cn("[&::-webkit-search-cancel-button]:hidden")}
+        {...props}
+      />
+
+      {onClear && hasValue && (
+        <InputGroupAddon align="inline-end">
+          <InputGroupButton
+            size="icon-xs"
             onClick={onClear}
             aria-label="検索キーワードをクリア"
-            className="rounded-full p-0.5 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            className="rounded-full"
           >
-            <X className="h-3.5 w-3.5" />
-          </button>
-        ) : undefined
-      }
-      {...props}
-    />
+            <XIcon />
+          </InputGroupButton>
+        </InputGroupAddon>
+      )}
+    </InputGroup>
   );
 });
 

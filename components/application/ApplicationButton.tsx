@@ -1,16 +1,33 @@
 /**
  * ApplicationButton - 共有 UI ライブラリのボタンコンポーネント
  *
- * shadcn/ui の Button をラップし、プロジェクト固有のバリアント・スタイルを提供します。
+ * shadcn/ui の Button をラップし、このリポジトリの意味論的なバリアント名
+ * （primary / secondary / danger / success）と `loading` を提供する。
  * 画面側では ApplicationButton のみを使用し、shadcn/ui の Button を直接使用しないでください。
+ *
+ * shadcn/ui 本体に `loading` はなく、利用側が Spinner を手で差し込む前提になっている。
+ * 送信中にボタンを無効化し忘れる事故を防ぐため、ここで面倒を見る。
  */
 
-import { Loader2 } from "lucide-react";
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { Button, type ButtonProps } from "../ui/button";
+import { Button } from "../ui/button";
+import { Spinner } from "../ui/spinner";
 
-export interface ApplicationButtonProps extends Omit<ButtonProps, "variant"> {
+/** このリポジトリの意味論的な名前 → shadcn/ui のバリアント名 */
+const VARIANT_MAP = {
+  primary: "default",
+  secondary: "outline",
+  danger: "destructive",
+  success: "success",
+  ghost: "ghost",
+  link: "link",
+} as const;
+
+export type ApplicationButtonVariant = keyof typeof VARIANT_MAP;
+
+export interface ApplicationButtonProps
+  extends Omit<React.ComponentPropsWithoutRef<typeof Button>, "variant"> {
   /**
    * ボタンのバリアント
    * - primary: メインアクション（作成・送信）- Blue
@@ -19,27 +36,22 @@ export interface ApplicationButtonProps extends Omit<ButtonProps, "variant"> {
    * - success: 保存完了・承認・確定 - Emerald
    * - ghost: 背景なし、ホバーで表示
    * - link: テキストリンク風
+   * @default "primary"
    */
-  variant?: "primary" | "secondary" | "danger" | "success" | "ghost" | "link";
+  variant?: ApplicationButtonVariant;
 
   /**
-   * ローディング状態（スピナーを表示）
+   * ローディング状態。true の間はスピナーを表示し、ボタンを無効化する。
+   * leftIcon / rightIcon はスピナーに置き換わる。
    */
   loading?: boolean;
 
-  /**
-   * 左側に表示するアイコン
-   */
+  /** 左側に表示するアイコン */
   leftIcon?: React.ReactNode;
 
-  /**
-   * 右側に表示するアイコン
-   */
+  /** 右側に表示するアイコン */
   rightIcon?: React.ReactNode;
 
-  /**
-   * 子要素
-   */
   children?: React.ReactNode;
 }
 
@@ -55,18 +67,15 @@ export interface ApplicationButtonProps extends Omit<ButtonProps, "variant"> {
  * <ApplicationButton variant="primary">作成</ApplicationButton>
  * <ApplicationButton variant="danger">削除</ApplicationButton>
  *
- * // ローディング状態
+ * // ローディング状態（自動で disabled になる）
  * <ApplicationButton loading>送信中...</ApplicationButton>
  *
  * // アイコン付き
- * <ApplicationButton leftIcon={<Plus className="w-4 h-4" />}>追加</ApplicationButton>
+ * <ApplicationButton leftIcon={<PlusIcon />}>追加</ApplicationButton>
  *
  * // サイズ指定
  * <ApplicationButton size="sm">小さいボタン</ApplicationButton>
  * <ApplicationButton size="lg">大きいボタン</ApplicationButton>
- *
- * // 無効化
- * <ApplicationButton disabled>無効</ApplicationButton>
  *
  * // フルワイド
  * <ApplicationButton className="w-full">幅いっぱい</ApplicationButton>
@@ -86,46 +95,19 @@ export const ApplicationButton = React.forwardRef<HTMLButtonElement, Application
     },
     ref,
   ) => {
-    // Application variant を shadcn/ui variant にマッピング
-    const shadcnVariant = React.useMemo(() => {
-      switch (variant) {
-        case "primary":
-          return "default";
-        case "secondary":
-          return "outline";
-        case "danger":
-          return "destructive";
-        case "success":
-          // success は shadcn/ui にないので、カスタムスタイルを適用
-          return "default";
-        case "ghost":
-          return "ghost";
-        case "link":
-          return "link";
-        default:
-          return "default";
-      }
-    }, [variant]);
-
-    // success バリアントのカスタムスタイル
-    // 色は input.css の --color-success トークン（btn-success と共通）に揃える
-    const successClassName =
-      variant === "success"
-        ? "bg-success hover:bg-success-hover text-success-foreground shadow-sm"
-        : "";
-
     return (
       <Button
         ref={ref}
-        variant={shadcnVariant}
+        variant={VARIANT_MAP[variant]}
         disabled={disabled || loading}
-        className={cn(successClassName, className)}
+        // 処理中であることを支援技術にも伝える（見た目のスピナーだけに頼らない）
+        aria-busy={loading || undefined}
+        className={cn("gap-2", className)}
         {...props}
       >
-        {loading && <Loader2 className="animate-spin" />}
-        {!loading && leftIcon && leftIcon}
+        {loading ? <Spinner /> : leftIcon}
         {children}
-        {!loading && rightIcon && rightIcon}
+        {!loading && rightIcon}
       </Button>
     );
   },

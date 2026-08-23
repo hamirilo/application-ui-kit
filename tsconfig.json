@@ -14,7 +14,6 @@
   },
   "include": [
     "components/**/*",
-    "hooks/**/*",
     "lib/**/*",
     "tokens/**/*",
     "stories/**/*",

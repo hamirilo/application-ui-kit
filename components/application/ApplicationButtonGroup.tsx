@@ -1,13 +1,15 @@
 /**
- * ApplicationButtonGroup - 共有 UI ライブラリのボタングループ（ラジオボタンのボタン表現）
+ * ApplicationButtonGroup - 共有 UI ライブラリのボタングループ（segmented control）
  *
  * 排他的な選択（どれか1つ）を、隣接したボタンの並びとして表現する。
- * 内部的にはラジオボタン（1つだけ選べる）であり、複数選択は表現できない。
+ * 内部は shadcn/ui の ToggleGroup（単一選択モード）で、複数選択は表現できない。
+ *
+ * 縦並びのラジオボタンで見せたい場合は `ApplicationRadioGroup` を使う。
  */
 
 import * as React from "react";
 import { cn } from "../../lib/utils";
-import { RadioGroup, RadioGroupItem } from "../ui/radio-group";
+import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
 
 export interface ApplicationButtonGroupItem {
   /** 選択時の値 */
@@ -30,12 +32,12 @@ export interface ApplicationButtonGroupProps {
   /** 初期選択値（非制御の場合） */
   defaultValue?: string;
 
-  /** 選択が変わったときに呼ばれる */
+  /** 選択が変わったときに呼ばれる。選択が外れた場合は空文字を渡す。 */
   onValueChange?: (value: string) => void;
 
   /**
    * 見た目のバリアント
-   * - primary: 選択中のボタンを塗りで強調（既定）
+   * - primary: 選択中のボタンを primary 色の塗りで強調（既定）
    * - secondary: 選択中のボタンを控えめな塗りで示す
    */
   variant?: "primary" | "secondary";
@@ -46,10 +48,13 @@ export interface ApplicationButtonGroupProps {
   /** 操作不可にする */
   disabled?: boolean;
 
-  /** input の name（通常のフォーム送信に含める場合） */
+  /**
+   * input の name（通常のフォーム送信に含める場合）。
+   * ToggleGroup 自体はフォームコントロールではないため、hidden input で値を送る。
+   */
   name?: string;
 
-  /** 必須 */
+  /** 必須。name と併せてフォーム送信時の検証に使う */
   required?: boolean;
 
   className?: string;
@@ -59,7 +64,6 @@ export interface ApplicationButtonGroupProps {
    *
    * <important>
    * 視覚的なラベルが画面上にない場合は `aria-label` か `aria-labelledby` が必須。
-   * `ApplicationFormField` で囲む場合はそちらの id が自動で紐づく。
    * </important>
    */
   "aria-label"?: string;
@@ -67,6 +71,12 @@ export interface ApplicationButtonGroupProps {
   /** ラベルとなる要素の id（画面上にラベルがある場合はこちらを使う） */
   "aria-labelledby"?: string;
 }
+
+/** ApplicationButtonGroup のサイズ名 → shadcn/ui の toggle サイズ名 */
+const SIZE_MAP = { sm: "sm", md: "default", lg: "lg" } as const;
+
+/** variant 名 → toggle バリアント名（primary は components/ui/toggle.tsx の独自拡張） */
+const VARIANT_MAP = { primary: "primary", secondary: "outline" } as const;
 
 /**
  * ApplicationButtonGroup コンポーネント
@@ -88,8 +98,8 @@ export interface ApplicationButtonGroupProps {
  * // アイコン付き
  * <ApplicationButtonGroup
  *   items={[
- *     { value: "list", label: "リスト", icon: <List /> },
- *     { value: "grid", label: "グリッド", icon: <Grid /> },
+ *     { value: "list", label: "リスト", icon: <ListIcon /> },
+ *     { value: "grid", label: "グリッド", icon: <GridIcon /> },
  *   ]}
  *   aria-label="表示形式"
  * />
@@ -112,31 +122,58 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
     },
     ref,
   ) => {
+    // Base UI の ToggleGroup は値を配列で扱う。
+    // このコンポーネントは単一選択なので、境界で string <-> string[] を変換する。
+    const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? "");
+    const current = value !== undefined ? value : uncontrolled;
+
+    const handleChange = React.useCallback(
+      (next: string[]) => {
+        const selected = next[0] ?? "";
+        if (value === undefined) setUncontrolled(selected);
+        onValueChange?.(selected);
+      },
+      [onValueChange, value],
+    );
+
     return (
-      <RadioGroup
+      <ToggleGroup
         ref={ref}
-        value={value}
-        defaultValue={defaultValue}
-        onValueChange={onValueChange as (v: unknown) => void}
+        value={value !== undefined ? (value === "" ? [] : [value]) : undefined}
+        defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
+        onValueChange={handleChange}
         disabled={disabled}
-        name={name}
-        required={required}
+        variant={VARIANT_MAP[variant]}
+        size={SIZE_MAP[size]}
+        // spacing=0 で隣接ボタンが 1 本の枠に見える segmented control になる
+        spacing={0}
         className={cn("inline-flex", className)}
         {...aria}
       >
         {items.map((item) => (
-          <RadioGroupItem
+          <ToggleGroupItem
             key={item.value}
             value={item.value}
             disabled={item.disabled}
-            variant={variant}
-            size={size}
+            className="gap-1.5"
           >
             {item.icon}
             {item.label}
-          </RadioGroupItem>
+          </ToggleGroupItem>
         ))}
-      </RadioGroup>
+
+        {/* ToggleGroup はフォームコントロールではないため、
+            通常のフォーム送信に値を載せるには hidden input が要る。 */}
+        {name && (
+          <input
+            type="hidden"
+            name={name}
+            value={current}
+            required={required}
+            disabled={disabled}
+          />
+        )}
+      </ToggleGroup>
     );
   },
 );
