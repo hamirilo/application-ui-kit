@@ -8,6 +8,7 @@ import {
   type ApplicationDropdownItem,
   ApplicationToast,
 } from "../../components/application";
+import { Labeled, Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationDropdown は行アクションのメニュー。
@@ -118,6 +119,119 @@ type ApplicationDropdownItem = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * トリガーの形・項目の構成・寄せ方を 1 画面で比較する。
+ *
+ * メニューは「行や画面に対する操作の入れ物」。ナビゲーションには使わない。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section
+        title="Triggers"
+        note="アイコンだけのトリガーには aria-label が必須。文字のトリガーには ▾ を付けて開くことを示す。"
+      >
+        <div className="flex flex-wrap items-start gap-8">
+          <Labeled label="アイコン（⋮）">
+            <ApplicationDropdown
+              trigger={
+                <ApplicationButton variant="ghost" size="icon" aria-label="操作メニュー">
+                  <MoreVertical className="w-4 h-4" />
+                </ApplicationButton>
+              }
+              items={[
+                { key: "edit", label: "編集" },
+                { key: "duplicate", label: "複製" },
+                { key: "delete", label: "削除", danger: true, separatorBefore: true },
+              ]}
+            />
+          </Labeled>
+          <Labeled label="文字 + ▾">
+            <ApplicationDropdown
+              trigger={
+                <ApplicationButton variant="secondary" rightIcon={<ChevronDown className="w-4 h-4" />}>
+                  操作
+                </ApplicationButton>
+              }
+              items={[
+                { key: "edit", label: "編集" },
+                { key: "export", label: "CSV でダウンロード" },
+              ]}
+            />
+          </Labeled>
+        </div>
+      </Section>
+
+      <Section
+        title="Items"
+        note="削除などの取り消せない操作は danger にし、separatorBefore で他の操作から離す。"
+      >
+        <div className="flex flex-wrap items-start gap-8">
+          <Labeled label="アイコン付き">
+            <ApplicationDropdown
+              trigger={
+                <ApplicationButton variant="ghost" size="icon" aria-label="操作メニュー（アイコン付き）">
+                  <MoreVertical className="w-4 h-4" />
+                </ApplicationButton>
+              }
+              items={[
+                { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" /> },
+                { key: "duplicate", label: "複製", icon: <Copy className="w-4 h-4" /> },
+                { key: "export", label: "CSV でダウンロード", icon: <Download className="w-4 h-4" /> },
+                { key: "archive", label: "アーカイブ", icon: <Archive className="w-4 h-4" /> },
+                {
+                  key: "delete",
+                  label: "削除",
+                  icon: <Trash className="w-4 h-4" />,
+                  danger: true,
+                  separatorBefore: true,
+                },
+              ]}
+            />
+          </Labeled>
+          <Labeled label="見出し付き / 無効な項目あり">
+            <ApplicationDropdown
+              trigger={
+                <ApplicationButton variant="ghost" size="icon" aria-label="操作メニュー（見出し付き）">
+                  <MoreVertical className="w-4 h-4" />
+                </ApplicationButton>
+              }
+              label="この申請に対する操作"
+              items={[
+                { key: "edit", label: "編集" },
+                { key: "approve", label: "承認（権限なし）", disabled: true },
+                { key: "delete", label: "削除", danger: true, separatorBefore: true },
+              ]}
+            />
+          </Labeled>
+        </div>
+      </Section>
+
+      <Section title="Align" note="行の右端に置くメニューは end。既定は start。">
+        <div className="flex flex-wrap items-start gap-8">
+          {(["start", "center", "end"] as const).map((align) => (
+            <Labeled key={align} label={`align="${align}"`}>
+              <ApplicationDropdown
+                align={align}
+                trigger={
+                  <ApplicationButton variant="ghost" size="icon" aria-label={`操作メニュー（${align}）`}>
+                    <MoreVertical className="w-4 h-4" />
+                  </ApplicationButton>
+                }
+                items={[
+                  { key: "edit", label: "編集" },
+                  { key: "duplicate", label: "複製" },
+                ]}
+              />
+            </Labeled>
+          ))}
+        </div>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。⋮ ボタンから開く。矢印キー・Enter・Esc が使える。 */
 export const Default: Story = {};

@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import { ApplicationButton, ApplicationCheckbox } from "../../components/application";
+import { Section, Showcase, Stack } from "../_showcase";
 
 /**
  * ApplicationCheckbox はオン / オフを切り替えるためのコンポーネント。
@@ -73,6 +74,52 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * 状態の一覧。チェックボックスは小さいため、状態の差が読み取れるかをここで確認する。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section
+        title="States"
+        note="indeterminate は「子の一部だけが選択されている」ことを表す。単独では使わない。"
+      >
+        <Stack>
+          <ApplicationCheckbox label="未チェック" />
+          <ApplicationCheckbox label="チェック済み" defaultChecked />
+          <ApplicationCheckbox label="一部選択（indeterminate）" indeterminate />
+          <ApplicationCheckbox label="無効" disabled />
+          <ApplicationCheckbox label="無効かつチェック済み" disabled defaultChecked />
+        </Stack>
+      </Section>
+
+      <Section
+        title="With Description"
+        note="補足はラベルに詰め込まず description に置く。ラベルは短く保つ。"
+      >
+        <Stack>
+          <ApplicationCheckbox
+            label="メール通知を受け取る"
+            description="申請の状態が変わったときに通知します。あとから設定画面で変更できます。"
+          />
+        </Stack>
+      </Section>
+
+      <Section title="親子の選択" note="親は子の状態に応じて checked / indeterminate を切り替える。">
+        <Stack>
+          <ApplicationCheckbox label="すべて選択" indeterminate />
+          <div className="ml-6 space-y-2.5">
+            <ApplicationCheckbox label="備品購入申請" defaultChecked />
+            <ApplicationCheckbox label="出張申請" />
+            <ApplicationCheckbox label="休暇申請" />
+          </div>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。ラベルのクリックでもトグルできる。 */
 export const Default: Story = {};
@@ -173,18 +220,4 @@ export const MultiSelectList: Story = {
       </div>
     );
   },
-};
-
-/** 全状態の一覧。 */
-export const AllStates: Story = {
-  render: () => (
-    <div className="space-y-3">
-      <ApplicationCheckbox label="未チェック" />
-      <ApplicationCheckbox label="チェック済み" defaultChecked />
-      <ApplicationCheckbox label="一部選択" indeterminate />
-      <ApplicationCheckbox label="無効" disabled />
-      <ApplicationCheckbox label="無効かつチェック済み" disabled defaultChecked />
-      <ApplicationCheckbox label="説明付き" description="補足の説明文がここに入ります" />
-    </div>
-  ),
 };

@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Bell, Settings, User } from "lucide-react";
 import * as React from "react";
 import { Card, ApplicationTabs } from "../../components/application";
+import { Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationTabs は同一画面内で複数のビューを切り替えるためのコンポーネント。
@@ -75,6 +76,68 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * タブの構成パターンを 1 画面で比較する。
+ *
+ * タブは同一画面内のビュー切り替えに使う。URL が変わる遷移には使わない。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="Default" note="1 つ目のタブが初期選択される。タブ名は 2〜6 文字程度に収める。">
+        <ApplicationTabs items={BASIC_ITEMS} />
+      </Section>
+
+      <Section title="With Icons" note="アイコンはラベルの補助。アイコンだけのタブにしない。">
+        <ApplicationTabs
+          items={[
+            {
+              value: "profile",
+              label: "プロフィール",
+              icon: <User className="h-4 w-4" />,
+              content: <p className="text-sm text-foreground">プロフィール情報。</p>,
+            },
+            {
+              value: "notifications",
+              label: "通知",
+              icon: <Bell className="h-4 w-4" />,
+              content: <p className="text-sm text-foreground">通知設定。</p>,
+            },
+            {
+              value: "settings",
+              label: "設定",
+              icon: <Settings className="h-4 w-4" />,
+              content: <p className="text-sm text-foreground">その他の設定。</p>,
+            },
+          ]}
+        />
+      </Section>
+
+      <Section
+        title="With Disabled Tab"
+        note="権限がない等で開けないタブは disabled にする。隠すと存在に気づけない。"
+      >
+        <ApplicationTabs
+          items={[
+            {
+              value: "overview",
+              label: "概要",
+              content: <p className="text-sm text-foreground">概要の内容。</p>,
+            },
+            {
+              value: "audit",
+              label: "監査ログ",
+              disabled: true,
+              content: <p className="text-sm text-foreground">閲覧権限が必要です。</p>,
+            },
+          ]}
+        />
+      </Section>
+    </Showcase>
+  ),
+};
 
 const BASIC_ITEMS = meta.args.items;
 

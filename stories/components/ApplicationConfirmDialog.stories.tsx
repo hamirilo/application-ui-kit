@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import { ApplicationButton, ApplicationConfirmDialog } from "../../components/application";
+import { Cluster, Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationConfirmDialog は「実行してよいか」を尋ねる確認ダイアログ。
@@ -114,6 +115,86 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const CONFIRM_VARIATIONS = [
+  {
+    type: "info",
+    label: "info",
+    title: "申請の送信",
+    message: "この内容で申請を送信しますか？",
+    confirmText: "送信する",
+  },
+  {
+    type: "warning",
+    label: "warning",
+    title: "申請のアーカイブ",
+    message: "アーカイブすると一覧に表示されなくなります。",
+    confirmText: "アーカイブする",
+  },
+  {
+    type: "danger",
+    label: "danger",
+    title: "申請の削除",
+    message: "この申請を削除します。削除すると元に戻せません。",
+    confirmText: "削除する",
+  },
+  {
+    type: "success",
+    label: "success",
+    title: "申請の承認",
+    message: "この申請を承認しますか？",
+    confirmText: "承認する",
+  },
+] as const;
+
+/**
+ * type ごとの見た目を 1 画面から開いて比較する。
+ *
+ * アイコン・色・確定ボタンの variant は `type` から決まる。
+ * 呼び出し側で色を指定しないため、「削除なのに青い」という食い違いが起きない。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const [openType, setOpenType] = React.useState<string | null>(null);
+    const current = CONFIRM_VARIATIONS.find((v) => v.type === openType);
+
+    return (
+      <Showcase>
+        <Section
+          title="Types"
+          note="取り消せない操作は必ず danger。確定ボタンのラベルは「はい」ではなく操作名（削除する）にする。"
+        >
+          <Cluster>
+            {CONFIRM_VARIATIONS.map((v) => (
+              <ApplicationButton
+                key={v.type}
+                variant="secondary"
+                onClick={() => setOpenType(v.type)}
+              >
+                {v.label}
+              </ApplicationButton>
+            ))}
+          </Cluster>
+        </Section>
+
+        {current && (
+          <ApplicationConfirmDialog
+            key={current.type}
+            open
+            onOpenChange={(next) => !next && setOpenType(null)}
+            type={current.type}
+            title={current.title}
+            message={current.message}
+            detail="detail には影響範囲（関連データも消える等）を書く。"
+            confirmText={current.confirmText}
+            onConfirm={() => setOpenType(null)}
+          />
+        )}
+      </Showcase>
+    );
+  },
+};
 
 /** ボタンから開く基本形。`type` を Controls で切り替えて見た目を比較できる。 */
 export const Default: Story = {
@@ -335,68 +416,6 @@ export const MessageOnly: Story = {
           confirmText="破棄"
           onConfirm={() => setOpen(false)}
         />
-      </>
-    );
-  },
-};
-
-/** 4 つの `type` を並べて比較する。 */
-export const AllTypes: Story = {
-  render: (args) => {
-    const TYPES = [
-      { type: "info", label: "info", title: "確認", message: "実行しますか？", text: "実行" },
-      {
-        type: "warning",
-        label: "warning",
-        title: "アーカイブ確認",
-        message: "アーカイブしますか？",
-        text: "アーカイブ",
-      },
-      {
-        type: "danger",
-        label: "danger",
-        title: "削除確認",
-        message: "削除しますか？",
-        text: "削除",
-      },
-      {
-        type: "success",
-        label: "success",
-        title: "公開確認",
-        message: "公開しますか？",
-        text: "公開",
-      },
-    ] as const;
-
-    const [openType, setOpenType] = React.useState<(typeof TYPES)[number] | null>(null);
-
-    return (
-      <>
-        <div className="flex flex-wrap gap-2">
-          {TYPES.map((t) => (
-            <ApplicationButton
-              key={t.type}
-              variant="secondary"
-              size="sm"
-              onClick={() => setOpenType(t)}
-            >
-              type=&quot;{t.label}&quot;
-            </ApplicationButton>
-          ))}
-        </div>
-        {openType && (
-          <ApplicationConfirmDialog
-            {...args}
-            open
-            onOpenChange={(next) => !next && setOpenType(null)}
-            type={openType.type}
-            title={openType.title}
-            message={openType.message}
-            detail="type によってアイコン・色・確定ボタンの variant が連動します。"
-            confirmText={openType.text}
-            onConfirm={() => setOpenType(null)}
-          />
-        )}
       </>
     );
   },

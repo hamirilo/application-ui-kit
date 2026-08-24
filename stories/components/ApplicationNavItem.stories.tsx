@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Archive, Clock, Heart, Inbox, Pin } from "lucide-react";
 import { useState } from "react";
 import { ApplicationNavItem } from "../../components/application/ApplicationNavItem";
+import { Section, Showcase } from "../_showcase";
 
 const meta = {
   title: "Components/ApplicationNavItem",
@@ -30,6 +31,67 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * 状態と色を 1 画面で比較する。
+ *
+ * アクティブ表示の移動アニメーションは `AnimatedNavigationGroup` で確認する
+ * （ここでは静的な見た目だけを並べている）。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="States" note="アクティブは色と背景の 2 つで示す。色だけに頼らない。">
+        <div className="w-64 space-y-1 rounded-xl border border-border bg-card p-3">
+          <ApplicationNavItem href="#" active icon={<Inbox className="w-4 h-4" />} label="受信トレイ" />
+          <ApplicationNavItem href="#" icon={<Clock className="w-4 h-4" />} label="いつか読む" />
+          <ApplicationNavItem href="#" icon={<Archive className="w-4 h-4" />} label="アーカイブ" />
+        </div>
+      </Section>
+
+      <Section title="With Badge" note="件数は badge に渡す。0 件のときは渡さない（0 を出しても意味がない）。">
+        <div className="w-64 space-y-1 rounded-xl border border-border bg-card p-3">
+          <ApplicationNavItem
+            href="#"
+            active
+            icon={<Inbox className="w-4 h-4" />}
+            label="受信トレイ"
+            badge={12}
+          />
+          <ApplicationNavItem
+            href="#"
+            icon={<Pin className="w-4 h-4" />}
+            label="ピン留め"
+            badge={3}
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="Active Colors"
+        note="アプリ内で色を使い分けるのは、区分（受信 / お気に入り等）を色で覚えてもらう場合だけ。"
+      >
+        <div className="w-64 space-y-1 rounded-xl border border-border bg-card p-3">
+          <ApplicationNavItem href="#" active activeColor="primary" icon={<Inbox className="w-4 h-4" />} label="primary" />
+          <ApplicationNavItem href="#" active activeColor="blue" icon={<Inbox className="w-4 h-4" />} label="blue" />
+          <ApplicationNavItem href="#" active activeColor="indigo" icon={<Clock className="w-4 h-4" />} label="indigo" />
+          <ApplicationNavItem href="#" active activeColor="teal" icon={<Archive className="w-4 h-4" />} label="teal" />
+          <ApplicationNavItem href="#" active activeColor="amber" icon={<Pin className="w-4 h-4" />} label="amber" />
+          <ApplicationNavItem href="#" active activeColor="rose" icon={<Heart className="w-4 h-4" />} label="rose" />
+          <ApplicationNavItem href="#" active activeColor="emerald" icon={<Inbox className="w-4 h-4" />} label="emerald" />
+        </div>
+      </Section>
+
+      <Section title="Link / Button" note="href があれば a、なければ button になる。画面遷移しないものに href を付けない。">
+        <div className="w-64 space-y-1 rounded-xl border border-border bg-card p-3">
+          <ApplicationNavItem href="#" icon={<Inbox className="w-4 h-4" />} label="href あり（a 要素）" />
+          <ApplicationNavItem icon={<Inbox className="w-4 h-4" />} label="href なし（button 要素）" />
+        </div>
+      </Section>
+    </Showcase>
+  ),
+};
 
 export const Default: Story = {};
 

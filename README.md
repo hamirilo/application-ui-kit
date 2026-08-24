@@ -17,6 +17,46 @@ StorybookをUIの視覚的な仕様・使用例として扱います。新しい
     bun install
     bun run storybook
 
+Storybookは包括的なデザインシステムではなく、**UI Kitのショールーム兼 開発・テスト環境**として位置付けます。Storyを増やすことが目的ではありません。UIを探す・比較する・理解する・検証するコストを下げることが目的です。
+
+### 構成
+
+    Getting Started      使い方とStory作成の基準
+    Foundations          Colors / Typography / Spacing / Radius & Shadow / Icons
+    Components           部品1つずつ（Overview + 個別Story）
+    Patterns             Form / EmptyState / ErrorState / Search / DataTable など
+    Gallery              All Components（全体の俯瞰）
+
+### 3段階で見る
+
+    Gallery              何があるか
+       ↓
+    Component Overview   どんな種類・状態があるか
+       ↓
+    Individual Story     実際にどう動くか
+
+- **Gallery** は主要な部品を1画面に並べます。代表的な状態だけを載せ、Propsは網羅しません。
+- **Overview** は各コンポーネントの先頭のStoryです。variant / size / 状態を1画面で比較します。デザイン確認・UIレビュー用のため、Controlsは無効にします。
+- **個別Story** は1状態を1Storyで持ちます。操作・Props変更・Visual Regression Test・不具合再現に使います。
+- **Patterns** は複数の部品を組み合わせた画面の作り方を示します。「どの部品を使うか」ではなく「アプリではどう組み合わせるか」です。
+- **Foundations** は実装時に確認が必要な情報だけに限定します。
+
+サイドバーのセクション順は `.storybook/preview.tsx` の `storySort` が決めます。コンポーネント内の並びはStoryファイル内の定義順のままなので、**Overviewはファイルの先頭に書きます**。
+
+### Story作成の基準
+
+すべての状態を機械的にStory化しません。次のいずれかに当てはまるものをStoryにします。
+
+- 複数のバリエーションがある
+- 状態によって見た目が大きく変わる
+- Loading / Error / Empty を持つ
+- UIレビューで確認する価値がある
+- 実アプリでは再現しにくい（通信エラー、長い文字列、境界値など）
+- Visual Regression Testの対象にしたい
+- 使い方を間違えやすい
+
+単純なshadcn/uiコンポーネントを、そのまま網羅的にStory化することは目的としません。詳細はStorybookの **Getting Started** を参照してください。見本を並べる表示部品は `stories/_showcase.tsx`（`Showcase` / `Section` / `Cluster` / `Stack` / `Labeled` / `Grid` / `Frame`）にあります。
+
 ## Token
 
 tokens/theme.css がスタイルTokenの入口です。コンポーネントではraw colorではなく、bg-primary、text-foreground、border-borderなどのsemantic tokenを使います。アプリごとのブランド差分はアプリ側のToken overrideで表現し、コンポーネント実装を複製しないでください。
@@ -109,7 +149,7 @@ GitHub Releaseをpublishすると `.github/workflows/publish.yml` が公開し�
 3. ラップする場合は components/application/ に実装し、何を足したのかをファイル冒頭に書く。
 4. 見た目は tokens/components.css の cn-* に置き、.tsx にクラスを直書きしない。
    テンプレート用クラス（tokens/theme.css の @layer components）も併せて揃える。
-5. Storybookに目的、状態、使い方、使わない場面を追加する。
+5. Storybookに目的、状態、使い方、使わない場面を追加する。Overviewを先頭に置き、必要な状態を個別Storyにする。Galleryに代表的な見た目を1つ足す。
 6. typecheck、test、lint、Storybook buildを確認する。
 
 実装の詳細な手順や昇格判断はPlaybookを参照してください。

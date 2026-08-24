@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import { ApplicationFormField, ApplicationSelect, type ApplicationSelectItem } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 const PRIORITIES: ApplicationSelectItem[] = [
   { value: "high", label: "高" },
@@ -124,6 +125,57 @@ type ApplicationSelectItem = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * 状態とグループ分けを 1 画面で比較する。
+ *
+ * 選択肢が 8 個を超えるときは `ApplicationCombobox`（絞り込み付き）を検討する。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="States" note="placeholder はラベルの代わりにならない。ラベルは別に置く。">
+        <Stack>
+          <Labeled label="未選択（placeholder）">
+            <ApplicationSelect items={PRIORITIES} placeholder="優先度を選択" aria-label="未選択" />
+          </Labeled>
+          <Labeled label="選択済み">
+            <ApplicationSelect items={PRIORITIES} defaultValue="high" aria-label="選択済み" />
+          </Labeled>
+          <Labeled label="エラー">
+            <ApplicationSelect items={PRIORITIES} error placeholder="優先度を選択" aria-label="エラー" />
+          </Labeled>
+          <Labeled label="無効">
+            <ApplicationSelect items={PRIORITIES} disabled defaultValue="low" aria-label="無効" />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section
+        title="Items"
+        note="選択肢そのものを無効にできる（権限で選べない等）。理由はラベルに書く。"
+      >
+        <Stack>
+          <Labeled label="選択肢の一部を無効化">
+            <ApplicationSelect items={STATUSES} defaultValue="new" aria-label="ステータス" />
+          </Labeled>
+          <Labeled label="group でまとめる">
+            <ApplicationSelect items={DEPARTMENTS} placeholder="部署を選択" aria-label="部署" />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="With Label" note="実装ではこの形が基本。">
+        <Stack>
+          <ApplicationFormField label="優先度" required>
+            <ApplicationSelect items={PRIORITIES} placeholder="優先度を選択" />
+          </ApplicationFormField>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
+
 /** 基本形。未選択時は `placeholder` が薄い文字で表示される。 */
 export const Default: Story = {};
 
@@ -203,23 +255,6 @@ export const WithFormField: Story = {
       <ApplicationFormField label="担当部署" required error="担当部署を選択してください">
         <ApplicationSelect items={DEPARTMENTS} placeholder="部署を選択" />
       </ApplicationFormField>
-    </div>
-  ),
-};
-
-/** 全状態の一覧。 */
-export const AllStates: Story = {
-  render: () => (
-    <div className="space-y-3">
-      <ApplicationSelect items={PRIORITIES} placeholder="未選択" aria-label="優先度（未選択）" />
-      <ApplicationSelect items={PRIORITIES} defaultValue="high" aria-label="優先度（選択済み）" />
-      <ApplicationSelect items={PRIORITIES} error placeholder="エラー" aria-label="優先度（エラー）" />
-      <ApplicationSelect
-        items={PRIORITIES}
-        disabled
-        defaultValue="low"
-        aria-label="優先度（操作不可）"
-      />
     </div>
   ),
 };

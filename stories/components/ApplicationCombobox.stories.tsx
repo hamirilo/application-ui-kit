@@ -7,6 +7,7 @@ import {
   ApplicationFormField,
   splitCreatedValues,
 } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 const SHOPS: ApplicationComboboxItem[] = [
   { value: "1", label: "渋谷店", badge: "128" },
@@ -140,6 +141,94 @@ const { values, created } = splitCreatedValues(selected)
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * 選択モードと状態を 1 画面で比較する。
+ *
+ * 選択肢が 8 個以下で絞り込みが不要なら `ApplicationSelect` を使う。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="Modes" note="単一選択・複数選択・新規作成つき。用途に応じて 1 つだけ選ぶ。">
+        <Stack className="max-w-md">
+          <Labeled label="単一選択（既定）">
+            <ApplicationCombobox items={SHOPS} placeholder="店舗を選択" aria-label="店舗" />
+          </Labeled>
+          <Labeled label="複数選択（multiple）">
+            <ApplicationCombobox
+              items={TAGS}
+              multiple
+              defaultValue={["urgent"]}
+              placeholder="タグを選択"
+              aria-label="タグ"
+            />
+          </Labeled>
+          <Labeled label="新規作成つき（creatable）">
+            <ApplicationCombobox
+              items={TAGS}
+              multiple
+              creatable
+              placeholder="タグを選択または入力"
+              aria-label="タグ（新規作成つき）"
+            />
+          </Labeled>
+          <Labeled label="クリアできる（clearable）">
+            <ApplicationCombobox
+              items={SHOPS}
+              clearable
+              defaultValue={SHOPS[0].value}
+              placeholder="店舗を選択"
+              aria-label="店舗（クリア可）"
+            />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section
+        title="States"
+        note="候補が 0 件のときは emptyMessage を出す。無言で閉じると壊れて見える。"
+      >
+        <Stack className="max-w-md">
+          <Labeled label="候補なし（emptyMessage）">
+            <ApplicationCombobox
+              items={[]}
+              emptyMessage="該当する店舗がありません"
+              placeholder="店舗を選択"
+              aria-label="店舗（候補なし）"
+            />
+          </Labeled>
+          <Labeled label="エラー">
+            <ApplicationCombobox
+              items={SHOPS}
+              error
+              placeholder="店舗を選択"
+              aria-label="店舗（エラー）"
+            />
+          </Labeled>
+          <Labeled label="無効">
+            <ApplicationCombobox
+              items={SHOPS}
+              disabled
+              defaultValue={SHOPS[0].value}
+              placeholder="店舗を選択"
+              aria-label="店舗（無効）"
+            />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="With Label" note="実装ではこの形が基本。">
+        <Stack className="max-w-md">
+          <ApplicationFormField label="店舗" required helpText="コードでも名前でも絞り込めます">
+            <ApplicationCombobox items={SHOPS} placeholder="店舗を選択" />
+          </ApplicationFormField>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。入力するとラベルで絞り込まれる。`badge` は絞り込みの対象にならない。 */
 export const Default: Story = {};

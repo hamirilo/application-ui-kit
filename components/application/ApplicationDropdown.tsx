@@ -12,6 +12,7 @@ import { cn } from "../../lib/utils";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -111,27 +112,38 @@ export const ApplicationDropdown = ({
   label,
   align = "end",
 }: ApplicationDropdownProps) => {
+  const renderedItems = items.map((item) => (
+    <React.Fragment key={item.key}>
+      {item.separatorBefore && <DropdownMenuSeparator />}
+      <DropdownMenuItem
+        disabled={item.disabled}
+        onClick={item.onSelect}
+        className={cn(
+          item.danger &&
+            "text-red-600 dark:text-red-400 data-highlighted:bg-red-50 dark:data-highlighted:bg-red-950/50 data-highlighted:text-red-600 dark:data-highlighted:text-red-400",
+        )}
+      >
+        {item.icon}
+        {item.label}
+      </DropdownMenuItem>
+    </React.Fragment>
+  ));
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger render={trigger as React.ReactElement} />
       <DropdownMenuContent align={align}>
-        {label && <DropdownMenuLabel>{label}</DropdownMenuLabel>}
-        {items.map((item) => (
-          <React.Fragment key={item.key}>
-            {item.separatorBefore && <DropdownMenuSeparator />}
-            <DropdownMenuItem
-              disabled={item.disabled}
-              onClick={item.onSelect}
-              className={cn(
-                item.danger &&
-                  "text-red-600 dark:text-red-400 data-highlighted:bg-red-50 dark:data-highlighted:bg-red-950/50 data-highlighted:text-red-600 dark:data-highlighted:text-red-400",
-              )}
-            >
-              {item.icon}
-              {item.label}
-            </DropdownMenuItem>
-          </React.Fragment>
-        ))}
+        {/* 見出しは Base UI の Menu.GroupLabel。
+            Menu.Group の外に置くと MenuGroupContext が無くて実行時エラーになるため、
+            見出しを出すときは項目ごと Group で包む（見出しが指すのはこの項目群）。 */}
+        {label ? (
+          <DropdownMenuGroup>
+            <DropdownMenuLabel>{label}</DropdownMenuLabel>
+            {renderedItems}
+          </DropdownMenuGroup>
+        ) : (
+          renderedItems
+        )}
       </DropdownMenuContent>
     </DropdownMenu>
   );

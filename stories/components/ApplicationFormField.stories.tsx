@@ -5,6 +5,7 @@ import {
   ApplicationInput,
   ApplicationSelect,
 } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 /**
  * ApplicationFormField はラベル・入力欄・エラー・ヘルプをまとめる部品。
@@ -95,6 +96,95 @@ application の \`includes/molecules/form_field.html\` の React 版。
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * ラベル・必須・ヘルプ・エラー・並び方向を 1 画面で比較する。
+ *
+ * `error` があるときはヘルプではなくエラーを優先して読ませる。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="Label" note="必須は required で示す。「任意」と書きたいときは helpText に置く。">
+        <Stack className="max-w-md">
+          <ApplicationFormField label="件名">
+            <ApplicationInput placeholder="例: 備品購入の申請" />
+          </ApplicationFormField>
+          <ApplicationFormField label="件名" required>
+            <ApplicationInput placeholder="例: 備品購入の申請" />
+          </ApplicationFormField>
+        </Stack>
+      </Section>
+
+      <Section
+        title="Help / Error"
+        note="ヘルプは入力前に読むもの、エラーは入力後に読むもの。両方あるときはエラーを上に出す。"
+      >
+        <Stack className="max-w-md">
+          <ApplicationFormField label="件名" helpText="50 文字以内で入力してください">
+            <ApplicationInput placeholder="例: 備品購入の申請" />
+          </ApplicationFormField>
+          <ApplicationFormField label="件名" required error="件名は必須です">
+            <ApplicationInput error defaultValue="" />
+          </ApplicationFormField>
+          <ApplicationFormField
+            label="件名"
+            required
+            error="50 文字以内で入力してください"
+            helpText="申請の内容が分かる名前にしてください"
+          >
+            <ApplicationInput error defaultValue="長すぎる件名..." />
+          </ApplicationFormField>
+        </Stack>
+      </Section>
+
+      <Section
+        title="Orientation"
+        note="既定は vertical。horizontal は設定画面のように項目が少ない画面だけに使う。"
+      >
+        <Stack className="max-w-2xl">
+          <Labeled label="vertical（既定）">
+            <ApplicationFormField label="優先度" required>
+              <ApplicationSelect
+                items={[
+                  { value: "high", label: "高" },
+                  { value: "mid", label: "中" },
+                  { value: "low", label: "低" },
+                ]}
+                placeholder="優先度を選択"
+              />
+            </ApplicationFormField>
+          </Labeled>
+          <Labeled label="horizontal">
+            <ApplicationFormField label="優先度" required orientation="horizontal">
+              <ApplicationSelect
+                items={[
+                  { value: "high", label: "高" },
+                  { value: "mid", label: "中" },
+                  { value: "low", label: "低" },
+                ]}
+                placeholder="優先度を選択"
+              />
+            </ApplicationFormField>
+          </Labeled>
+          <Labeled label="responsive（狭い画面で縦、広い画面で横）">
+            <ApplicationFormField label="優先度" required orientation="responsive">
+              <ApplicationSelect
+                items={[
+                  { value: "high", label: "高" },
+                  { value: "mid", label: "中" },
+                  { value: "low", label: "低" },
+                ]}
+                placeholder="優先度を選択"
+              />
+            </ApplicationFormField>
+          </Labeled>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。ラベルをクリックすると入力欄にフォーカスが移る。 */
 export const Default: Story = {};

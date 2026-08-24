@@ -137,33 +137,39 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
     );
 
     return (
-      <ToggleGroup
-        ref={ref}
-        value={value !== undefined ? (value === "" ? [] : [value]) : undefined}
-        defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
-        onValueChange={handleChange}
-        disabled={disabled}
-        variant={VARIANT_MAP[variant]}
-        size={SIZE_MAP[size]}
-        // spacing=0 で隣接ボタンが 1 本の枠に見える segmented control になる
-        spacing={0}
-        className={cn("inline-flex", className)}
-        {...aria}
-      >
-        {items.map((item) => (
-          <ToggleGroupItem
-            key={item.value}
-            value={item.value}
-            disabled={item.disabled}
-            className="gap-1.5"
-          >
-            {item.icon}
-            {item.label}
-          </ToggleGroupItem>
-        ))}
+      <>
+        <ToggleGroup
+          ref={ref}
+          value={value !== undefined ? (value === "" ? [] : [value]) : undefined}
+          defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
+          onValueChange={handleChange}
+          disabled={disabled}
+          variant={VARIANT_MAP[variant]}
+          size={SIZE_MAP[size]}
+          // spacing=0 で隣接ボタンが 1 本の枠に見える segmented control になる
+          spacing={0}
+          className={cn("inline-flex", className)}
+          {...aria}
+        >
+          {items.map((item) => (
+            <ToggleGroupItem
+              key={item.value}
+              value={item.value}
+              disabled={item.disabled}
+              className="gap-1.5"
+            >
+              {item.icon}
+              {item.label}
+            </ToggleGroupItem>
+          ))}
+        </ToggleGroup>
 
         {/* ToggleGroup はフォームコントロールではないため、
-            通常のフォーム送信に値を載せるには hidden input が要る。 */}
+            通常のフォーム送信に値を載せるには hidden input が要る。
+            両端の角丸は :first-child / :last-child で付くので、
+            この input は ToggleGroup の中に置かない（最後の item が
+            last-child でなくなり、右端の角丸が落ちる）。
+            input[type=hidden] は描画されないためレイアウトには影響しない。 */}
         {name && (
           <input
             type="hidden"
@@ -173,7 +179,7 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
             disabled={disabled}
           />
         )}
-      </ToggleGroup>
+      </>
     );
   },
 );

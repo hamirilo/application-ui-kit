@@ -8,6 +8,7 @@ import {
   ApplicationInput,
   ApplicationSelect,
 } from "../../components/application";
+import { Cluster, Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationFormDialog はフォーム入力を伴うダイアログ。
@@ -143,6 +144,102 @@ application のバリデーションエラーは JSON で返し、\`ApplicationF
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+type FormDialogVariation = {
+  key: string;
+  label: string;
+  props: Partial<React.ComponentProps<typeof ApplicationFormDialog>>;
+  error?: string;
+};
+
+const FORM_DIALOG_VARIATIONS: FormDialogVariation[] = [
+  { key: "default", label: "標準", props: { title: "新規申請の作成" } },
+  {
+    key: "loading",
+    label: "送信中",
+    props: { title: "新規申請の作成", loading: true },
+  },
+  {
+    key: "error",
+    label: "検証エラー",
+    props: { title: "新規申請の作成" },
+    error: "件名は必須です",
+  },
+  {
+    key: "disabled",
+    label: "送信できない",
+    props: { title: "新規申請の作成", disabled: true },
+  },
+  {
+    key: "success",
+    label: "承認（success）",
+    props: { title: "申請の承認", submitText: "承認する", submitVariant: "success" },
+  },
+];
+
+/**
+ * フォームダイアログの状態を 1 画面から開いて比較する。
+ *
+ * 押すとその状態のダイアログが開く。`loading` 中は入力ごと無効になることを確認する。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const [openKey, setOpenKey] = React.useState<string | null>(null);
+    const current = FORM_DIALOG_VARIATIONS.find((v) => v.key === openKey);
+
+    return (
+      <Showcase>
+        <Section
+          title="States"
+          note="送信中は loading（フォーム全体が無効になる）。入力不足で送れないときは disabled。"
+        >
+          <Cluster>
+            {FORM_DIALOG_VARIATIONS.map((v) => (
+              <ApplicationButton key={v.key} variant="secondary" onClick={() => setOpenKey(v.key)}>
+                {v.label}
+              </ApplicationButton>
+            ))}
+          </Cluster>
+        </Section>
+
+        {current && (
+          <ApplicationFormDialog
+            key={current.key}
+            title=""
+            {...current.props}
+            open
+            onOpenChange={(next) => !next && setOpenKey(null)}
+            onSubmit={(event) => {
+              event.preventDefault();
+              setOpenKey(null);
+            }}
+            onCancel={() => setOpenKey(null)}
+          >
+            <ApplicationFormField label="件名" required error={current.error}>
+              <ApplicationInput
+                name="title"
+                placeholder="例: 備品購入の申請"
+                error={Boolean(current.error)}
+              />
+            </ApplicationFormField>
+            <ApplicationFormField label="優先度" required>
+              <ApplicationSelect
+                name="priority"
+                items={[
+                  { value: "high", label: "高" },
+                  { value: "mid", label: "中" },
+                  { value: "low", label: "低" },
+                ]}
+                placeholder="優先度を選択"
+              />
+            </ApplicationFormField>
+          </ApplicationFormDialog>
+        )}
+      </Showcase>
+    );
+  },
+};
 
 const PRIORITY_ITEMS = [
   { value: "high", label: "高" },

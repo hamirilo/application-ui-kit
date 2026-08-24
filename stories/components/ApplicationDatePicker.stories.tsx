@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import type { DateRange } from "react-day-picker";
 import { ApplicationButton, ApplicationDatePicker, ApplicationFormField } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 /**
  * ApplicationDatePicker は日付を選ぶ・入力するコンポーネント。
@@ -129,6 +130,99 @@ const [dates, setDates] = useState<Date[]>([])
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * mode と状態を 1 画面で比較する。
+ *
+ * 表示・入力の形式は `yyyy-MM-dd` に固定している。
+ * 画面ごとに和暦や `yyyy/MM/dd` へ変えない。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const [single, setSingle] = React.useState<Date | undefined>(new Date(2026, 3, 20));
+    const [range, setRange] = React.useState<DateRange | undefined>({
+      from: new Date(2026, 3, 20),
+      to: new Date(2026, 3, 24),
+    });
+    const [multiple, setMultiple] = React.useState<Date[] | undefined>([
+      new Date(2026, 3, 20),
+      new Date(2026, 3, 22),
+    ]);
+
+    return (
+      <Showcase>
+        <Section title="Modes" note="単日・期間・複数日。期間は from だけ選ばれた中間状態を持つ。">
+          <Stack className="max-w-md">
+            <Labeled label='mode="single"（既定）'>
+              <ApplicationDatePicker
+                mode="single"
+                value={single}
+                onChange={(v) => setSingle(v as Date | undefined)}
+                className="w-64"
+              />
+            </Labeled>
+            <Labeled label='mode="range"'>
+              <ApplicationDatePicker
+                mode="range"
+                value={range}
+                onChange={(v) => setRange(v as DateRange | undefined)}
+                className="w-64"
+              />
+            </Labeled>
+            <Labeled label='mode="multiple"'>
+              <ApplicationDatePicker
+                mode="multiple"
+                value={multiple}
+                onChange={(v) => setMultiple(v as Date[] | undefined)}
+                className="w-64"
+              />
+            </Labeled>
+          </Stack>
+        </Section>
+
+        <Section
+          title="States"
+          note="選択できない範囲は minDate / maxDate で閉じる。エラーは枠線だけで理由を示さないため、文章を併記する。"
+        >
+          <Stack className="max-w-md">
+            <Labeled label="未選択（placeholder）">
+              <ApplicationDatePicker mode="single" placeholder="日付を選択" className="w-64" />
+            </Labeled>
+            <Labeled label="エラー">
+              <ApplicationDatePicker mode="single" error placeholder="日付を選択" className="w-64" />
+            </Labeled>
+            <Labeled label="無効">
+              <ApplicationDatePicker
+                mode="single"
+                disabled
+                value={new Date(2026, 3, 20)}
+                className="w-64"
+              />
+            </Labeled>
+            <Labeled label="minDate / maxDate（今日以降 30 日まで）">
+              <ApplicationDatePicker
+                mode="single"
+                minDate={new Date(2026, 3, 1)}
+                maxDate={new Date(2026, 3, 30)}
+                placeholder="2026-04-01 〜 2026-04-30"
+                className="w-64"
+              />
+            </Labeled>
+          </Stack>
+        </Section>
+
+        <Section title="With Label" note="実装ではこの形が基本。">
+          <Stack className="max-w-md">
+            <ApplicationFormField label="希望日" required helpText="yyyy-MM-dd 形式で直接入力もできます">
+              <ApplicationDatePicker mode="single" placeholder="日付を選択" className="w-64" />
+            </ApplicationFormField>
+          </Stack>
+        </Section>
+      </Showcase>
+    );
+  },
+};
 
 /**
  * 単一日付（`mode="single"`）。

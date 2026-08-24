@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import { ApplicationPagination, ApplicationTable } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 /**
  * ApplicationPagination は一覧・テーブルの下に置くページ送り UI。
@@ -56,6 +57,54 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * ページ数と現在位置による表示の違いを 1 画面で比較する。
+ *
+ * ページ番号は 1 始まり。`totalPages <= 1` では何も描画されない。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="ページ数" note="多いときは現在ページ周辺だけを出し、省略記号（…）で省く。">
+        <Stack className="max-w-xl">
+          <Labeled label="totalPages=5（全ページを表示）">
+            <ApplicationPagination page={3} totalPages={5} onPageChange={() => {}} />
+          </Labeled>
+          <Labeled label="totalPages=50（省略記号あり）">
+            <ApplicationPagination page={25} totalPages={50} onPageChange={() => {}} />
+          </Labeled>
+          <Labeled label="totalPages=1（何も描画されない）">
+            <ApplicationPagination page={1} totalPages={1} onPageChange={() => {}} />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="現在位置" note="端では「前へ」「次へ」が無効になる。押せないボタンを隠さない（位置がずれるため）。">
+        <Stack className="max-w-xl">
+          <Labeled label="先頭ページ">
+            <ApplicationPagination page={1} totalPages={20} onPageChange={() => {}} />
+          </Labeled>
+          <Labeled label="末尾ページ">
+            <ApplicationPagination page={20} totalPages={20} onPageChange={() => {}} />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="siblingCount" note="現在ページの前後に出す数。既定は 1。狭い画面では増やさない。">
+        <Stack className="max-w-xl">
+          <Labeled label="siblingCount=1（既定）">
+            <ApplicationPagination page={10} totalPages={20} onPageChange={() => {}} />
+          </Labeled>
+          <Labeled label="siblingCount=2">
+            <ApplicationPagination page={10} totalPages={20} siblingCount={2} onPageChange={() => {}} />
+          </Labeled>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。ページ数が少ない場合は全ページ番号を表示する。 */
 export const Default: Story = {
