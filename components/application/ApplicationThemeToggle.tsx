@@ -27,35 +27,30 @@ export function ApplicationThemeToggle({
   onToggle,
   theme: controlledTheme,
 }: ApplicationThemeToggleProps) {
-  const [mounted, setMounted] = React.useState(false);
   const [internalDark, setInternalDark] = React.useState(false);
 
-  // マウント後にDOMクラスおよびlocalStorageをチェック
+  // 非制御時の title 表示用に、マウント後に実テーマを状態へ同期する。
+  // アイコンの表示自体はこの状態に依存しない（下の CSS 出し分けを参照）。
+  // ここで待たされるのは title 文言だけなので、描画のちらつきは起きない。
   React.useEffect(() => {
-    setMounted(true);
-    if (typeof document !== "undefined") {
-      const isDarkClass = document.documentElement.classList.contains("dark");
-      setInternalDark(isDarkClass);
-    }
+    setInternalDark(document.documentElement.classList.contains("dark"));
   }, []);
 
   const isDark = controlledTheme ? controlledTheme === "dark" : internalDark;
 
   const handleToggle = () => {
-    const nextDark = !isDark;
+    // effect 実行前のクリックでは internalDark がまだ DOM と同期していないため、
+    // 非制御時の現在値は常に DOM から読む
+    const currentDark = controlledTheme
+      ? controlledTheme === "dark"
+      : typeof document !== "undefined" && document.documentElement.classList.contains("dark");
+    const nextDark = !currentDark;
 
     if (!controlledTheme && typeof document !== "undefined") {
-      if (nextDark) {
-        document.documentElement.classList.add("dark");
-        try {
-          localStorage.setItem("theme", "dark");
-        } catch (_) {}
-      } else {
-        document.documentElement.classList.remove("dark");
-        try {
-          localStorage.setItem("theme", "light");
-        } catch (_) {}
-      }
+      document.documentElement.classList.toggle("dark", nextDark);
+      try {
+        localStorage.setItem("theme", nextDark ? "dark" : "light");
+      } catch (_) {}
       setInternalDark(nextDark);
     }
 
@@ -70,15 +65,24 @@ export function ApplicationThemeToggle({
         "p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
-      title={mounted ? (isDark ? "ライトモードに切り替え" : "ダークモードに切り替え") : ariaLabel}
+      title={isDark ? "ライトモードに切り替え" : "ダークモードに切り替え"}
       aria-label={ariaLabel}
     >
-      {!mounted ? (
-        <span className={cn("inline-block", iconClassName)} aria-hidden="true" />
-      ) : isDark ? (
-        <Sun className={cn(iconClassName, "text-amber-400")} />
+      {controlledTheme ? (
+        controlledTheme === "dark" ? (
+          <Sun className={cn(iconClassName, "text-amber-400")} />
+        ) : (
+          <Moon className={cn(iconClassName, "text-indigo-600 dark:text-indigo-400")} />
+        )
       ) : (
-        <Moon className={cn(iconClassName, "text-indigo-600 dark:text-indigo-400")} />
+        <>
+          {/* 非制御時は html の .dark クラスで CSS 出し分けする。
+              マウント（useEffect）を待ってから描くと、その間アイコンが空になり
+              1 フレーム以上のちらつきになる。SSR でも同じ HTML を返せるので
+              ハイドレーション不一致も起きない。 */}
+          <Sun className={cn(iconClassName, "text-amber-400 hidden dark:inline-block")} />
+          <Moon className={cn(iconClassName, "text-indigo-600 inline-block dark:hidden")} />
+        </>
       )}
     </button>
   );

@@ -223,6 +223,38 @@
 }
 
 /* ==========================================================================
+ * MARK: クリックできるものにはポインタカーソル
+ *
+ * Tailwind v4 の Preflight は button のカーソルを `default` にした（v3 は pointer）。
+ * このキットのボタン・タブ・トグル類はすべて素の <button> なので、
+ * 何もしないと全画面でポインタが出ない。ここで v3 相当に戻す。
+ *
+ * base レイヤーに置くのが要点で、`cursor-default` / `cursor-not-allowed` を
+ * 明示している箇所（メニュー項目、無効状態など）は components / utilities
+ * レイヤーが勝つため、この規則では上書きされない。
+ *
+ * 無効状態は 3 通りの表し方がある:
+ *   - 素の HTML / React の `disabled`
+ *   - Base UI の `aria-disabled="true"`
+ *   - Base UI の `data-disabled`（`data-disabled="false"` は無効ではない）
+ * ========================================================================== */
+
+@layer base {
+  button:not(:disabled, [aria-disabled="true"], [data-disabled]:not([data-disabled="false"])),
+  select:not(:disabled, [aria-disabled="true"]),
+  summary,
+  input:where([type="checkbox"], [type="radio"]):not(:disabled),
+  ::file-selector-button,
+  :where([role="button"], [role="tab"], [role="checkbox"], [role="radio"], [role="switch"]):not(
+      :disabled,
+      [aria-disabled="true"],
+      [data-disabled]:not([data-disabled="false"])
+    ) {
+    cursor: pointer;
+  }
+}
+
+/* ==========================================================================
  * 共有コンポーネントクラス
  *
  * テンプレートから使う「素の HTML + class」の部品。

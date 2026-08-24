@@ -42,7 +42,11 @@ function DropdownMenuContent({
         <MenuPrimitive.Popup
           data-slot="dropdown-menu-content"
           className={cn(
-            "cn-dropdown-menu-content cn-dropdown-menu-content-logical cn-menu-target cn-menu-translucent z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto outline-none data-closed:overflow-hidden",
+            // メニューはトリガー幅ではなく中身に合わせる。
+            // w-(--anchor-width) だと ⋮ ボタン（32px）が幅を決めてしまい、
+            // min-w-[8rem]（.cn-dropdown-menu-content）まで縮んで項目名が折り返す。
+            // 画面外へはみ出さないよう max-w だけ available-width で止める。
+            "cn-dropdown-menu-content cn-dropdown-menu-content-logical cn-menu-target cn-menu-translucent z-50 max-h-(--available-height) w-max max-w-(--available-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto outline-none data-closed:overflow-hidden",
             className
           )}
           {...props}
@@ -138,7 +142,7 @@ function DropdownMenuSubContent({
     <DropdownMenuContent
       data-slot="dropdown-menu-sub-content"
       className={cn(
-        "cn-dropdown-menu-sub-content cn-menu-target cn-menu-translucent w-auto",
+        "cn-dropdown-menu-sub-content cn-menu-target cn-menu-translucent",
         className
       )}
       align={align}
