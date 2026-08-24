@@ -6,9 +6,11 @@
 
 - Standard: UIに関する判断原則は ai-dev-standards が所有します。
 - Playbook: 実装手順・検証方法・運用のコツは ai-dev-playbook が所有します。
-- UI Kit: このリポジトリは、実際に参照・利用する汎用UIとToken、Storybook仕様を所有します。
+- UI Kit: このリポジトリは、実際に参照・利用する汎用UIとToken、Storybook仕様、および Claude Design / 人間向けの設計参照（[design-system/](design-system/)）を所有します。
 
-社員検索、組織ツリー、Authentik連携などの業務ドメインUIは各アプリで管理してください。このリポジトリにはアプリ固有設定、サーバー連携、AI向けルールを置きません。
+社員検索、組織ツリー、Authentik連携などの業務ドメインUIは各アプリで管理してください。このリポジトリにはアプリ固有設定や、認証・エンドポイントを焼き込んだ連携を置きません。Django + htmx との**汎用的な**接続だけを Islands（後述）として提供します（[decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。
+
+AIエージェント向けの入口は [CLAUDE.md](CLAUDE.md)、実装前に読むプロジェクト前提は [decisions/project-context.md](decisions/project-context.md) にあります。
 
 ## Storybook
 
@@ -118,12 +120,57 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
 
+## Django 連携（Islands）
+
+Django テンプレート + htmx のアプリ向けに、`data-react` 属性から React コンポーネントを自動マウントする仕組みと、標準 Island 4 種を提供します（ai-dev-standards ADR-0002 の htmx 許可パターンの共有実装。設計判断は [decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。
+
+    confirm-dialog     確認ダイアログ。data-url への fetch・CSRF・成功トーストを内包
+    form-dialog        htmx が data-form-url から Django Form HTML を取得して表示
+    toast-listener     全ページトースト。window.ApplicationToast の登録と Django messages の表示
+    date-picker        Django Form の hidden input の値を書き換える日付選択
+
+アプリの Vite エントリで auto-mount を import するだけで使えます。
+
+    // islands/main.ts
+    import '@hamirilo/application-ui-kit/islands/auto-mount'
+
+    <!-- base.html に一度だけ（全ページトースト） -->
+    <div data-react="toast-listener"></div>
+
+    <!-- 確認ダイアログ -->
+    <div data-react="confirm-dialog" data-id="delete-15" data-title="削除しますか？"
+         data-type="danger" data-url="/ideas/15/delete/"></div>
+    <button onclick="window.openConfirmDialog['delete-15']()">削除</button>
+
+    <!-- フォームダイアログ: htmx が data-form-url から Django Form HTML を取得 -->
+    <div data-react="form-dialog" data-id="task-create" data-title="新規タスク作成"
+         data-form-url="/tasks/create/form/"></div>
+
+    <!-- 日付選択: hidden input の値を書き換える -->
+    {{ form.start_date }}
+    <div data-react="date-picker" data-mode="single"
+         data-target="{{ form.start_date.id_for_label }}"></div>
+
+Django View からの通知はそのままトーストになります（`messages.success(request, "保存しました")` を `data-messages` で toast-listener に渡す）。素の JS / htmx からは `window.ApplicationToast.success("保存しました")` を呼びます。
+
+form-dialog の送信成功は Django View が `HX-Trigger: application-form-success` を返して通知します。CSRF cookie 名を変更しているプロジェクトは `data-csrf-cookie-name` で渡してください（既定は Django 標準の `csrftoken`）。
+
+アプリ固有の Island は、このリポジトリに追加せずアプリ側で登録します。
+
+    import { registerIslandComponents } from '@hamirilo/application-ui-kit/islands'
+    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    registerIslandComponents({ 'my-widget': MyWidget })
+
+islands を import しない純 React アプリには、これまで通り `.` エントリだけで影響ありません。
+
 ### 配布物
 
 `bun run build` が dist/ を作ります。JS は vite の library build、型定義は tsc が出力します。
 
-    dist/index.js                                     ES module 本体
-    dist/types/components/application/index.d.ts      型定義
+    dist/components/application/index.js              ES module 本体（`.`）
+    dist/components/islands/index.js                  Django 連携 Island（`./islands`・副作用なし）
+    dist/components/islands/auto-mount.js             自動マウント（`./islands/auto-mount`・副作用あり）
+    dist/types/                                       型定義
 
 利用側は dist だけをimportします。TypeScriptのビルド設定を持たないアプリ（Django + Vite の Islands 構成など）でもそのまま使えるようにするためです。
 
