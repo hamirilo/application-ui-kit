@@ -5,6 +5,7 @@ import {
   ApplicationRadioGroup,
   type ApplicationRadioGroupItem,
 } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 const PRIORITIES: ApplicationRadioGroupItem[] = [
   { value: "high", label: "高" },
@@ -71,6 +72,72 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * 並び方向と状態を 1 画面で比較する。
+ *
+ * 選択肢が 5 個を超えるときは `ApplicationSelect` を検討する
+ * （縦に伸びて画面を占有するため）。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section
+        title="Orientation"
+        note="既定は vertical。ラベルが短く選択肢が 3 個程度のときだけ horizontal にする。"
+      >
+        <Stack className="max-w-md">
+          <Labeled label="vertical（既定）">
+            <ApplicationRadioGroup items={PRIORITIES} defaultValue="mid" />
+          </Labeled>
+          <Labeled label="horizontal">
+            <ApplicationRadioGroup items={PRIORITIES} defaultValue="mid" orientation="horizontal" />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="With Description" note="選択の判断に必要な補足は description に置く。">
+        <Stack className="max-w-md">
+          <ApplicationRadioGroup
+            items={[
+              {
+                value: "all",
+                label: "全員に公開",
+                description: "社内の全ユーザーが閲覧できます",
+              },
+              {
+                value: "dept",
+                label: "部署内に公開",
+                description: "所属部署のユーザーだけが閲覧できます",
+              },
+              { value: "private", label: "非公開", description: "自分だけが閲覧できます" },
+            ]}
+            defaultValue="dept"
+          />
+        </Stack>
+      </Section>
+
+      <Section title="States" note="選択肢単位の無効化と、グループ全体の無効化。">
+        <Stack className="max-w-md">
+          <Labeled label="選択肢の一部を無効化">
+            <ApplicationRadioGroup
+              items={[
+                { value: "draft", label: "下書き" },
+                { value: "published", label: "公開" },
+                { value: "archived", label: "アーカイブ（権限なし）", disabled: true },
+              ]}
+              defaultValue="draft"
+            />
+          </Labeled>
+          <Labeled label="グループ全体を無効化">
+            <ApplicationRadioGroup items={PRIORITIES} defaultValue="mid" disabled />
+          </Labeled>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形（縦並び）。 */
 export const Default: Story = {

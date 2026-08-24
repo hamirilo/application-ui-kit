@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import { ApplicationSearchInput, ApplicationTable } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 /**
  * ApplicationSearchInput は一覧・テーブルの上に置くフィルタ用検索欄。
@@ -62,6 +63,58 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * 状態を 1 画面で比較する。
+ *
+ * クリアボタン（×）は `onClear` を渡し、かつ値があるときだけ出る。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const [keyword, setKeyword] = React.useState("備品");
+
+    return (
+      <Showcase>
+        <Section
+          title="States"
+          note="ラベルを画面に置かない場合は aria-label が必須。placeholder は代わりにならない。"
+        >
+          <Stack>
+            <Labeled label="空（クリアボタンなし）">
+              <ApplicationSearchInput placeholder="タイトルで検索" aria-label="検索" />
+            </Labeled>
+            <Labeled label="入力済み + onClear（× が出る）">
+              <ApplicationSearchInput
+                value={keyword}
+                onChange={(e) => setKeyword(e.target.value)}
+                onClear={() => setKeyword("")}
+                placeholder="タイトルで検索"
+                aria-label="検索（クリア付き）"
+              />
+            </Labeled>
+            <Labeled label="無効">
+              <ApplicationSearchInput
+                placeholder="タイトルで検索"
+                disabled
+                aria-label="検索（無効）"
+              />
+            </Labeled>
+          </Stack>
+        </Section>
+
+        <Section title="In Toolbar" note="一覧の上に置く。件数の表示は検索欄の外に持つ。">
+          <div className="flex flex-wrap items-center gap-3 rounded-lg border border-border bg-card p-3">
+            <div className="max-w-xs flex-1">
+              <ApplicationSearchInput placeholder="タイトルで検索" aria-label="検索" />
+            </div>
+            <span className="text-xs text-muted-foreground">6 件</span>
+          </div>
+        </Section>
+      </Showcase>
+    );
+  },
+};
 
 /** 基本形（非制御）。 */
 export const Default: Story = {};

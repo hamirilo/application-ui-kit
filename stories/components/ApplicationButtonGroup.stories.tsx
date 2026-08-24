@@ -6,6 +6,7 @@ import {
   type ApplicationButtonGroupItem,
   ApplicationFormField,
 } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 const PERIODS: ApplicationButtonGroupItem[] = [
   { value: "day", label: "日" },
@@ -78,6 +79,102 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * variant / size / 状態を 1 画面で比較する。
+ *
+ * 選択肢が 4 個を超える、またはラベルが長いときは
+ * `ApplicationRadioGroup` か `ApplicationSelect` を使う（横幅が破綻する）。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section title="Variants" note="選択中を primary の塗りで示すか、控えめな塗りで示すかの違い。">
+        <Stack className="max-w-md">
+          <Labeled label="primary（既定）">
+            <ApplicationButtonGroup items={PERIODS} defaultValue="week" aria-label="期間" />
+          </Labeled>
+          <Labeled label="secondary">
+            <ApplicationButtonGroup
+              items={PERIODS}
+              defaultValue="week"
+              variant="secondary"
+              aria-label="期間（secondary）"
+            />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="Sizes" note="ツールバー内は sm。既定は md。">
+        <Stack className="max-w-md">
+          <Labeled label="sm">
+            <ApplicationButtonGroup
+              items={PERIODS}
+              defaultValue="week"
+              size="sm"
+              aria-label="期間（sm）"
+            />
+          </Labeled>
+          <Labeled label="md（既定）">
+            <ApplicationButtonGroup
+              items={PERIODS}
+              defaultValue="week"
+              size="md"
+              aria-label="期間（md）"
+            />
+          </Labeled>
+          <Labeled label="lg">
+            <ApplicationButtonGroup
+              items={PERIODS}
+              defaultValue="week"
+              size="lg"
+              aria-label="期間（lg）"
+            />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="With Icons" note="アイコンだけにしない。表示形式の切替のように意味が明確な場合も文字を残す。">
+        <Stack className="max-w-md">
+          <ApplicationButtonGroup
+            items={[
+              { value: "list", label: "リスト", icon: <List /> },
+              { value: "rows", label: "行表示", icon: <Rows3 /> },
+              { value: "grid", label: "グリッド", icon: <LayoutGrid /> },
+            ]}
+            defaultValue="list"
+            aria-label="表示形式"
+          />
+        </Stack>
+      </Section>
+
+      <Section title="States" note="選択肢単位の無効化と、グループ全体の無効化。">
+        <Stack className="max-w-md">
+          <Labeled label="選択肢の一部を無効化">
+            <ApplicationButtonGroup
+              items={[
+                { value: "draft", label: "下書き" },
+                { value: "published", label: "公開" },
+                { value: "archived", label: "アーカイブ", disabled: true },
+              ]}
+              defaultValue="draft"
+              aria-label="公開状態"
+            />
+          </Labeled>
+          <Labeled label="グループ全体を無効化">
+            <ApplicationButtonGroup
+              items={PERIODS}
+              defaultValue="week"
+              disabled
+              aria-label="期間（無効）"
+            />
+          </Labeled>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
+
 /** 基本形。 */
 export const Default: Story = {
   args: { defaultValue: "week" },
@@ -99,17 +196,6 @@ export const WithIcons: Story = {
 /** secondary バリアント。選択中を控えめな塗りで示す。 */
 export const Secondary: Story = {
   args: { variant: "secondary", defaultValue: "week" },
-};
-
-/** サイズの一覧。 */
-export const Sizes: Story = {
-  render: (args) => (
-    <div className="flex flex-col items-start gap-4">
-      <ApplicationButtonGroup {...args} size="sm" defaultValue="week" />
-      <ApplicationButtonGroup {...args} size="md" defaultValue="week" />
-      <ApplicationButtonGroup {...args} size="lg" defaultValue="week" />
-    </div>
-  ),
 };
 
 /** 一部の選択肢を無効化した例（権限で選べない場合等）。 */

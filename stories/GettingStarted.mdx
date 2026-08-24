@@ -1,0 +1,189 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { SpecTable, Code, DoDont } from './foundations/_parts'
+
+<Meta title="Getting Started" />
+
+# Application UI Kit
+
+この Storybook は、**UI Kit のショールーム兼 開発・テスト環境**です。
+包括的なデザインシステムではありません。
+
+UI をアプリ本体から切り離して確認・開発・検証するために使います。
+コードを直接読まなくても、使える UI を探して比較し、挙動を確かめられる状態を保ちます。
+
+<SpecTable
+  head={['できること', 'どこで']}
+  rows={[
+    ['使える UI を一覧で把握する', 'Gallery'],
+    ['1 つの部品のバリエーションと状態を並べて比べる', '各 Component の Overview'],
+    ['操作する・Props を変える・テストする', '各 Component の個別 Story'],
+    ['複数の部品を組み合わせた画面の作り方を見る', 'Patterns'],
+    ['色・文字・余白のトークンを確認する', 'Foundations'],
+  ]}
+/>
+
+---
+
+## 3 段階で見る
+
+上から下へたどると、探す → 比べる → 確かめる の順に粒度が細かくなります。
+
+```
+Gallery              何があるか
+   ↓
+Component Overview   どんな種類・状態があるか
+   ↓
+Individual Story     実際にどう動くか
+```
+
+<SpecTable
+  head={['階層', '役割', '網羅性']}
+  rows={[
+    [
+      <strong>Gallery</strong>,
+      '主要な部品を 1 画面に並べる。短時間で「何が使えるか」を掴む',
+      '代表的な部品と代表的な状態だけ。Props は網羅しない',
+    ],
+    [
+      <strong>Component Overview</strong>,
+      'その部品の variant / size / 状態を 1 画面で比較する。デザイン確認・UI レビューに使う',
+      '見た目が変わる軸はすべて。組み合わせは網羅しない',
+    ],
+    [
+      <strong>Individual Story</strong>,
+      '1 状態を 1 Story で持つ。操作・Props 変更・自動テストに使う',
+      'テストと確認に必要な状態だけ',
+    ],
+  ]}
+/>
+
+実装するときの流れはこうなります。
+
+1. **Gallery** で使える UI を探す
+2. **Overview** でバリエーションを比較して、使うものを決める
+3. **Individual Story** で挙動・キーボード操作・エラー時の見た目を確かめる
+4. `@hamirilo/application-ui-kit` から import して使う
+
+```tsx
+import { ApplicationButton } from '@hamirilo/application-ui-kit'
+import '@hamirilo/application-ui-kit/styles.css'
+
+<ApplicationButton variant="primary">保存</ApplicationButton>
+```
+
+---
+
+## 構成
+
+```
+Getting Started      このページ
+
+Foundations          色・文字・余白などのトークン
+  Colors
+  Typography
+  Spacing
+  Radius & Shadow
+  Icons
+
+Components           部品 1 つずつ
+  ApplicationButton
+    Overview         variant / size / 状態の比較
+    Primary          個別 Story
+    Secondary
+    ...
+  ApplicationInput
+  ...
+
+Patterns             複数の部品を組み合わせた画面
+  Form
+  EmptyState
+  ErrorState
+  Search
+  DataTable
+  ButtonGroupExample
+
+Gallery              全体の俯瞰
+  All Components
+```
+
+Foundations は**実装時に確認が必要な情報だけ**を置きます。
+Storybook を独立した巨大なデザインシステムにはしません。
+
+Patterns では「どの部品を使うか」ではなく、
+**アプリではどう組み合わせるか**を示します。
+
+---
+
+## ツールバーの使い方
+
+<SpecTable
+  head={['ツール', '用途']}
+  rows={[
+    ['Theme', 'ライト / ダーク切替。トークンで組めているかはここで分かる'],
+    ['Viewport', 'Mobile (sm) / Tablet (md) / Desktop (lg)。狭い画面で操作と内容が失われないか見る'],
+    ['Accessibility', '全 Story で axe を実行する。違反は Story を止めずにパネルに出る'],
+    ['Controls', 'Props を変えて試す。Overview のような一覧 Story では無効にしている'],
+  ]}
+/>
+
+---
+
+## Story を追加するとき
+
+**すべての状態を機械的に Story 化しません。** Story の数を増やすことが目的ではなく、
+UI を探す・比較する・理解する・検証するコストを下げることが目的です。
+
+次のいずれかに当てはまるものを Story にします。
+
+- 複数のバリエーションがある
+- 状態によって見た目が大きく変わる
+- Loading / Error / Empty を持つ
+- UI レビューで確認する価値がある
+- 実アプリでは再現しにくい（通信エラー、長い文字列、境界値など）
+- Visual Regression Test の対象にしたい
+- 使い方を間違えやすい
+
+<DoDont
+  doText={<>意味のある状態を Story にする。<Code>Loading</Code> / <Code>Error</Code> / <Code>Empty</Code> / <Code>Disabled</Code></>}
+  dontText={<>shadcn/ui の素の部品を、Props の組み合わせだけ変えて網羅的に Story 化する</>}
+/>
+
+書き方の決まりです。
+
+<SpecTable
+  head={['決めごと', 'ルール']}
+  rows={[
+    ['title', <><Code>Components/Application*</Code> / <Code>Patterns/*</Code> / <Code>Foundations/*</Code> / <Code>Gallery/*</Code></>],
+    ['Overview', <>ファイルの<strong>先頭</strong>に置く。<Code>Overview</Code> は常にサイドバーの先頭に並ぶ</>],
+    ['一覧 Story', <><Code>parameters: {'{'} controls: {'{'} disable: true {'}'} {'}'}</Code> を付ける（Props を 1 つ変えても全体に効かないため）</>],
+    ['見本の並べ方', <><Code>stories/_showcase.tsx</Code> の <Code>Showcase</Code> / <Code>Section</Code> / <Code>Cluster</Code> を使う</>],
+    ['docs', <>目的・使う場面・<strong>使わない場面</strong>・注意事項を <Code>docs.description.component</Code> に書く</>],
+    ['色', <>raw color を書かない。<Code>bg-primary</Code> / <Code>text-muted-foreground</Code> のような semantic token を使う</>],
+  ]}
+/>
+
+Overview と個別 Story は役割が違うため、両方置きます。
+Overview は「並べて比べる」ためのもので Controls を無効にし、
+個別 Story は「1 状態を操作・テストする」ためのものです。
+
+---
+
+## 開発
+
+```
+bun install
+bun run storybook          # http://localhost:6006
+bun run build-storybook    # 静的ビルド（CI で通ることを確認している）
+```
+
+コンポーネントや Story を変更したら、次を確認してください。
+
+```
+bun run typecheck
+bun run test
+bun run lint
+bun run build-storybook
+```
+
+品質確認の観点（a11y、キーボード操作、狭い画面、reduced motion など）は
+リポジトリ直下の `README.md` を参照してください。

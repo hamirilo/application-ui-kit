@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { Search, X } from "lucide-react";
 import { ApplicationFormField, ApplicationInput } from "../../components/application";
+import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
 /**
  * ApplicationInput はテキスト入力の唯一のコンポーネント。
@@ -83,6 +84,75 @@ application の \`input-field\` クラスと同じ余白（\`px-3.5 py-2.5\`）�
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * 状態とアイコンの有無を 1 画面で比較する。
+ *
+ * ラベルは通常 `ApplicationFormField` が持つ。ここでは状態の見た目を比べるため
+ * ラベルを外し、支援技術向けに `aria-label` を付けている。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section
+        title="States"
+        note="error は枠線だけを変える。何が悪いのかは ApplicationFormField の error に文章で書く。"
+      >
+        <Stack>
+          <Labeled label="通常">
+            <ApplicationInput placeholder="例: 備品購入の申請" aria-label="通常" />
+          </Labeled>
+          <Labeled label="入力済み">
+            <ApplicationInput defaultValue="備品購入の申請" aria-label="入力済み" />
+          </Labeled>
+          <Labeled label="エラー">
+            <ApplicationInput error defaultValue="" aria-label="エラー" />
+          </Labeled>
+          <Labeled label="無効（操作できない）">
+            <ApplicationInput disabled defaultValue="申請番号は自動採番" aria-label="無効" />
+          </Labeled>
+          <Labeled label="読み取り専用（値は選択・コピーできる）">
+            <ApplicationInput readOnly defaultValue="SYS-2026-0001" aria-label="読み取り専用" />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section title="With Icon" note="左は入力の種類、右は操作（クリア等）に使う。">
+        <Stack>
+          <Labeled label="leftIcon">
+            <ApplicationInput
+              leftIcon={<Search className="w-4 h-4" />}
+              placeholder="検索"
+              aria-label="検索"
+            />
+          </Labeled>
+          <Labeled label="rightIcon">
+            <ApplicationInput
+              rightIcon={<X className="w-4 h-4" />}
+              defaultValue="入力をクリアできる"
+              aria-label="クリア付き"
+            />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section
+        title="With Label"
+        note="実装ではこの形が基本。ラベル・必須・エラーは ApplicationFormField が持つ。"
+      >
+        <Stack>
+          <ApplicationFormField label="件名" required helpText="50 文字以内">
+            <ApplicationInput placeholder="例: 備品購入の申請" />
+          </ApplicationFormField>
+          <ApplicationFormField label="件名" required error="件名は必須です">
+            <ApplicationInput error defaultValue="" />
+          </ApplicationFormField>
+        </Stack>
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。`input-field` クラスと同じ見た目。 */
 export const Default: Story = {};
@@ -196,26 +266,6 @@ export const InputTypes: Story = {
       >
         <ApplicationInput type="text" inputMode="numeric" placeholder="03-1234-5678" />
       </ApplicationFormField>
-    </div>
-  ),
-};
-
-/** 全状態の一覧。ツールバーの Theme を dark にしても崩れない。 */
-export const AllStates: Story = {
-  render: () => (
-    <div className="space-y-3">
-      {/* placeholder はラベルの代わりにならない（入力すると消える）ため
-          ラベルなしで置く場合は aria-label を付ける */}
-      <ApplicationInput placeholder="通常" aria-label="通常" />
-      <ApplicationInput defaultValue="入力済み" aria-label="入力済み" />
-      <ApplicationInput error defaultValue="エラー" aria-label="エラー" />
-      <ApplicationInput disabled defaultValue="無効" aria-label="無効" />
-      <ApplicationInput readOnly defaultValue="読み取り専用" aria-label="読み取り専用" />
-      <ApplicationInput
-        leftIcon={<Search className="w-4 h-4" />}
-        placeholder="アイコン付き"
-        aria-label="アイコン付き"
-      />
     </div>
   ),
 };

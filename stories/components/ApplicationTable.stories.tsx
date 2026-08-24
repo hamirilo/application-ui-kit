@@ -8,6 +8,7 @@ import {
   ApplicationTable,
   type ApplicationTableColumn,
 } from "../../components/application";
+import { Section, Showcase } from "../_showcase";
 
 type Request = {
   id: number;
@@ -176,6 +177,82 @@ type ApplicationTableColumn<T> = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+/**
+ * データあり / 0 件 / 操作列つきを 1 画面で比較する。
+ *
+ * 一覧を作るときに最初に決めるのは「0 件のとき何を出すか」。
+ * `emptyMessage` を渡さない一覧を作らない。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase className="max-w-none">
+      <Section title="Default" note="数値は align='right' + toLocaleString() で桁を揃える。">
+        <ApplicationTable<Request>
+          columns={COLUMNS}
+          rows={ROWS.slice(0, 3)}
+          rowKey={(r) => r.id}
+          caption="申請の一覧"
+        />
+      </Section>
+
+      <Section
+        title="Empty"
+        note="0 件は必ず文章で伝える。emptySubMessage には次にすべき操作を書く。"
+      >
+        <div className="space-y-4">
+          <ApplicationTable<Request>
+            columns={COLUMNS}
+            rows={[]}
+            emptyMessage="申請がありません"
+            emptySubMessage="「新規申請」から作成してください"
+            caption="申請の一覧（0 件）"
+          />
+          <ApplicationTable<Request>
+            columns={COLUMNS}
+            rows={[]}
+            emptyMessage="検索条件に一致する申請が見つかりませんでした"
+            caption="申請の一覧（検索結果 0 件）"
+          />
+        </div>
+      </Section>
+
+      <Section
+        title="With Actions"
+        note="行の操作は右端に置く。tr はフォーカスできないため、操作は行内のボタン・リンクで提供する。"
+      >
+        <ApplicationTable<Request>
+          columns={[
+            ...COLUMNS.slice(0, 3),
+            {
+              key: "actions",
+              header: "",
+              align: "right",
+              className: "w-12",
+              cell: () => (
+                <ApplicationDropdown
+                  trigger={
+                    <ApplicationButton variant="ghost" size="icon" aria-label="操作メニュー">
+                      <MoreVertical className="w-4 h-4" />
+                    </ApplicationButton>
+                  }
+                  items={[
+                    { key: "edit", label: "編集" },
+                    { key: "delete", label: "削除", danger: true, separatorBefore: true },
+                  ]}
+                />
+              ),
+            },
+          ]}
+          rows={ROWS.slice(0, 3)}
+          rowKey={(r) => r.id}
+          caption="申請の一覧（操作列つき）"
+        />
+      </Section>
+    </Showcase>
+  ),
+};
 
 /** 基本形。 */
 export const Default: Story = {

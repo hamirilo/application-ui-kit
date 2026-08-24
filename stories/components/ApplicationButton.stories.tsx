@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
-import { Download, Plus, Trash } from "lucide-react";
+import { ArrowRight, Download, Plus, Trash } from "lucide-react";
 import { ApplicationButton } from "../../components/application";
+import { Cluster, Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationButton は画面上のあらゆるアクションに使う唯一のボタンコンポーネント。
@@ -73,6 +74,73 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * variant / size / 状態を 1 画面で比較する。
+ *
+ * 「どの variant を使うべきか」を決めるのはここ。
+ * 個別の操作確認・Props 変更は下の各 Story で行う。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section
+        title="Variants"
+        note="色は意味に対応する。削除は必ず danger、キャンセルは必ず secondary。primary は 1 画面に原則 1 つ。"
+      >
+        <Cluster>
+          <ApplicationButton variant="primary">保存</ApplicationButton>
+          <ApplicationButton variant="secondary">キャンセル</ApplicationButton>
+          <ApplicationButton variant="danger">削除</ApplicationButton>
+          <ApplicationButton variant="success">承認</ApplicationButton>
+          <ApplicationButton variant="ghost">詳細</ApplicationButton>
+          <ApplicationButton variant="link">利用規約を読む</ApplicationButton>
+        </Cluster>
+      </Section>
+
+      <Section title="Sizes" note="テーブル行内は sm、ページの主要 CTA は lg。既定は default。">
+        <Cluster>
+          <ApplicationButton size="sm">Small</ApplicationButton>
+          <ApplicationButton size="default">Default</ApplicationButton>
+          <ApplicationButton size="lg">Large</ApplicationButton>
+          <ApplicationButton size="icon" aria-label="追加">
+            <Plus className="w-4 h-4" />
+          </ApplicationButton>
+        </Cluster>
+      </Section>
+
+      <Section
+        title="States"
+        note="loading は自動で disabled になるため、二重送信の防止に disabled を併記する必要はない。"
+      >
+        <Cluster>
+          <ApplicationButton>保存</ApplicationButton>
+          <ApplicationButton disabled>保存</ApplicationButton>
+          <ApplicationButton loading>送信中...</ApplicationButton>
+          <ApplicationButton variant="danger" loading>
+            削除中...
+          </ApplicationButton>
+        </Cluster>
+      </Section>
+
+      <Section title="With Icon" note="アイコンはラベルの代わりにしない。icon サイズには aria-label を付ける。">
+        <Cluster>
+          <ApplicationButton leftIcon={<Plus className="w-4 h-4" />}>タスク追加</ApplicationButton>
+          <ApplicationButton variant="secondary" rightIcon={<ArrowRight className="w-4 h-4" />}>
+            次へ
+          </ApplicationButton>
+          <ApplicationButton variant="secondary" leftIcon={<Download className="w-4 h-4" />}>
+            CSV 出力
+          </ApplicationButton>
+          <ApplicationButton variant="danger" leftIcon={<Trash className="w-4 h-4" />}>
+            削除する
+          </ApplicationButton>
+        </Cluster>
+      </Section>
+    </Showcase>
+  ),
+};
+
 /** メインアクション。作成・送信・保存に使う。1 画面に原則 1 つ。 */
 export const Primary: Story = {
   args: { variant: "primary", children: "保存" },
@@ -119,33 +187,6 @@ export const Loading: Story = {
 /** アイコン付き。アイコンとラベルの間隔はコンポーネント側で `gap` が入る。 */
 export const WithIcon: Story = {
   args: { leftIcon: <Plus className="w-4 h-4" />, children: "タスク追加" },
-};
-
-/** 全 variant の比較。意味と色の対応を確認するのに使う。 */
-export const AllVariants: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => (
-    <div className="flex flex-wrap gap-3">
-      <ApplicationButton variant="primary">保存</ApplicationButton>
-      <ApplicationButton variant="secondary">キャンセル</ApplicationButton>
-      <ApplicationButton variant="danger">削除</ApplicationButton>
-      <ApplicationButton variant="success">承認</ApplicationButton>
-      <ApplicationButton variant="ghost">詳細</ApplicationButton>
-      <ApplicationButton variant="link">リンク</ApplicationButton>
-    </div>
-  ),
-};
-
-/** サイズ 3 種。テーブル内は `sm`、ページ主要 CTA は `lg`。 */
-export const Sizes: Story = {
-  parameters: { controls: { disable: true } },
-  render: () => (
-    <div className="flex flex-wrap items-center gap-3">
-      <ApplicationButton size="sm">Small</ApplicationButton>
-      <ApplicationButton size="default">Default</ApplicationButton>
-      <ApplicationButton size="lg">Large</ApplicationButton>
-    </div>
-  ),
 };
 
 /**

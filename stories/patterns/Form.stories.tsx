@@ -24,7 +24,7 @@ import {
  * </important>
  */
 const meta = {
-  title: "Patterns/FormLayout",
+  title: "Patterns/Form",
   parameters: {
     layout: "padded",
     docs: {
@@ -102,7 +102,7 @@ const DEPARTMENT_ITEMS = [
  * 最も多いパターン。`max-w-2xl` で幅を抑え、`space-y-4` で項目を並べ、
  * 最下部に区切り線付きのボタン列を置く。
  */
-export const SingleColumn: Story = {
+export const StandardForm: Story = {
   render: () => (
     <form className="max-w-2xl space-y-4">
       <ApplicationFormField label="件名" required helpText="50 文字以内で入力してください">
@@ -330,7 +330,7 @@ export const TwoColumn: Story = {
  * **両方を出す。** 全体だけでは直す場所が分からず、
  * 項目だけでは画面外の項目に気付けない。
  */
-export const WithErrors: Story = {
+export const ValidationError: Story = {
   render: () => (
     <form className="max-w-2xl space-y-4">
       <div role="alert" className="rounded-lg bg-red-50 px-4 py-3 text-sm text-red-600">

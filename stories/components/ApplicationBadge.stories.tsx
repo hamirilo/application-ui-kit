@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { AlertCircle } from "lucide-react";
 import { ApplicationBadge, ApplicationTable } from "../../components/application";
+import { Cluster, Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationBadge はステータス・種別・優先度を表すピル型ラベル。
@@ -72,6 +73,52 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+/**
+ * tone の一覧とアイコン付きの見た目を 1 画面で比較する。
+ *
+ * tone は「意味 → 色」の対応であり、見た目で選ぶものではない。
+ * 同じ意味の状態には全アプリで同じ tone を使う。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <Showcase>
+      <Section
+        title="Tones"
+        note="色だけに意味を持たせない。文字（「完了」「未対応」等）だけで意味が読み取れるようにする。"
+      >
+        <Cluster>
+          <ApplicationBadge tone="new">受付</ApplicationBadge>
+          <ApplicationBadge tone="active">対応中</ApplicationBadge>
+          <ApplicationBadge tone="done">完了</ApplicationBadge>
+          <ApplicationBadge tone="warning">差戻し</ApplicationBadge>
+          <ApplicationBadge tone="danger">却下</ApplicationBadge>
+          <ApplicationBadge tone="pending">保留</ApplicationBadge>
+          <ApplicationBadge tone="neutral">アーカイブ</ApplicationBadge>
+        </Cluster>
+      </Section>
+
+      <Section title="With Icon" note="アイコンは意味の補助。アイコンだけにして文字を省かない。">
+        <Cluster>
+          <ApplicationBadge tone="danger" icon={<AlertCircle className="w-3 h-3" />}>
+            期限超過
+          </ApplicationBadge>
+          <ApplicationBadge tone="warning" icon={<AlertCircle className="w-3 h-3" />}>
+            要確認
+          </ApplicationBadge>
+        </Cluster>
+      </Section>
+
+      <Section title="長いラベル" note="バッジは折り返さない。長い文字列は列幅を押し広げるため短く保つ。">
+        <Cluster>
+          <ApplicationBadge tone="active">承認待ち（部長承認）</ApplicationBadge>
+          <ApplicationBadge tone="neutral">2026 年度上期</ApplicationBadge>
+        </Cluster>
+      </Section>
+    </Showcase>
+  ),
+};
+
 /** 基本形。 */
 export const Default: Story = {};
 
@@ -82,21 +129,6 @@ export const WithIcon: Story = {
     icon: <AlertCircle className="h-3 w-3" />,
     children: "エラー",
   },
-};
-
-/** 全 tone の一覧。 */
-export const AllTones: Story = {
-  render: () => (
-    <div className="flex flex-wrap gap-2">
-      <ApplicationBadge tone="new">受付</ApplicationBadge>
-      <ApplicationBadge tone="active">対応中</ApplicationBadge>
-      <ApplicationBadge tone="done">完了</ApplicationBadge>
-      <ApplicationBadge tone="warning">差戻し</ApplicationBadge>
-      <ApplicationBadge tone="danger">却下</ApplicationBadge>
-      <ApplicationBadge tone="pending">保留</ApplicationBadge>
-      <ApplicationBadge tone="neutral">アーカイブ</ApplicationBadge>
-    </div>
-  ),
 };
 
 type Row = { id: number; title: string; tone: "new" | "active" | "done"; label: string };

@@ -6,6 +6,7 @@ import {
   ApplicationFormField,
   ApplicationInput,
 } from "../../components/application";
+import { Cluster, Section, Showcase } from "../_showcase";
 
 /**
  * ApplicationDialog は汎用のモーダルダイアログ。
@@ -99,6 +100,112 @@ const meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+type DialogVariation = {
+  key: string;
+  label: string;
+  props: Partial<React.ComponentProps<typeof ApplicationDialog>>;
+  body: React.ReactNode;
+};
+
+const DIALOG_VARIATIONS: DialogVariation[] = [
+  {
+    key: "default",
+    label: "標準",
+    props: { title: "申請の詳細", description: "内容を確認してください" },
+    body: <p className="text-sm text-muted-foreground">申請番号 SYS-2026-0001 の内容です。</p>,
+  },
+  {
+    key: "no-footer",
+    label: "フッターなし",
+    props: { title: "お知らせ", footer: null },
+    body: (
+      <p className="text-sm text-muted-foreground">
+        読むだけの内容。閉じる手段は右上の × と Esc になる。
+      </p>
+    ),
+  },
+  {
+    key: "danger",
+    label: "危険な操作",
+    props: {
+      title: "申請の削除",
+      confirmText: "削除する",
+      confirmVariant: "danger",
+      cancelText: "キャンセル",
+    },
+    body: (
+      <p className="text-sm text-muted-foreground">
+        この申請を削除します。削除すると元に戻せません。
+      </p>
+    ),
+  },
+  {
+    key: "loading",
+    label: "確定中",
+    props: { title: "申請の送信", confirmText: "送信", confirmLoading: true },
+    body: (
+      <p className="text-sm text-muted-foreground">
+        確定ボタンが loading の状態。二重送信を防ぐため閉じるまで押せない。
+      </p>
+    ),
+  },
+  {
+    key: "wide",
+    label: "幅 2xl",
+    props: { title: "一覧の確認", maxWidth: "2xl" },
+    body: (
+      <p className="text-sm text-muted-foreground">
+        表や一覧を入れる場合だけ広げる。既定（md）で足りるなら広げない。
+      </p>
+    ),
+  },
+];
+
+/**
+ * ダイアログの構成パターンを 1 画面から開いて比較する。
+ *
+ * ダイアログは重ねて並べられないため、Overview はトリガーの一覧にしている。
+ * 押すとその構成のダイアログが開く。
+ */
+export const Overview: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => {
+    const [openKey, setOpenKey] = React.useState<string | null>(null);
+    const current = DIALOG_VARIATIONS.find((v) => v.key === openKey);
+
+    return (
+      <Showcase>
+        <Section
+          title="Variations"
+          note="open は必ず呼び出し側が持つ。確定ボタンの色は操作の意味に合わせる（削除は danger）。"
+        >
+          <Cluster>
+            {DIALOG_VARIATIONS.map((v) => (
+              <ApplicationButton key={v.key} variant="secondary" onClick={() => setOpenKey(v.key)}>
+                {v.label}
+              </ApplicationButton>
+            ))}
+          </Cluster>
+        </Section>
+
+        {current && (
+          <ApplicationDialog
+            key={current.key}
+            title=""
+            {...current.props}
+            open
+            onOpenChange={(next) => !next && setOpenKey(null)}
+            onConfirm={() => setOpenKey(null)}
+            onCancel={() => setOpenKey(null)}
+          >
+            {current.body}
+          </ApplicationDialog>
+        )}
+      </Showcase>
+    );
+  },
+};
 
 /**
  * 開くボタンと組み合わせた基本形。
