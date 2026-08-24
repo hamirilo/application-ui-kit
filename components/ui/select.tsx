@@ -86,7 +86,10 @@ function SelectContent({
           data-slot="select-content"
           data-align-trigger={alignItemWithTrigger}
           className={cn(
-            "cn-select-content cn-select-content-logical cn-menu-target cn-menu-translucent relative isolate z-50 max-h-(--available-height) w-(--anchor-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto data-[align-trigger=true]:animate-none",
+            // 幅はトリガー幅を下限にして中身に合わせる（min-w は .cn-select-content 側）。
+            // w-(--anchor-width) で固定すると、長い選択肢が overflow-x-hidden で
+            // 省略記号もなく途中で切れる。
+            "cn-select-content cn-select-content-logical cn-menu-target cn-menu-translucent relative isolate z-50 max-h-(--available-height) w-max max-w-(--available-width) origin-(--transform-origin) overflow-x-hidden overflow-y-auto data-[align-trigger=true]:animate-none",
             className
           )}
           {...props}

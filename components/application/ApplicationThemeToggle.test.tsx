@@ -44,7 +44,12 @@ describe("ApplicationThemeToggle", () => {
   it("制御モードでは theme プロパティのアイコンだけを描画し、DOM を書き換えない", () => {
     let next: boolean | undefined;
     const { container, getByRole } = render(
-      <ApplicationThemeToggle theme="dark" onToggle={(isDark) => (next = isDark)} />,
+      <ApplicationThemeToggle
+        theme="dark"
+        onToggle={(isDark) => {
+          next = isDark;
+        }}
+      />,
     );
     const { sun, moon } = icons(container);
     expect(sun).toBeNull();
