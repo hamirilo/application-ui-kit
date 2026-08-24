@@ -66,19 +66,82 @@ CSS クラスと Application コンポーネントで対応しています。
 <SpecTable
   head={['部品', 'CSS クラス', 'React', '内側余白']}
   rows={[
-    ['カード（小）', <Code>card-sm</Code>, <Code>{'<Card className="p-3">'}</Code>, <Code>p-3</Code>],
-    ['カード（標準）', <Code>card</Code>, <Code>{'<Card>'}</Code>, <Code>p-4</Code>],
-    ['カード（大）', <Code>card-lg</Code>, <Code>{'<Card className="p-6">'}</Code>, <Code>p-6</Code>],
+    ['カード（小）', <Code>card-sm</Code>, <Code>{'<Card size="sm">'}</Code>, '導出（11.0px）'],
+    ['カード（標準）', <Code>card</Code>, <Code>{'<Card>'}</Code>, '導出（12.6px）'],
+    ['カード（大）', <Code>card-lg</Code>, '—', '導出（18.9px）'],
     ['ボタン（極小・24px）', <Code>btn-xs</Code>, <Code>{'size="xs"'}</Code>, <Code>h-6 px-2.5</Code>],
     ['ボタン（小・28px）', <Code>btn-sm</Code>, <Code>{'size="sm"'}</Code>, <Code>h-7 px-3</Code>],
-    ['ボタン（標準・32px）', <Code>btn-primary</Code>, '省略時', <Code>h-8 px-4</Code>],
-    ['ボタン（大・40px）', <Code>btn-lg</Code>, <Code>{'size="lg"'}</Code>, <Code>h-10 px-5</Code>],
-    ['入力欄（32px）', <Code>input-field</Code>, <Code>ApplicationInput</Code>, <Code>h-8 px-3</Code>],
+    ['ボタン（標準・32px）', <Code>btn-primary</Code>, '省略時', <Code>h-8 px-3.5</Code>],
+    ['ボタン（大・40px）', <Code>btn-lg</Code>, <Code>{'size="lg"'}</Code>, <Code>h-10 px-4</Code>],
+    ['入力欄（32px）', <Code>input-field</Code>, <Code>ApplicationInput</Code>, <Code>h-8 px-3.5</Code>],
     ['バッジ', <Code>badge</Code>, '—', <Code>px-2 py-0.5</Code>],
   ]}
 />
 
+ボタンと入力欄の左右余白は **14px（`px-3.5`）で揃えて**います。横に並べたときに
+文字の開始位置が段差にならないためです。
+
+カードの内側余白は固定値ではなく**中の見出しの大きさから導出**しています
+（後述の「アイコンと文字」と同じ考え方）。
+
 これらの余白は `tokens/theme.css` に定義済みです。
+
+---
+
+## アイコンと文字
+
+「＋新規申請」のように**記号と文字が並ぶ**とき、左右を数学的に対称にすると
+かえって不揃いに見えます。記号は字画が少なく、余白として読まれるためです。
+
+これは余白スケールの変更ではなく、**アイコンが入ったときだけの光学補正**です。
+Tailwind の 0.25rem 刻みという上の方針はそのまま維持しています。
+
+### 2 つの規則
+
+どちらも黄金比 φ = 1.618 から導出します（定義は `tokens/scale.css`）。
+
+<SpecTable
+  head={['対象', '式', '標準ボタンでの値']}
+  rows={[
+    ['アイコンがある側の padding', <>反対側の padding ÷ φ</>, '14 ÷ 1.618 = 8.65px'],
+    ['アイコンと文字の間隔', <>文字サイズ × 0.4575</>, '14 × 0.4575 = 6.41px'],
+  ]}
+/>
+
+`gap < アイコン側 padding < padX` の 3 段階になります。
+出典は LiftKit（`registry/nextjs/components/button/button.css`）です。
+
+<DoDont
+  doText={<>アイコンは <Code>leftIcon</Code> / <Code>rightIcon</Code> に渡す（補正が自動で効く）</>}
+  dontText={<><Code>{'<ApplicationButton><Plus />新規申請</ApplicationButton>'}</Code>（children に直接置くと、どちら側のアイコンか判別できず補正されない）</>}
+/>
+
+### アイコンの箱の補正
+
+もう 1 つ、CSS だけでは解けない問題があります。**アイコンの CSS 上の箱と、
+実際に描画される字形の幅が一致しない**ことです。
+
+<SpecTable
+  head={['アイコン', '描画される幅', '16px 枠内の片側の空き']}
+  rows={[
+    [<Code>Plus</Code>, '66.7%', '2.67px'],
+    [<Code>Download</Code>, '83.3%', '1.33px'],
+  ]}
+/>
+
+同じ `gap` を指定しても、`Plus` は `Download` より 1.33px 広く見えます。
+そこで各アイコンの空きを**片側 1px に正規化**しています。字形もストロークの
+太さも変えず、レイアウト箱だけを詰めます。実測値は
+`tokens/icon-metrics.generated.ts`、一覧は Foundations/Icons を参照してください。
+
+**アイコンにサイズを手で指定しないでください。** `size="sm"` のボタンに
+`<Plus className="w-4 h-4" />` と書くと、補正の計算基準（`--icon-box`）と
+実際のサイズがずれます。サイズはボタンのサイズクラスが持っています。
+
+<DoDont
+  doText={<><Code>{'<ApplicationButton size="sm" leftIcon={<Plus />}>'}</Code></>}
+  dontText={<><Code>{'<ApplicationButton size="sm" leftIcon={<Plus className="w-4 h-4" />}>'}</Code></>}
+/>
 
 コントロールの高さは **24 / 28 / 32 / 40px** の4段階で、ボタンと入力欄は同じ高さに揃えています。
 主要なUIライブラリ（Ant Design、Fluent UI、shadcn/ui の全スタイル）が例外なくこの原則を採っており、

@@ -1,0 +1,466 @@
+/* ==========================================================================
+ * アイコンの光学箱の補正（生成物）
+ *
+ * <important>
+ * このファイルは tokens/icon-metrics.generated.ts から書き出した生成物。手で編集しない。
+ * 実測手順と背景はその .ts のコメントを参照。
+ * </important>
+ *
+ * やっていること:
+ *   アイコンの CSS 上の箱と実際に描画される字形の幅は一致しない。
+ *   例えば lucide `plus` は 16px の箱に片側 2.67px の空白を内側に持ち、
+ *   `download` は 1.33px しか持たない。同じ gap でも見える間隔が変わる原因。
+ *   ここでは各アイコンの空きを --lk-icon-air（片側 1px）に正規化する。
+ *   字形もストロークの太さも変えず、レイアウト箱だけを詰める（または広げる）。
+ *
+ *   --icon-fix = --lk-icon-air - 描画サイズ × 空き比率
+ *
+ * 注意:
+ *   --icon-box は「そのアイコンが実際に何 px で描かれるか」。
+ *   アイコンサイズを指定している場所では必ず --icon-box も同時に宣言すること。
+ *   宣言し忘れると 1rem 前提の補正がかかり、小さいアイコンで詰まりすぎる。
+ *   未登録のアイコンは --icon-fix が未定義になり、補正なし（0px）になる。
+ * ========================================================================== */
+
+@layer components {
+  /* 補正の適用。--icon-fix を持つアイコンだけが動く。 */
+  svg[class*="lucide-"],
+  svg[class*="hero-"] {
+    margin-inline: var(--icon-fix, 0px);
+  }
+
+  /* lucide-react（React 側）。クラスは createLucideIcon が付ける `lucide-<name>`。 */
+  .lucide-archive {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-bell {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-calendar {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-check {
+    --icon-empty: 0.125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.125);
+  }
+  .lucide-chevron-down {
+    --icon-empty: 0.2083;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.2083);
+  }
+  .lucide-chevron-left {
+    --icon-empty: 0.3334;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.3334);
+  }
+  .lucide-chevron-right {
+    --icon-empty: 0.3334;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.3334);
+  }
+  .lucide-chevron-up {
+    --icon-empty: 0.2083;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.2083);
+  }
+  .lucide-circle-alert {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-circle-check {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-circle-check-big {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-circle-x {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-clock {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-copy {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-download {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-ellipsis {
+    --icon-empty: 0.125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.125);
+  }
+  .lucide-ellipsis-vertical {
+    --icon-empty: 0.4167;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.4167);
+  }
+  .lucide-heart {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-inbox {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-info {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-layout-grid {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-list {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-loader-circle {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-moon {
+    --icon-empty: 0.0836;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0836);
+  }
+  .lucide-octagon-x {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-package-check {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .lucide-pencil {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-pin {
+    --icon-empty: 0.1667;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1667);
+  }
+  .lucide-plus {
+    --icon-empty: 0.1667;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1667);
+  }
+  .lucide-rows-3 {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-search {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-settings {
+    --icon-empty: 0.0852;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0852);
+  }
+  .lucide-store {
+    --icon-empty: 0.0415;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0415);
+  }
+  .lucide-sun {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-trash {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-trash-2 {
+    --icon-empty: 0.0833;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0833);
+  }
+  .lucide-triangle-alert {
+    --icon-empty: 0.0413;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0413);
+  }
+  .lucide-truck {
+    --icon-empty: 0.0417;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0417);
+  }
+  .lucide-user {
+    --icon-empty: 0.1667;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1667);
+  }
+  .lucide-x {
+    --icon-empty: 0.2083;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.2083);
+  }
+
+  /* Heroicons v2 outline（テンプレート側）。
+   *
+   * <important>
+   * これが効くには、利用側アプリのアイコンヘルパーが svg に `hero-<name>` クラスを
+   * 出す必要がある。ヘルパーの SSOT はこのリポジトリの外（tokens/icons.generated.ts
+   * 冒頭のコメント参照）なので、ここでは受け皿だけ用意している。
+   * クラスが付くまでテンプレート側は無補正のまま動く（壊れはしない）。
+   * </important> */
+  .hero-arrow-down {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-arrow-left {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-arrow-right {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-arrow-up {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-arrows-up-down {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-bars-3 {
+    --icon-empty: 0.125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.125);
+  }
+  .hero-beaker {
+    --icon-empty: 0.058;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.058);
+  }
+  .hero-bell {
+    --icon-empty: 0.1225;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1225);
+  }
+  .hero-book-open {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-bookmark {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-building-office {
+    --icon-empty: 0.125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.125);
+  }
+  .hero-calendar {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-chart-bar {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-chat {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-check {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-check-circle {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-chevron-down {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-chevron-left {
+    --icon-empty: 0.3125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.3125);
+  }
+  .hero-chevron-right {
+    --icon-empty: 0.3125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.3125);
+  }
+  .hero-chevron-up {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-clipboard {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-clock {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-cog {
+    --icon-empty: 0.1107;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1107);
+  }
+  .hero-document {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-download {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-ellipsis-horizontal {
+    --icon-empty: 0.1875;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1875);
+  }
+  .hero-ellipsis-vertical {
+    --icon-empty: 0.4375;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.4375);
+  }
+  .hero-exclamation-triangle {
+    --icon-empty: 0.0685;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0685);
+  }
+  .hero-eye {
+    --icon-empty: 0.0514;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0514);
+  }
+  .hero-eye-slash {
+    --icon-empty: 0.0494;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0494);
+  }
+  .hero-folder {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-funnel {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-heart {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-home {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-inbox {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-information-circle {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-light-bulb {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-link {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-list-bullet {
+    --icon-empty: 0.1172;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1172);
+  }
+  .hero-lock-closed {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-lock-open {
+    --icon-empty: 0.0312;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0312);
+  }
+  .hero-magnifying-glass {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-map-pin {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-paper-clip {
+    --icon-empty: 0.1067;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1067);
+  }
+  .hero-pencil {
+    --icon-empty: 0.1406;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1406);
+  }
+  .hero-pencil-square {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-photo {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-plus {
+    --icon-empty: 0.1562;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1562);
+  }
+  .hero-printer {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-question-mark-circle {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-rocket-launch {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-search {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-share {
+    --icon-empty: 0.0933;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0933);
+  }
+  .hero-sparkles {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-squares-2x2 {
+    --icon-empty: 0.125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.125);
+  }
+  .hero-star {
+    --icon-empty: 0.0872;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0872);
+  }
+  .hero-tag {
+    --icon-empty: 0.0857;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0857);
+  }
+  .hero-thumb-up {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-trash {
+    --icon-empty: 0.125;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.125);
+  }
+  .hero-upload {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-user {
+    --icon-empty: 0.1563;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.1563);
+  }
+  .hero-users {
+    --icon-empty: 0.0625;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0625);
+  }
+  .hero-wrench {
+    --icon-empty: 0.0624;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0624);
+  }
+  .hero-x {
+    --icon-empty: 0.2188;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.2188);
+  }
+  .hero-x-circle {
+    --icon-empty: 0.0938;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.0938);
+  }
+  .hero-x-mark {
+    --icon-empty: 0.2188;
+    --icon-fix: calc(var(--lk-icon-air) - var(--icon-box, 1rem) * 0.2188);
+  }
+}

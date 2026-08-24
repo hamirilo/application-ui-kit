@@ -22,7 +22,7 @@ const meta = {
   },
   args: {
     label: "受信トレイ",
-    icon: <Inbox className="w-4 h-4" />,
+    icon: <Inbox />,
     active: true,
     href: "#",
   },
@@ -49,33 +49,33 @@ export const AnimatedNavigationGroup: Story = {
       {
         id: "inbox",
         label: "受信トレイ",
-        icon: <Inbox className="w-4 h-4" />,
+        icon: <Inbox />,
         badge: 5,
         color: "blue" as const,
       },
       {
         id: "someday",
         label: "いつか読む",
-        icon: <Clock className="w-4 h-4" />,
+        icon: <Clock />,
         badge: 2,
         color: "indigo" as const,
       },
       {
         id: "archive",
         label: "アーカイブ",
-        icon: <Archive className="w-4 h-4" />,
+        icon: <Archive />,
         color: "teal" as const,
       },
       {
         id: "pinned",
         label: "ピン留め",
-        icon: <Pin className="w-4 h-4" />,
+        icon: <Pin />,
         color: "amber" as const,
       },
       {
         id: "favorites",
         label: "お気に入り",
-        icon: <Heart className="w-4 h-4" />,
+        icon: <Heart />,
         color: "rose" as const,
       },
     ];

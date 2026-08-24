@@ -22,6 +22,11 @@
 @import "./motion.css";
 @import "./fonts.css";
 
+/* 黄金比の係数（アイコンの光学補正・押下状態）と、その実測データ。
+ * scale.css が定義する --lk-* を icon-metrics.generated.css が使うため順序が要る。 */
+@import "./scale.css";
+@import "./icon-metrics.generated.css";
+
 /* components/ui/*.tsx (shadcn/ui gen3) が参照する cn-* クラスのスキン。
  * このファイルの @layer components（.btn-primary 等のテンプレート用クラス）とは別系統。
  * 詳細は components.css の冒頭コメントを参照。 */
@@ -240,7 +245,7 @@
    * ======================================== */
 
   .btn-primary {
-    @apply h-8 px-4 text-sm font-medium rounded-lg
+    @apply h-8 px-3.5 text-sm font-medium rounded-lg
            focus:outline-none focus:ring-2 focus:ring-offset-2
            transition-colors inline-flex items-center justify-center cursor-pointer;
     background-color: var(--color-primary);
@@ -257,7 +262,7 @@
   }
 
   .btn-secondary {
-    @apply h-8 px-4 text-sm font-medium rounded-lg
+    @apply h-8 px-3.5 text-sm font-medium rounded-lg
            focus:outline-none focus:ring-2 focus:ring-offset-2
            transition-colors inline-flex items-center justify-center cursor-pointer;
     background-color: var(--color-secondary);
@@ -275,7 +280,7 @@
   }
 
   .btn-success {
-    @apply h-8 px-4 text-sm font-medium rounded-lg
+    @apply h-8 px-3.5 text-sm font-medium rounded-lg
            focus:outline-none focus:ring-2 focus:ring-offset-2
            transition-colors inline-flex items-center justify-center cursor-pointer;
     background-color: var(--color-success);
@@ -292,7 +297,7 @@
   }
 
   .btn-danger {
-    @apply h-8 px-4 text-sm font-medium rounded-lg
+    @apply h-8 px-3.5 text-sm font-medium rounded-lg
            focus:outline-none focus:ring-2 focus:ring-offset-2
            transition-colors inline-flex items-center justify-center cursor-pointer;
     background-color: var(--color-danger);
@@ -337,7 +342,7 @@
   }
 
   .btn-lg {
-    @apply h-10 px-5 text-sm font-medium rounded-lg
+    @apply h-10 px-4 text-base font-medium rounded-lg
            transition-colors inline-flex items-center justify-center cursor-pointer;
   }
 
@@ -351,8 +356,64 @@
            transition-colors inline-flex items-center justify-center cursor-pointer;
   }
 
+  /* テンプレート側のアイコン + 文字の光学補正
+   *
+   * cn-* と 1:1 に揃える契約（components.css 冒頭の <important> 参照）。
+   * React 側と同じ 2 規則:
+   *   アイコンがある側の padding = padX × --lk-icon-inset
+   *   gap                        = 文字サイズ × --lk-icon-gap
+   *
+   * <important>
+   * テンプレートは素の HTML なので、アイコンが先頭にあることを
+   * `svg:first-child` で判定する。ラベルを <span> で包まず
+   * `<svg/>新規申請` と書いた場合も :first-child は成立する（テキストノードは
+   * 数えられないため）。逆に `新規申請<svg/>` も :first-child になってしまうので、
+   * **末尾にアイコンを置くときは svg を <span> で包むこと**。
+   * 包めば :first-child が外れ、左余白が誤って詰まらない。
+   * </important> */
+  .btn-primary,
+  .btn-secondary,
+  .btn-success,
+  .btn-danger {
+    --icon-box: 1rem;
+  }
+
+  .btn-primary:has(> svg:first-child),
+  .btn-secondary:has(> svg:first-child),
+  .btn-success:has(> svg:first-child),
+  .btn-danger:has(> svg:first-child) {
+    padding-left: calc(0.875rem * var(--lk-icon-inset));
+    column-gap: calc(0.875rem * var(--lk-icon-gap));
+  }
+
+  .btn-lg {
+    --icon-box: 1.125rem;
+  }
+
+  .btn-lg:has(> svg:first-child) {
+    padding-left: calc(1rem * var(--lk-icon-inset));
+    column-gap: calc(1rem * var(--lk-icon-gap));
+  }
+
+  .btn-sm,
+  .btn-xs {
+    --icon-box: 0.875rem;
+  }
+
+  .btn-sm:has(> svg:first-child) {
+    padding-left: calc(0.75rem * var(--lk-icon-inset));
+    column-gap: calc(0.75rem * var(--lk-icon-gap));
+  }
+
+  .btn-xs:has(> svg:first-child) {
+    padding-left: calc(0.625rem * var(--lk-icon-inset));
+    column-gap: calc(0.75rem * var(--lk-icon-gap));
+  }
+
   .badge {
     @apply inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium;
+    --icon-box: 0.75rem;
+    column-gap: calc(0.75rem * var(--lk-icon-gap));
   }
 
   .avatar-sm {
@@ -367,16 +428,30 @@
     @apply w-9 h-9 rounded-full flex items-center justify-center font-medium flex-shrink-0 text-sm;
   }
 
+  /* 余白と角丸は「中の一番大きい文字」から導出する（.cn-card と同じ規則）。
+   *   padding = radius = --card-title-size ÷ √φ
+   * 見出しが大きいカードほど余白が広がる。固定の p-3 / p-4 / p-6 だと
+   * 中身に関係なく同じ余白になってしまう。
+   * 出典: LiftKit registry/nextjs/components/card/card.css */
+  .card,
+  .card-sm,
+  .card-lg {
+    @apply bg-card text-card-foreground shadow-sm border border-border;
+    --card-optical: calc(var(--card-title-size) / var(--lk-halfstep));
+    padding: var(--card-optical);
+    border-radius: var(--card-optical);
+  }
+
   .card {
-    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-4;
+    --card-title-size: 1rem; /* 見出しが text-base のカード */
   }
 
   .card-sm {
-    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-3;
+    --card-title-size: 0.875rem; /* 見出しが text-sm のカード */
   }
 
   .card-lg {
-    @apply bg-card text-card-foreground rounded-xl shadow-sm border border-border p-6;
+    --card-title-size: 1.5rem; /* 見出しが text-2xl のカード */
   }
 
   /* テンプレート側の一覧テーブル（レイアウト系 UI はテンプレート側が所有する方針） */

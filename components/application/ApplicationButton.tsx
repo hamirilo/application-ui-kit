@@ -95,6 +95,16 @@ export const ApplicationButton = React.forwardRef<HTMLButtonElement, Application
     },
     ref,
   ) => {
+    // 先頭のアイコン枠。
+    //
+    // loading 中に leftIcon がある場合、アイコンを DOM から外すと横幅が動く。
+    // アイコンごとに光学補正の量が違うため（例: plus は片側 -1.67px、
+    // スピナーは -0.34px）、差し替えると文字が 2.67px 横に飛ぶ。
+    // そこで元のアイコンは場所取りとして残したまま隠し、スピナーを重ねる。
+    // leftIcon がないときは素直にスピナーを流し込む（ここは幅が増えて当然）。
+    const overlaySpinner = loading && Boolean(leftIcon);
+    const showIconSlot = Boolean(leftIcon) || loading;
+
     return (
       <Button
         ref={ref}
@@ -102,12 +112,25 @@ export const ApplicationButton = React.forwardRef<HTMLButtonElement, Application
         disabled={disabled || loading}
         // 処理中であることを支援技術にも伝える（見た目のスピナーだけに頼らない）
         aria-busy={loading || undefined}
-        className={cn("gap-2", className)}
+        className={cn(className)}
         {...props}
       >
-        {loading ? <Spinner /> : leftIcon}
+        {showIconSlot ? (
+          <span
+            data-slot="button-icon"
+            data-position="start"
+            data-loading={overlaySpinner ? "" : undefined}
+          >
+            {leftIcon}
+            {loading ? <Spinner /> : null}
+          </span>
+        ) : null}
         {children}
-        {!loading && rightIcon}
+        {!loading && rightIcon ? (
+          <span data-slot="button-icon" data-position="end">
+            {rightIcon}
+          </span>
+        ) : null}
       </Button>
     );
   },

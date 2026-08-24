@@ -1,0 +1,69 @@
+/* ==========================================================================
+ * Application UI Kit — 光学スケールトークン（黄金比）
+ *
+ * 値を「選ぶ」のではなく「導出する」ための定数。
+ * 出典: LiftKit（https://github.com/Chainlift/liftkit）
+ *   - registry/universal/lib/css/liftkitvars.css
+ *   - registry/nextjs/components/button/button.css
+ *   - registry/nextjs/components/state-layer/state-layer.css
+ * 公式サイト（chainlift.io）は消滅しているため、規則はリポジトリの CSS から読み取った。
+ *
+ * 読み込み元:
+ *   1. 各プロジェクトの backend/static/css/input.css（theme.css 経由）
+ *   2. Storybook の .storybook/storybook.css（theme.css 経由）
+ *
+ * <important>
+ * ここにあるのは「アイコンと文字の光学補正」「押下状態」のための係数だけ。
+ * padding / gap / border-radius のスケールそのものは Tailwind の 0.25rem 刻みを
+ * 使い続ける（tokens/spacing.ts の方針）。φ でスケール全体を置き換えてはいない。
+ * </important>
+ * ========================================================================== */
+
+@theme {
+  /* ========================================
+   * 黄金比のステップ
+   * ======================================== */
+
+  --lk-wholestep: 1.618; /* φ */
+  --lk-halfstep: 1.272; /* √φ */
+  --lk-quarterstep: 1.128; /* φ^(1/4) */
+  --lk-eighthstep: 1.062; /* φ^(1/8) */
+
+  /* ========================================
+   * アイコンと文字の光学補正
+   * ======================================== */
+
+  /* アイコンがある側の padding の係数。反対側の padding ÷ φ。
+   * 記号は字画が少なく余白として読まれるため、外側で二重に余白を数えない。
+   * LiftKit: --button-padX-sideWithIcon = font-size / φ */
+  --lk-icon-inset: 0.618; /* 1 / φ */
+
+  /* アイコンと文字の間隔の係数。文字サイズに掛ける。
+   * LiftKit: --button-gap = (font-size × √φ / φ²) / φ^(1/8) */
+  --lk-icon-gap: 0.4575; /* √φ / (φ² · φ^(1/8)) */
+
+  /* アイコンの光学箱を正規化したあとに残す片側の空き。
+   * 0 にすると字形が文字に接して見えるため、わずかに残す。
+   * 各アイコンの補正値は tokens/icon-metrics.generated.css。 */
+  --lk-icon-air: 1px;
+
+  /* ========================================
+   * ステートレイヤー（押下感）
+   *
+   * バリアントごとに背景色を差し替えるのではなく、同じ半透明レイヤーを重ねる。
+   * primary / secondary / danger / success / ghost で押下感が揃う。
+   * LiftKit: registry/nextjs/components/state-layer/state-layer.css
+   * ======================================== */
+
+  /* 面が薄いバリアント（outline / ghost / secondary）。
+   * currentColor が濃い文字色なので、レイヤーは暗く沈む。 */
+  --lk-state-hover: 0.06;
+  --lk-state-active: 0.12;
+
+  /* 面が濃いバリアント（primary / danger / success）。
+   * currentColor が白なのでレイヤーは明るく乗る。
+   * 白を彩度の高い面に重ねる変化は暗く沈める変化より知覚されにくいため、
+   * 同じ数値では押下感が揃わない。実測で見比べて 2 段構えにしている。 */
+  --lk-state-hover-on-fill: 0.16;
+  --lk-state-active-on-fill: 0.26;
+}

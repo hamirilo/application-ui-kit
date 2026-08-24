@@ -29,7 +29,8 @@ import { SpecTable, Code, DoDont } from './_parts'
   head={['部品', '角丸']}
   rows={[
     ['ボタン・入力欄・セレクト', <Code>rounded-lg</Code>],
-    ['カード・テーブルの外枠', <Code>rounded-xl</Code>],
+    ['カード', '導出（下記）'],
+    ['テーブルの外枠', <Code>rounded-xl</Code>],
     ['ダイアログ・大きいパネル', <Code>rounded-2xl</Code>],
     ['バッジ・アバター', <Code>rounded-full</Code>],
     ['メンションピル等の小要素', <Code>rounded</Code>],
@@ -37,8 +38,35 @@ import { SpecTable, Code, DoDont } from './_parts'
 />
 
 同じ画面で角丸が混在すると雑に見えます。
-**ボタンは `rounded-lg`、カードは `rounded-xl`** に統一してください。
-CSS クラス（`btn-*` / `card`）と Application コンポーネントは既にこの値になっています。
+**ボタンは `rounded-lg`** に統一してください。
+CSS クラス（`btn-*`）と Application コンポーネントは既にこの値になっています。
+
+### カードの角丸と余白は導出する
+
+カードだけは固定値ではなく、**中の一番大きい文字**から角丸と内側余白を導出します。
+どちらも同じ値なので、余白と角の曲がりが常に釣り合います。
+
+```
+padding = border-radius = 見出しの文字サイズ ÷ √φ   （√φ = 1.272）
+```
+
+<SpecTable
+  head={['クラス', '見出しのサイズ', '余白 = 角丸']}
+  rows={[
+    [<Code>{'<Card size="sm">'}</Code>, '14px（text-sm）', '11.01px'],
+    [<Code>{'<Card>'}</Code>, '16px（text-base）', '12.58px'],
+    [<Code>card-lg</Code>, '24px（text-2xl）', '18.87px'],
+  ]}
+/>
+
+見出しが大きいカードほど余白が広がります。固定の `p-3` / `p-4` / `p-6` だと
+中身に関係なく同じ余白になり、大きい見出しのカードだけ窮屈に見えます。
+出典は LiftKit（`registry/nextjs/components/card/card.css`）の
+`--opticCorrectedPadding` です。
+
+CSS は子要素の文字サイズを読めないため、`Card` の `size` プロップで明示的に
+渡しています。`className="p-6"` のような上書きはしないでください
+（余白だけが動いて角丸と釣り合わなくなります）。
 
 ---
 

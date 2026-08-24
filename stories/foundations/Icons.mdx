@@ -1,26 +1,109 @@
 import { Meta } from '@storybook/addon-docs/blocks'
-import { AlertCircle, Check, Plus, Search, Trash2 } from 'lucide-react'
+import { AlertCircle, Check, Download, Plus, Search, Trash2 } from 'lucide-react'
+import { LUCIDE_METRICS } from '../../tokens/icon-metrics.generated'
+import { SpecTable, Code, DoDont } from './_parts'
 
 <Meta title="Foundations/Icons" />
 
 # Icons
 
-Use named exports from lucide-react for application icons.
+アイコンは lucide-react の名前付きエクスポートを使います。
+テンプレート側は Heroicons v2 outline（`tokens/icons.generated.ts`）です。
 
-## Rules
+## ルール
 
-- Import only the icons used by a story or component.
-- Use currentColor through semantic text tokens; do not hard-code SVG colors.
-- Give icon-only controls an accessible aria-label.
-- Use an icon to support meaning, not as the only way to communicate a critical action.
-
-## Examples
+- Story やコンポーネントで使うアイコンだけを import してください
+- 色はセマンティックなテキストトークン経由で `currentColor` を使い、SVG に色を直書きしないでください
+- アイコンのみのコントロールには `aria-label` を付けてください
+- アイコンは意味を補助するものです。重要な操作をアイコンだけで伝えないでください
+- **サイズを手で指定しないでください**（後述）
 
 <div className="flex items-center gap-4 text-foreground">
-  <Plus className="h-4 w-4" aria-hidden="true" />
-  <Search className="h-4 w-4" aria-hidden="true" />
-  <Check className="h-4 w-4" aria-hidden="true" />
-  <AlertCircle className="h-4 w-4" aria-hidden="true" />
-  <Trash2 className="h-4 w-4" aria-hidden="true" />
+  <Plus aria-hidden="true" />
+  <Search aria-hidden="true" />
+  <Check aria-hidden="true" />
+  <AlertCircle aria-hidden="true" />
+  <Trash2 aria-hidden="true" />
 </div>
 
+---
+
+## 光学箱の補正
+
+アイコンの **CSS 上の箱と、実際に描画される字形の幅は一致しません**。
+
+`Plus` は 24 の viewBox に 66.7% しか描かれておらず、16px で表示すると
+片側 2.67px の空白を箱の内側に持っています。`Download` は 83.3% で 1.33px です。
+そのため CSS の `gap` が同じでも、アイコンごとに見える間隔が変わります。
+
+<div className="flex items-center gap-6 text-foreground">
+  <span className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
+    <Plus aria-hidden="true" />新規申請
+  </span>
+  <span className="inline-flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-sm">
+    <Download aria-hidden="true" />出力
+  </span>
+</div>
+
+各アイコンの「箱の空き」を**片側 1px に正規化**することでこれを揃えています。
+字形もストロークの太さも変えず、レイアウト箱だけを詰めます（または広げます）。
+
+```
+margin-inline = 1px − 描画サイズ × 空き比率
+空き比率 = (1 − 描画幅の割合) ÷ 2
+```
+
+実測値は `tokens/icon-metrics.generated.ts`、CSS は
+`tokens/icon-metrics.generated.css` です。どちらも生成物なので手で編集しません。
+
+### `--icon-box` を必ず宣言する
+
+補正はアイコンが**実際に何 px で描かれるか**（`--icon-box`）を基準に計算します。
+アイコンサイズを指定するクラスでは `--icon-box` も同時に宣言してください。
+宣言し忘れると 1rem 前提の補正がかかり、小さいアイコンで詰まりすぎます。
+
+<DoDont
+  doText={<>サイズはコンポーネントのサイズクラスに任せる。<Code>{'<ApplicationButton size="sm" leftIcon={<Plus />}>'}</Code></>}
+  dontText={<>アイコンに直接サイズを書く。<Code>{'<Plus className="w-4 h-4" />'}</Code></>}
+/>
+
+未登録のアイコンは補正が 0 になり、従来どおり描画されます（壊れはしません）。
+新しいアイコンを使い始めたら `tokens/icon-metrics.generated.ts` の測定手順に沿って
+再生成してください。
+
+---
+
+## 実測値一覧（lucide）
+
+描画幅の割合が小さいほど、箱の内側に空白を多く持っています。
+
+<SpecTable
+  head={['アイコン', '名前', '描画幅', '描画高', '16px での補正']}
+  rows={Object.entries(LUCIDE_METRICS)
+    .sort((a, b) => a[1].width - b[1].width)
+    .map(([name, m]) => [
+      <span
+        className="inline-block bg-muted text-primary"
+        style={{ width: 16, height: 16 }}
+        title={name}
+      >
+        <svg viewBox="0 0 24 24" width="16" height="16" aria-hidden="true">
+          <rect
+            x={(1 - m.width) * 12}
+            y={(1 - m.height) * 12}
+            width={m.width * 24}
+            height={m.height * 24}
+            fill="currentColor"
+          />
+        </svg>
+      </span>,
+      <Code>{name}</Code>,
+      `${(m.width * 100).toFixed(1)}%`,
+      `${(m.height * 100).toFixed(1)}%`,
+      `${(1 - 16 * m.empty).toFixed(2)}px`,
+    ])}
+/>
+
+見本の四角は、16px の箱の中で**実際に字形が占める範囲**を表しています。
+`ellipsis-vertical` や `chevron-left` のように極端に細いアイコンほど、
+補正なしでは周囲が空きすぎます。

@@ -116,7 +116,7 @@ export const ReadOnly: Story = {
 export const WithLeftIcon: Story = {
   args: {
     placeholder: "検索",
-    leftIcon: <Search className="w-4 h-4" />,
+    leftIcon: <Search />,
   },
 };
 
@@ -128,14 +128,14 @@ export const WithLeftIcon: Story = {
 export const WithRightIcon: Story = {
   args: {
     defaultValue: "検索キーワード",
-    leftIcon: <Search className="w-4 h-4" />,
+    leftIcon: <Search />,
     rightIcon: (
       <button
         type="button"
         aria-label="検索条件をクリア"
-        className="text-muted-foreground hover:text-foreground"
+        className="text-muted-foreground hover:text-foreground [--icon-box:1rem]"
       >
-        <X className="w-4 h-4" />
+        <X className="size-4" />
       </button>
     ),
   },
@@ -212,7 +212,7 @@ export const AllStates: Story = {
       <ApplicationInput disabled defaultValue="無効" aria-label="無効" />
       <ApplicationInput readOnly defaultValue="読み取り専用" aria-label="読み取り専用" />
       <ApplicationInput
-        leftIcon={<Search className="w-4 h-4" />}
+        leftIcon={<Search />}
         placeholder="アイコン付き"
         aria-label="アイコン付き"
       />

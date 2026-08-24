@@ -99,14 +99,14 @@ export const ApplicationNavItem = React.forwardRef<
   const currentStyle = colorStyles[activeColor];
 
   const sharedClasses = cn(
-    "group relative flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors border border-transparent select-none outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer h-auto",
+    "cn-nav-item group relative flex w-full items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors border border-transparent select-none outline-none focus-visible:ring-2 focus-visible:ring-ring cursor-pointer h-auto",
     active ? currentStyle.text : "text-muted-foreground hover:text-foreground hover:bg-accent",
     className,
   );
 
   const innerContent = (
     <>
-      <span className="relative z-10 flex items-center gap-2.5">
+      <span className="cn-nav-item-label relative z-10 flex items-center">
         {icon}
         <span className="truncate">{label ?? children}</span>
       </span>
