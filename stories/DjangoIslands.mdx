@@ -1,0 +1,72 @@
+import { Meta } from '@storybook/addon-docs/blocks'
+import { SpecTable, Code } from './foundations/_parts'
+
+<Meta title="Getting Started/Django Islands" />
+
+# Django 連携（Islands）
+
+Django テンプレート + htmx のアプリから、このキットの UI を**テンプレート側の記述だけ**で
+使うための仕組みです。`data-react` 属性を持つ要素に React コンポーネントを自動マウントします。
+
+React コンポーネントとして直接使う場合（`.tsx` の中）はこのページは不要です。
+各 Component の Story を参照してください。
+
+## 使い方
+
+アプリの Vite エントリで auto-mount を import します。
+
+<Code>{`// islands/main.ts
+import '@hamirilo/application-ui-kit/islands/auto-mount'`}</Code>
+
+これだけで、ページ内の `data-react` 要素（htmx スワップで後から入ったものも含む）が
+自動でマウントされます。
+
+## 標準 Island
+
+<SpecTable
+  head={['data-react', '目的', '主な data-* 属性']}
+  rows={[
+    ['toast-listener', '全ページトースト。window.ApplicationToast の登録と Django messages の表示。base.html に 1 つだけ置く', 'data-messages'],
+    ['confirm-dialog', '確認ダイアログ。確定時の fetch・CSRF・成功トーストを内包', 'data-id / data-title / data-message / data-type / data-url / data-method / data-success-message'],
+    ['form-dialog', 'ダイアログの枠だけを React が持ち、中身は htmx が Django Form HTML を取得して表示', 'data-id / data-title / data-form-url / data-success-event'],
+    ['date-picker', 'Django Form の hidden input の値を書き換える日付選択（single / range）', 'data-mode / data-target / data-value / data-target-from / data-target-to'],
+  ]}
+/>
+
+## テンプレート例
+
+<Code>{`<!-- base.html に一度だけ（全ページトースト） -->
+<div data-react="toast-listener"></div>
+
+<!-- 確認ダイアログ -->
+<div data-react="confirm-dialog" data-id="delete-15" data-title="削除しますか？"
+     data-type="danger" data-url="/ideas/15/delete/"></div>
+<button onclick="window.openConfirmDialog['delete-15']()">削除</button>
+
+<!-- フォームダイアログ -->
+<div data-react="form-dialog" data-id="task-create" data-title="新規タスク作成"
+     data-form-url="{% url 'tasks:create_form' %}"></div>
+
+<!-- 日付選択 -->
+{{ form.start_date }}
+<div data-react="date-picker" data-mode="single"
+     data-target="{{ form.start_date.id_for_label }}"></div>`}</Code>
+
+## 通知の流れ
+
+- Django View: `messages.success(request, "保存しました")` → `data-messages` 経由でページ読込時にトースト表示
+- 素の JS / htmx: `window.ApplicationToast.success("保存しました")`
+- form-dialog の送信成功: Django View が `HX-Trigger: application-form-success` を返す
+
+## 注意事項
+
+- 表示領域（Toaster）を持つのは toast-listener だけです。成功トーストを使う Island がある
+  ページには toast-listener が必要です（通常は base.html に置くので満たされます）。
+- CSRF cookie 名を変更しているプロジェクトは `data-csrf-cookie-name` を渡してください
+  （既定は Django 標準の `csrftoken`）。エンドポイントや認証方式は焼き込みません。
+- 業務ドメイン固有の Island はこのパッケージに追加せず、アプリ側で
+  `registerIslandComponents()` を使って登録します。
+- `data-props` に Django の値を渡すときは、文字列連結で JSON を組み立てず
+  `json_script` 等の安全なシリアライズ手段を使ってください。
+
+詳細な設計判断は リポジトリの `decisions/adr-0001-django-htmx-islands.md` を参照してください。

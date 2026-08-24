@@ -27,7 +27,13 @@ export default defineConfig({
   plugins: [react()],
   build: {
     lib: {
-      entry: fileURLToPath(new URL("./components/application/index.ts", import.meta.url)),
+      // islands/auto-mount は import 時に自動マウントを実行する副作用エントリのため、
+      // index から import させず独立したエントリにする（package.json の sideEffects も参照）。
+      entry: [
+        fileURLToPath(new URL("./components/application/index.ts", import.meta.url)),
+        fileURLToPath(new URL("./components/islands/index.ts", import.meta.url)),
+        fileURLToPath(new URL("./components/islands/auto-mount.tsx", import.meta.url)),
+      ],
       formats: ["es"],
     },
     rollupOptions: {

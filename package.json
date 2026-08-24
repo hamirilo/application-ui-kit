@@ -3,7 +3,7 @@
   "version": "3.0.0",
   "description": "Shared React application UI components, semantic design tokens, and Storybook specification",
   "type": "module",
-  "sideEffects": false,
+  "sideEffects": ["**/auto-mount.tsx", "dist/components/islands/auto-mount.js", "**/*.css"],
   "scripts": {
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build -o storybook-static",
@@ -24,6 +24,14 @@
     ".": {
       "types": "./dist/types/components/application/index.d.ts",
       "import": "./dist/components/application/index.js"
+    },
+    "./islands": {
+      "types": "./dist/types/components/islands/index.d.ts",
+      "import": "./dist/components/islands/index.js"
+    },
+    "./islands/auto-mount": {
+      "types": "./dist/types/components/islands/auto-mount.d.ts",
+      "import": "./dist/components/islands/auto-mount.js"
     },
     "./styles.css": "./tokens/theme.css",
     "./tokens/*": "./tokens/*"
