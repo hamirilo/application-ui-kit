@@ -41,7 +41,7 @@ Storybookは包括的なデザインシステムではなく、**UI Kitのショ
 - **Patterns** は複数の部品を組み合わせた画面の作り方を示します。「どの部品を使うか」ではなく「アプリではどう組み合わせるか」です。
 - **Foundations** は実装時に確認が必要な情報だけに限定します。
 
-サイドバーの並びは `.storybook/preview.tsx` の `storySort` が決めます。Overviewは各コンポーネントの先頭に固定されます。
+サイドバーのセクション順は `.storybook/preview.tsx` の `storySort` が決めます。コンポーネント内の並びはStoryファイル内の定義順のままなので、**Overviewはファイルの先頭に書きます**。
 
 ### Story作成の基準
 
