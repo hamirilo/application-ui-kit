@@ -34,7 +34,16 @@ export const SPACING_RULES = [
   { context: "ラベルと入力欄の間", value: "mb-1.5", note: "mb-1 / mb-2 との混在を禁止" },
   { context: "エラーメッセージの上", value: "mt-1.5", note: "" },
   { context: "ヘルプテキストの上", value: "mt-1", note: "" },
-  { context: "アイコンとラベルの間", value: "gap-1.5", note: "ボタン内の標準" },
+  {
+    context: "アイコンとラベルの間",
+    value: "自動",
+    note: "文字サイズ × 0.4575 で導出。手で gap を指定しない（Foundations/Spacing 参照）",
+  },
   { context: "フォーム項目の縦間隔", value: "space-y-4", note: "" },
   { context: "カード内の要素間", value: "gap-3", note: "" },
+  {
+    context: "カードの内側余白",
+    value: "自動",
+    note: "見出しの文字サイズ ÷ √φ で導出。p-* で上書きしない",
+  },
 ] as const;

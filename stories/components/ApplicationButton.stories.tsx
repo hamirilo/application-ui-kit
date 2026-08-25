@@ -186,7 +186,7 @@ export const Loading: Story = {
 
 /** アイコン付き。アイコンとラベルの間隔はコンポーネント側で `gap` が入る。 */
 export const WithIcon: Story = {
-  args: { leftIcon: <Plus className="w-4 h-4" />, children: "タスク追加" },
+  args: { leftIcon: <Plus />, children: "タスク追加" },
 };
 
 /**
@@ -202,7 +202,7 @@ export const InDialogFooter: Story = {
       </p>
       <div className="flex justify-end gap-2">
         <ApplicationButton variant="secondary">キャンセル</ApplicationButton>
-        <ApplicationButton variant="danger" leftIcon={<Trash className="w-4 h-4" />}>
+        <ApplicationButton variant="danger" leftIcon={<Trash />}>
           削除する
         </ApplicationButton>
       </div>
@@ -215,10 +215,10 @@ export const InToolbar: Story = {
   parameters: { controls: { disable: true } },
   render: () => (
     <div className="flex items-center gap-2 rounded-lg border border-border p-2">
-      <ApplicationButton size="sm" leftIcon={<Plus className="w-3.5 h-3.5" />}>
+      <ApplicationButton size="sm" leftIcon={<Plus />}>
         新規
       </ApplicationButton>
-      <ApplicationButton size="sm" variant="secondary" leftIcon={<Download className="w-3.5 h-3.5" />}>
+      <ApplicationButton size="sm" variant="secondary" leftIcon={<Download />}>
         CSV 出力
       </ApplicationButton>
       <div className="flex-1" />

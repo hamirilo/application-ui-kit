@@ -88,16 +88,16 @@ export interface ApplicationDropdownProps {
  * <ApplicationDropdown
  *   trigger={
  *     <ApplicationButton variant="ghost" size="icon">
- *       <MoreVertical className="w-4 h-4" />
+ *       <MoreVertical />
  *     </ApplicationButton>
  *   }
  *   items={[
- *     { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" />, onSelect: handleEdit },
- *     { key: "archive", label: "アーカイブ", icon: <Archive className="w-4 h-4" />, onSelect: handleArchive },
+ *     { key: "edit", label: "編集", icon: <Pencil />, onSelect: handleEdit },
+ *     { key: "archive", label: "アーカイブ", icon: <Archive />, onSelect: handleArchive },
  *     {
  *       key: "delete",
  *       label: "削除",
- *       icon: <Trash className="w-4 h-4" />,
+ *       icon: <Trash />,
  *       danger: true,
  *       separatorBefore: true,
  *       onSelect: () => setDeleteConfirmOpen(true),

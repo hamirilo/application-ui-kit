@@ -10,12 +10,66 @@
  * @fontsource/ibm-plex-sans-jp から同じ要領で追加する。
  * ========================================================================== */
 
+/* ==========================================================================
+ * 縦位置の光学補正（Inter のメトリクスオーバーライド）
+ *
+ * <important>
+ * Inter の 4 ウェイトすべてに ascent-override / descent-override を付けている。
+ * 外すとボタンや入力欄の中で文字が上にずれる。値を変えるときは下記の導出を追うこと。
+ * </important>
+ *
+ * なぜ必要か:
+ *   固定高さ + align-items:center のコントロールでは、ベースラインの位置は
+ *   line-height ではなく (ascent - descent) / 2 だけで決まる。
+ *   行ボックスの strut はスタック先頭の Inter が持つが、和文グリフは
+ *   IBM Plex Sans JP から来る。両者の「視覚的な中心」がずれている:
+ *
+ *     Inter の箱の中心          (1984 - 494) / 2 / 2048 = 0.36377em（ベースライン上）
+ *     IBM Plex Sans JP の
+ *     仮想ボディ中心            (880 - 120) / 2 / 1000  = 0.38000em
+ *     差                                                  0.01623em（14px で 0.23px）
+ *
+ *   この差のぶん和文が上に浮く。さらにブラウザがベースラインをピクセル境界に
+ *   丸めるため、実測では 0.32〜0.58px 上にずれていた。
+ *
+ * 値の決め方:
+ *   ascent + descent = 121% は元の Inter（96.875 + 24.121 = 120.996%）を維持する。
+ *   → 行ボックスの高さは変わらない。ベースラインの位置だけが下がる。
+ *   ascent - descent を大きくするとベースラインが下がり、文字が下がる。
+ *
+ *   和文と欧文のどちらを優先するかで最適値が変わる。98/23 は両方を均等に
+ *   良くする点（折半）。xs/sm/default/lg × 和文/欧文 の実測平均絶対誤差:
+ *
+ *     現状（96.875/24.121）   和文 0.505px  欧文 0.286px
+ *     98/23                   和文 0.130px  欧文 0.136px  ← 採用
+ *     98.5/22.5               和文 0.095px  欧文 0.214px（和文優先）
+ *
+ * フォントを変えたら再計算すること:
+ *   目標の箱の中心 C（em）= (和文の typoAscender - typoDescender) / 2 / UPM と
+ *   (欧文の capHeight) / 2 / UPM の中間。
+ *   ascent = (現状の asc+desc + 2C) / 2、descent = 現状の asc+desc - ascent。
+ *   メトリクスは fontTools で読める（TTFont(...)['OS/2'], ['head'].unitsPerEm）。
+ *
+ * 既知の限界:
+ *   - default（32px）は 0.5px の丸めに阻まれ、この解像度では改善しない。
+ *     高 DPI 端末では刻みが細かくなるため挙動が変わる。
+ *   - ascent-override は Safari 17 以降。未対応環境では補正なしで描画される
+ *     （従来の見た目に戻るだけで、壊れはしない）。
+ *
+ * 出典の考え方: https://coliss.com/articles/build-websites/operation/work/about-centering.html
+ *   「ascender - cap-height = descender」が成り立つフォントは中央に来る。
+ *   Inter は 494 = 494 でこれを満たすが、和文フォントと混ぜると上記のずれが出る。
+ * ========================================================================== */
+
 @font-face {
   font-family: "Inter";
   font-style: normal;
   font-display: swap;
   font-weight: 400;
   src: url("./fonts/inter-latin-400-normal.woff2") format("woff2");
+  ascent-override: 98%;
+  descent-override: 23%;
+  line-gap-override: 0%;
 }
 
 @font-face {
@@ -24,6 +78,9 @@
   font-display: swap;
   font-weight: 500;
   src: url("./fonts/inter-latin-500-normal.woff2") format("woff2");
+  ascent-override: 98%;
+  descent-override: 23%;
+  line-gap-override: 0%;
 }
 
 @font-face {
@@ -32,6 +89,9 @@
   font-display: swap;
   font-weight: 600;
   src: url("./fonts/inter-latin-600-normal.woff2") format("woff2");
+  ascent-override: 98%;
+  descent-override: 23%;
+  line-gap-override: 0%;
 }
 
 @font-face {
@@ -40,6 +100,9 @@
   font-display: swap;
   font-weight: 700;
   src: url("./fonts/inter-latin-700-normal.woff2") format("woff2");
+  ascent-override: 98%;
+  descent-override: 23%;
+  line-gap-override: 0%;
 }
 
 @font-face {

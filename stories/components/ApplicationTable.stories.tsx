@@ -330,7 +330,7 @@ export const WithActions: Story = {
           <ApplicationDropdown
             trigger={
               <ApplicationButton variant="ghost" size="sm" aria-label="操作メニュー">
-                <MoreVertical className="w-4 h-4" />
+                <MoreVertical />
               </ApplicationButton>
             }
             items={[

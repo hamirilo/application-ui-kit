@@ -25,44 +25,148 @@
    * MARK: Button — 移行前の components/ui/button.tsx から移設
    * ====================================================================== */
 
+  /* アイコンのサイズと --icon-box はサイズクラス側が持つ（.cn-button-size-*）。
+   * ここで size-4 を固定すると xs/sm（text-xs）でアイコンだけが大きくなる。 */
   .cn-button {
-    @apply inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-lg
-           text-sm font-medium transition-colors outline-none
+    @apply relative inline-flex items-center justify-center gap-2 whitespace-nowrap
+           rounded-lg text-sm font-medium transition-colors outline-none
            focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
            disabled:pointer-events-none disabled:opacity-50
            data-disabled:pointer-events-none data-disabled:opacity-50
-           [&_svg]:pointer-events-none [&_svg]:shrink-0
-           [&_svg:not([class*='size-'])]:size-4;
+           [&_svg]:pointer-events-none [&_svg]:shrink-0;
+  }
+
+  /* ステートレイヤー（押下感）
+   *
+   * バリアントごとに背景色を差し替えるのではなく、同じ半透明レイヤーを重ねる。
+   * 以前は hover:bg-primary/90 ・ /80 ・ bg-success-hover と方式も不透明度も
+   * バラバラで、:active に至っては存在しなかった。
+   *
+   * currentColor を敷くので、面が濃いバリアント（primary/danger/success）では
+   * 明るく、面が薄いバリアント（outline/ghost）では暗く沈む。どちらも
+   * 「押した」と読める方向に転ぶ。
+   *
+   * 出典: LiftKit registry/nextjs/components/state-layer/state-layer.css
+   * LiftKit の値は hover 0.16 / active 0.5 の 1 段だが、そのままでは
+   * (1) active が明らかに濃すぎ、(2) 塗りバリアント（白レイヤー）と
+   * outline/ghost（暗いレイヤー）で知覚される変化量が揃わなかった。
+   * Storybook で見比べて 2 段構えに変えている（値は tokens/scale.css）。
+   *
+   * <important>
+   * overflow: hidden は使わない。focus-visible:ring がボタンの外側に出るため、
+   * 切るとキーボード操作時にフォーカスが見えなくなる。
+   * 代わりに isolation: isolate + z-index: -1 を使う。こうするとレイヤーは
+   * ボタン自身の背景の上・中身の下に入るので、文字やアイコンが曇らない。
+   * </important> */
+  /* position: relative は必須。static のままだと ::after の inset:0 が
+   * ビューポート基準になり、ホバーで画面全体が覆われる。 */
+  .cn-button,
+  .cn-toggle {
+    position: relative;
+    isolation: isolate;
+  }
+
+  .cn-button::after,
+  .cn-toggle::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: currentColor;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity var(--motion-duration-fast) var(--motion-ease-default);
+  }
+
+  .cn-button:hover::after,
+  .cn-toggle:hover::after {
+    opacity: var(--lk-state-hover);
+  }
+
+  .cn-button:active::after,
+  .cn-toggle:active::after {
+    opacity: var(--lk-state-active);
+  }
+
+  /* 塗りバリアントは白レイヤーになるので強めに振る */
+  .cn-button-variant-default,
+  .cn-button-variant-destructive,
+  .cn-button-variant-success {
+    --lk-state-hover: var(--lk-state-hover-on-fill);
+    --lk-state-active: var(--lk-state-active-on-fill);
+  }
+
+  /* 無効時は押下感を出さない */
+  .cn-button:disabled::after,
+  .cn-button[data-disabled]:not([data-disabled="false"])::after,
+  .cn-toggle:disabled::after {
+    opacity: 0;
+  }
+
+  /* ApplicationButton がアイコン枠に付ける印。どちら側にアイコンがあるかを
+   * CSS から見るためだけのもので、レイアウト上の箱は作らない。
+   * display: contents なので svg がそのまま flex アイテムになり、
+   * gap も icon-metrics の margin-inline もこれまでどおり svg に効く。 */
+  [data-slot="button-icon"] {
+    display: contents;
+  }
+
+  /* loading 中は元のアイコンを場所取りとして残し（隠すだけ）、スピナーを重ねる。
+   * アイコンごとに光学補正の量が違うので、DOM から外すと文字が横に飛ぶ。
+   * 詳細は ApplicationButton.tsx のコメント。 */
+  [data-slot="button-icon"][data-loading] {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+  }
+
+  [data-slot="button-icon"][data-loading] > :not([data-slot="spinner"]) {
+    visibility: hidden;
+  }
+
+  /* スピナーは元のアイコンより大きいことがあるので、inset:0 + margin:auto では
+   * 枠に収まらず左寄りになる。中心を基準に置く。 */
+  [data-slot="button-icon"][data-loading] > [data-slot="spinner"] {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin: 0;
+    transform: translate(-50%, -50%);
   }
 
   .cn-button-variant-default {
-    @apply bg-primary text-primary-foreground shadow hover:bg-primary/90;
+    @apply bg-primary text-primary-foreground shadow;
   }
 
   .cn-button-variant-destructive {
-    @apply bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90;
+    @apply bg-destructive text-destructive-foreground shadow-sm;
   }
 
   .cn-button-variant-outline {
-    @apply border border-input bg-background shadow-sm
-           hover:bg-accent hover:text-accent-foreground;
+    @apply border border-input bg-background shadow-sm;
   }
 
   .cn-button-variant-secondary {
-    @apply bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80;
+    @apply bg-secondary text-secondary-foreground shadow-sm;
   }
 
   .cn-button-variant-ghost {
-    @apply text-foreground hover:bg-accent hover:text-accent-foreground;
+    @apply text-foreground;
   }
 
+  /* link は面を持たないので、レイヤーではなく下線で状態を示す */
   .cn-button-variant-link {
     @apply text-primary underline-offset-4 hover:underline;
   }
 
+  .cn-button-variant-link::after {
+    content: none;
+  }
+
   /* success は shadcn 標準にないバリアント。btn-success（theme.css）と色を揃える。 */
   .cn-button-variant-success {
-    @apply bg-success text-success-foreground shadow-sm hover:bg-success-hover;
+    @apply bg-success text-success-foreground shadow-sm;
   }
 
   /* サイズはテンプレートの .btn-* と 1:1 で対応させる（実測で一致を確認済み）。
@@ -74,44 +178,146 @@
    * 例外なくボタン高 = 入力欄高になっており、崩すと横並びで段差が出る。
    * ここを変えるときは入力系と theme.css の .btn-* / .input-field も同時に直すこと。
    * </important> */
+  /* 横方向の余白は φ から導出する（tokens/scale.css）。
+   *
+   *   アイコンがある側の padding = padX × --lk-icon-inset（= padX ÷ φ）
+   *   gap                        = 文字サイズ × --lk-icon-gap
+   *
+   * 記号は字画が少なく余白として読まれるため、アイコン側の外周は詰める。
+   * 詰めないと「＋新規申請」で ＋ が文字側へ押し付けられて見える。
+   * padX 自体はサイズごとの設計判断で、default は 1em = 14px（入力欄と同値）。
+   * 出典: LiftKit registry/nextjs/components/button/button.css
+   *
+   * アイコンの有無は data-slot="button-icon" で見る。svg:first-child では
+   * `保存<svg/>`（rightIcon のみ）と `<svg/>保存` が区別できない
+   * （:first-child は要素しか数えず、テキストノードを無視するため）。 */
+
   .cn-button-size-default {
-    @apply h-8 px-4 text-sm;
+    @apply h-8 px-3.5 text-sm;
+    --icon-box: 1rem;
+  }
+  .cn-button-size-default :where(svg:not([class*="size-"])) {
+    @apply size-4;
+  }
+  .cn-button-size-default:has(> [data-position="start"]) {
+    padding-left: calc(0.875rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-default:has(> [data-position="end"]) {
+    padding-right: calc(0.875rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-default:has(> [data-slot="button-icon"]) {
+    column-gap: calc(0.875rem * var(--lk-icon-gap));
   }
 
   .cn-button-size-xs {
     @apply h-6 px-2.5 text-xs;
+    --icon-box: 0.875rem;
+  }
+  .cn-button-size-xs :where(svg:not([class*="size-"])) {
+    @apply size-3.5;
+  }
+  .cn-button-size-xs:has(> [data-position="start"]) {
+    padding-left: calc(0.625rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-xs:has(> [data-position="end"]) {
+    padding-right: calc(0.625rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-xs:has(> [data-slot="button-icon"]) {
+    column-gap: calc(0.75rem * var(--lk-icon-gap));
   }
 
   .cn-button-size-sm {
     @apply h-7 px-3 text-xs;
+    --icon-box: 0.875rem;
+  }
+  .cn-button-size-sm :where(svg:not([class*="size-"])) {
+    @apply size-3.5;
+  }
+  .cn-button-size-sm:has(> [data-position="start"]) {
+    padding-left: calc(0.75rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-sm:has(> [data-position="end"]) {
+    padding-right: calc(0.75rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-sm:has(> [data-slot="button-icon"]) {
+    column-gap: calc(0.75rem * var(--lk-icon-gap));
   }
 
+  /* lg だけ文字が 16px。padX = 1em の規則を満たしたうえで default（14px）と
+   * 差を残すには、文字ごと上げるしかない。text-sm のままだと padX を 14 に
+   * 下げた瞬間に default と横幅が同じになり「大きいボタン」でなくなる。 */
   .cn-button-size-lg {
-    @apply h-10 px-5 text-sm;
+    @apply h-10 px-4 text-base;
+    --icon-box: 1.125rem;
+  }
+  .cn-button-size-lg :where(svg:not([class*="size-"])) {
+    @apply size-[18px];
+  }
+  .cn-button-size-lg:has(> [data-position="start"]) {
+    padding-left: calc(1rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-lg:has(> [data-position="end"]) {
+    padding-right: calc(1rem * var(--lk-icon-inset));
+  }
+  .cn-button-size-lg:has(> [data-slot="button-icon"]) {
+    column-gap: calc(1rem * var(--lk-icon-gap));
   }
 
+  /* アイコンのみの正方形。横方向の導出規則は当てない（左右の非対称が無意味なため）。
+   * --icon-box だけは宣言する。書かないと 1rem 前提の補正がかかる。 */
   .cn-button-size-icon {
     @apply size-8;
+    --icon-box: 1rem;
+  }
+  .cn-button-size-icon :where(svg:not([class*="size-"])) {
+    @apply size-4;
   }
 
   .cn-button-size-icon-xs {
     @apply size-6;
+    --icon-box: 0.875rem;
+  }
+  .cn-button-size-icon-xs :where(svg:not([class*="size-"])) {
+    @apply size-3.5;
   }
 
   .cn-button-size-icon-sm {
     @apply size-7;
+    --icon-box: 0.875rem;
+  }
+  .cn-button-size-icon-sm :where(svg:not([class*="size-"])) {
+    @apply size-3.5;
   }
 
   .cn-button-size-icon-lg {
     @apply size-10;
+    --icon-box: 1.125rem;
+  }
+  .cn-button-size-icon-lg :where(svg:not([class*="size-"])) {
+    @apply size-[18px];
   }
 
   /* ========================================================================
    * MARK: Badge — theme.css の .badge と同じ形状
    * ====================================================================== */
 
+  /* gap は文字サイズから導出する（ボタンと同じ --lk-icon-gap）。
+   *
+   * <important>
+   * 左右の非対称（padX ÷ φ）はここでは当てない。Badge は children を素通しするため、
+   * アイコンが先頭にあるのか末尾（×ボタン等）にあるのかを CSS から判別できない。
+   * :first-child は要素しか数えずテキストノードを無視するので、`下書き<svg/>` でも
+   * svg が :first-child になってしまう。Button は data-slot="button-icon" という
+   * 印を持つので判別できるが、Badge には印がない。
+   * 非対称が必要になったら Button と同じく印を足すこと。
+   * </important> */
   .cn-badge {
-    @apply inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium;
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+    --icon-box: 0.75rem;
+    column-gap: calc(0.75rem * var(--lk-icon-gap));
+  }
+  .cn-badge :where(svg:not([class*="size-"])) {
+    @apply size-3;
   }
 
   .cn-badge-variant-default {
@@ -142,9 +348,24 @@
    * MARK: Card — theme.css の .card と同じ（rounded-xl / shadow-sm / p-4）
    * ====================================================================== */
 
+  /* 余白と角丸は「中の一番大きい文字」から導出する。
+   *   padding = radius = --card-title-size ÷ √φ
+   * 見出しが大きいカードほど余白が広がり、小さいカードは締まる。
+   * 固定の p-4 / p-3 / p-6 だと、中身に関係なく同じ余白になってしまう。
+   * 出典: LiftKit registry/nextjs/components/card/card.css の
+   *       --opticCorrectedPadding（font-size / line-height）
+   *
+   * CSS は子の font-size を読めないため、Card の data-size で明示的に渡す。 */
   .cn-card {
-    @apply flex flex-col rounded-xl border border-border bg-card p-4
-           text-card-foreground shadow-sm;
+    --card-title-size: 1rem; /* .cn-card-title = text-base */
+    --card-optical: calc(var(--card-title-size) / var(--lk-halfstep));
+    @apply flex flex-col border border-border bg-card text-card-foreground shadow-sm;
+    padding: var(--card-optical);
+    border-radius: var(--card-optical);
+  }
+
+  .cn-card[data-size="sm"] {
+    --card-title-size: 0.875rem;
   }
 
   .cn-card-header {
@@ -176,7 +397,7 @@
    * ====================================================================== */
 
   .cn-input {
-    @apply w-full rounded-lg border border-input bg-card h-8 px-3 text-sm
+    @apply w-full rounded-lg border border-input bg-card h-8 px-3.5 text-sm
            text-foreground transition-colors
            placeholder:text-muted-foreground
            focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
@@ -185,7 +406,7 @@
   }
 
   .cn-textarea {
-    @apply w-full rounded-lg border border-input bg-card px-3 py-1.5 text-sm
+    @apply w-full rounded-lg border border-input bg-card px-3.5 py-1.5 text-sm
            text-foreground transition-colors
            placeholder:text-muted-foreground
            focus-visible:border-ring focus-visible:ring-2 focus-visible:ring-ring
@@ -215,6 +436,7 @@
 
   .cn-checkbox-indicator {
     @apply flex items-center justify-center text-current [&_svg]:size-3.5;
+    --icon-box: 0.875rem;
   }
 
   /* 並び方向は利用側（ApplicationRadioGroup の orientation）が決めるため、
@@ -260,8 +482,11 @@
     @apply bg-transparent;
   }
 
+  /* gap は文字サイズ（14px）から導出。左右の非対称は当てない（.cn-badge のコメント参照）。 */
   .cn-tabs-trigger {
-    @apply -mb-px inline-flex items-center gap-1.5 border-b-2 border-transparent px-3 py-2
+    --icon-box: 1rem;
+    column-gap: calc(0.875rem * var(--lk-icon-gap));
+    @apply -mb-px inline-flex items-center border-b-2 border-transparent px-3 py-2
            text-sm font-medium text-muted-foreground transition-colors
            hover:text-foreground
            focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
@@ -376,8 +601,10 @@
    * ====================================================================== */
 
   .cn-select-trigger {
-    @apply flex w-full items-center justify-between gap-2 rounded-lg border border-input
-           bg-card h-8 px-3 text-sm text-foreground transition-colors
+    --icon-box: 1rem;
+    column-gap: calc(0.875rem * var(--lk-icon-gap));
+    @apply flex w-full items-center justify-between rounded-lg border border-input
+           bg-card h-8 px-3.5 text-sm text-foreground transition-colors
            focus-visible:outline-none focus-visible:border-ring focus-visible:ring-2
            focus-visible:ring-ring
            data-[popup-open]:border-ring
@@ -456,8 +683,12 @@
            data-closed:animate-out data-closed:fade-out-0 data-closed:zoom-out-95;
   }
 
+  /* gap は文字サイズ（14px）から導出。左右の非対称は当てない（.cn-badge の
+   * コメント参照。加えて pl-8 のチェック済み変種があり左余白の意味が違う）。 */
   .cn-dropdown-menu-item {
-    @apply relative flex cursor-default select-none items-center gap-2 rounded-sm px-2 py-1.5
+    --icon-box: 1rem;
+    column-gap: calc(0.875rem * var(--lk-icon-gap));
+    @apply relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5
            text-sm outline-none transition-colors
            data-highlighted:bg-accent data-highlighted:text-accent-foreground
            data-disabled:pointer-events-none data-disabled:opacity-50
@@ -533,6 +764,7 @@
   .cn-combobox-clear {
     @apply inline-flex size-5 items-center justify-center rounded-full text-muted-foreground
            transition-colors hover:bg-accent hover:text-foreground;
+    --icon-box: 0.875rem;
   }
 
   .cn-combobox-clear-icon {
@@ -600,6 +832,7 @@
   /* 見た目は 16px（移行前と同じ）だが、擬似要素で当たり判定を広げて
    * 最小ターゲットサイズを確保する。cn-checkbox と同じ手法。 */
   .cn-combobox-chip-remove {
+    --icon-box: 0.75rem;
     @apply relative inline-flex size-4 shrink-0 items-center justify-center rounded-full
            text-muted-foreground transition-colors
            after:absolute after:-inset-1.5
@@ -757,12 +990,34 @@
   }
 
   /* ========================================================================
+   * MARK: Nav Item — ApplicationNavItem
+   *
+   * ここはアイコンが先頭かどうかを判別できる。ラベルが常に <span> で包まれて
+   * いるため、svg が :first-child になるのはアイコンがあるときだけ。
+   * （Badge / Tab はラベルが生テキストなので判別できず、gap のみに留めている）
+   * ====================================================================== */
+
+  .cn-nav-item {
+    --icon-box: 1rem;
+  }
+
+  /* サイズ指定がないと lucide のデフォルト 24px になるので、ここで受ける。 */
+  .cn-nav-item-label {
+    column-gap: calc(0.875rem * var(--lk-icon-gap));
+    @apply [&_svg:not([class*='size-'])]:size-4;
+  }
+
+  .cn-nav-item:has(.cn-nav-item-label > svg:first-child) {
+    padding-left: calc(0.75rem * var(--lk-icon-inset));
+  }
+
+  /* ========================================================================
    * MARK: Input Group — shadcn/ui 標準（style-nova.css より移設）
    *   このリポジトリに移行前の相当物がなかったため、上流の見た目をそのまま採用する。
    * ====================================================================== */
 
   /* nova は h-8 の低い入力欄を前提にしている。このリポジトリの入力欄は
-   * .cn-input（px-3.5 py-2.5）なので、アイコンの有無で高さが変わらないよう揃える。 */
+   * .cn-input（h-8 px-3.5）なので、アイコンの有無で高さが変わらないよう揃える。 */
   .cn-input-group {
     @apply h-8 w-full rounded-lg border border-input bg-card transition-colors
            focus-within:border-ring focus-within:ring-2 focus-within:ring-ring
@@ -771,7 +1026,16 @@
            has-[>[data-align=block-end]]:flex-col has-[>[data-align=block-start]]:flex-col;
   }
 
+  /* <important>
+   * svg のサイズ指定は直下（&>svg）に限定する。子孫（&_svg）に広げると
+   * .cn-combobox-clear-icon のように component クラス側で size-3.5 を持つ
+   * アイコンを上書きしてしまう（:not([class*='size-']) の除外は、要素の
+   * class 属性に "size-" が現れないと効かないため）。
+   * addon の中にアイコンを <button> 等で包んで置く場合は、そのマークアップ側で
+   * サイズと --icon-box を指定すること。指定しないと lucide のデフォルト 24px になる。
+   * </important> */
   .cn-input-group-addon {
+    --icon-box: 1rem;
     @apply text-muted-foreground h-auto gap-2 py-1.5 text-sm font-medium group-data-[disabled=true]/input-group:opacity-50 [&>kbd]:rounded-[calc(var(--radius)-5px)] [&>svg:not([class*='size-'])]:size-4;
   }
 
@@ -807,8 +1071,10 @@
     @apply h-6 gap-1 rounded-[calc(var(--radius)-3px)] px-1.5 [&>svg:not([class*='size-'])]:size-3.5;
   }
 
+  /* px は .cn-input と同値（1em = 14px）。ここだけ 12px だとアイコン付き入力欄と
+   * 素の入力欄で文字の開始位置がずれる。 */
   .cn-input-group-input {
-    @apply h-full flex-1 border-0 bg-transparent px-3 py-0 shadow-none outline-none
+    @apply h-full flex-1 border-0 bg-transparent px-3.5 py-0 shadow-none outline-none
            focus-visible:border-0 focus-visible:ring-0;
   }
 
@@ -817,7 +1083,7 @@
   }
 
   .cn-input-group-textarea {
-    @apply flex-1 resize-none border-0 bg-transparent px-3 py-1.5 shadow-none outline-none
+    @apply flex-1 resize-none border-0 bg-transparent px-3.5 py-1.5 shadow-none outline-none
            focus-visible:border-0 focus-visible:ring-0;
   }
 
@@ -913,6 +1179,7 @@
 
   .cn-pagination-ellipsis {
     @apply size-8 items-center justify-center [&_svg:not([class*='size-'])]:size-4;
+    --icon-box: 1rem;
   }
 
   .cn-pagination-next {
@@ -984,12 +1251,16 @@
     @apply group-data-[spacing=0]/toggle-group:rounded-none group-data-[spacing=0]/toggle-group:px-2 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-end]:pr-1.5 group-data-[spacing=0]/toggle-group:has-data-[icon=inline-start]:pl-1.5 group-data-horizontal/toggle-group:data-[spacing=0]:first:rounded-l-lg group-data-vertical/toggle-group:data-[spacing=0]:first:rounded-t-lg group-data-horizontal/toggle-group:data-[spacing=0]:last:rounded-r-lg group-data-vertical/toggle-group:data-[spacing=0]:last:rounded-b-lg;
   }
 
+  /* padX は .cn-button-size-* と同値。ApplicationButtonGroup と ApplicationButton が
+   * 横に並んだときに段差が出ないため。 */
   .cn-toggle-size-default {
-    @apply h-8 min-w-8 px-4 text-sm;
+    @apply h-8 min-w-8 px-3.5 text-sm;
+    --icon-box: 1rem;
   }
 
   .cn-toggle-size-lg {
-    @apply h-10 min-w-10 px-5 text-sm;
+    @apply h-10 min-w-10 px-4 text-base;
+    --icon-box: 1.125rem;
   }
 
   /* サイズは nova ではなく、このリポジトリのボタンスケール
@@ -997,6 +1268,7 @@
    * ApplicationButtonGroup と ApplicationButton が並んだときに段差が出ないため。 */
   .cn-toggle-size-sm {
     @apply h-7 min-w-7 px-3 text-xs [&_svg:not([class*='size-'])]:size-3.5;
+    --icon-box: 0.875rem;
   }
 
   .cn-toggle-variant-default {

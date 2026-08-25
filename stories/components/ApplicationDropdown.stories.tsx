@@ -98,7 +98,7 @@ type ApplicationDropdownItem = {
   args: {
     trigger: (
       <ApplicationButton variant="ghost" size="icon" aria-label="操作メニュー">
-        <MoreVertical className="w-4 h-4" />
+        <MoreVertical />
       </ApplicationButton>
     ),
     items: [
@@ -245,14 +245,14 @@ export const Default: Story = {};
 export const WithIcons: Story = {
   args: {
     items: [
-      { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" /> },
-      { key: "duplicate", label: "複製", icon: <Copy className="w-4 h-4" /> },
-      { key: "export", label: "CSV でダウンロード", icon: <Download className="w-4 h-4" /> },
-      { key: "archive", label: "アーカイブ", icon: <Archive className="w-4 h-4" /> },
+      { key: "edit", label: "編集", icon: <Pencil /> },
+      { key: "duplicate", label: "複製", icon: <Copy /> },
+      { key: "export", label: "CSV でダウンロード", icon: <Download /> },
+      { key: "archive", label: "アーカイブ", icon: <Archive /> },
       {
         key: "delete",
         label: "削除",
-        icon: <Trash className="w-4 h-4" />,
+        icon: <Trash />,
         danger: true,
         separatorBefore: true,
       },
@@ -269,12 +269,12 @@ export const WithLabel: Story = {
   args: {
     label: "SYS-2026-0001",
     items: [
-      { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" /> },
-      { key: "duplicate", label: "複製", icon: <Copy className="w-4 h-4" /> },
+      { key: "edit", label: "編集", icon: <Pencil /> },
+      { key: "duplicate", label: "複製", icon: <Copy /> },
       {
         key: "delete",
         label: "削除",
-        icon: <Trash className="w-4 h-4" />,
+        icon: <Trash />,
         danger: true,
         separatorBefore: true,
       },
@@ -292,12 +292,12 @@ export const WithLabel: Story = {
 export const WithDisabledItem: Story = {
   args: {
     items: [
-      { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" /> },
-      { key: "duplicate", label: "複製", icon: <Copy className="w-4 h-4" /> },
+      { key: "edit", label: "編集", icon: <Pencil /> },
+      { key: "duplicate", label: "複製", icon: <Copy /> },
       {
         key: "delete",
         label: "削除（承認済みのため不可）",
-        icon: <Trash className="w-4 h-4" />,
+        icon: <Trash />,
         danger: true,
         disabled: true,
         separatorBefore: true,
@@ -315,17 +315,17 @@ export const WithDisabledItem: Story = {
 export const TextTrigger: Story = {
   args: {
     trigger: (
-      <ApplicationButton variant="secondary" rightIcon={<ChevronDown className="w-4 h-4" />}>
+      <ApplicationButton variant="secondary" rightIcon={<ChevronDown />}>
         操作
       </ApplicationButton>
     ),
     items: [
-      { key: "export-csv", label: "CSV でダウンロード", icon: <Download className="w-4 h-4" /> },
-      { key: "export-pdf", label: "PDF でダウンロード", icon: <Download className="w-4 h-4" /> },
+      { key: "export-csv", label: "CSV でダウンロード", icon: <Download /> },
+      { key: "export-pdf", label: "PDF でダウンロード", icon: <Download /> },
       {
         key: "archive",
         label: "アーカイブ",
-        icon: <Archive className="w-4 h-4" />,
+        icon: <Archive />,
         separatorBefore: true,
       },
     ],
@@ -379,26 +379,26 @@ export const WithConfirmation: Story = {
           label="SYS-2026-0001"
           trigger={
             <ApplicationButton variant="ghost" size="icon" aria-label="操作メニュー">
-              <MoreVertical className="w-4 h-4" />
+              <MoreVertical />
             </ApplicationButton>
           }
           items={[
             {
               key: "edit",
               label: "編集",
-              icon: <Pencil className="w-4 h-4" />,
+              icon: <Pencil />,
               onSelect: () => ApplicationToast.info("編集画面を開きます"),
             },
             {
               key: "duplicate",
               label: "複製",
-              icon: <Copy className="w-4 h-4" />,
+              icon: <Copy />,
               onSelect: () => ApplicationToast.success("複製しました"),
             },
             {
               key: "delete",
               label: "削除",
-              icon: <Trash className="w-4 h-4" />,
+              icon: <Trash />,
               danger: true,
               separatorBefore: true,
               // ✓ 直接消さず、確認ダイアログを開く
@@ -454,16 +454,16 @@ export const InListRow: Story = {
                   size="icon"
                   aria-label={`${row.title} の操作メニュー`}
                 >
-                  <MoreVertical className="w-4 h-4" />
+                  <MoreVertical />
                 </ApplicationButton>
               }
               items={[
-                { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" /> },
-                { key: "duplicate", label: "複製", icon: <Copy className="w-4 h-4" /> },
+                { key: "edit", label: "編集", icon: <Pencil /> },
+                { key: "duplicate", label: "複製", icon: <Copy /> },
                 {
                   key: "delete",
                   label: row.locked ? "削除（承認済みのため不可）" : "削除",
-                  icon: <Trash className="w-4 h-4" />,
+                  icon: <Trash />,
                   danger: true,
                   disabled: row.locked,
                   separatorBefore: true,

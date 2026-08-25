@@ -239,16 +239,16 @@ function actionColumn(onDelete: (row: Request) => void): ApplicationTableColumn<
         label={row.code}
         trigger={
           <ApplicationButton variant="ghost" size="icon" aria-label={`${row.title} の操作メニュー`}>
-            <MoreVertical className="w-4 h-4" />
+            <MoreVertical />
           </ApplicationButton>
         }
         items={[
-          { key: "edit", label: "編集", icon: <Pencil className="w-4 h-4" /> },
-          { key: "duplicate", label: "複製", icon: <Copy className="w-4 h-4" /> },
+          { key: "edit", label: "編集", icon: <Pencil /> },
+          { key: "duplicate", label: "複製", icon: <Copy /> },
           {
             key: "delete",
             label: row.locked ? "削除（完了済みのため不可）" : "削除",
-            icon: <Trash className="w-4 h-4" />,
+            icon: <Trash />,
             danger: true,
             disabled: row.locked,
             separatorBefore: true,
@@ -272,7 +272,7 @@ export const Basic: Story = {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-bold text-foreground">申請一覧</h2>
-        <ApplicationButton variant="primary" leftIcon={<Plus className="w-4 h-4" />}>
+        <ApplicationButton variant="primary" leftIcon={<Plus />}>
           新規申請
         </ApplicationButton>
       </div>
@@ -318,7 +318,7 @@ export const WithFiltering: Story = {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-foreground">申請一覧</h2>
-          <ApplicationButton variant="primary" leftIcon={<Plus className="w-4 h-4" />}>
+          <ApplicationButton variant="primary" leftIcon={<Plus />}>
             新規申請
           </ApplicationButton>
         </div>
@@ -332,7 +332,7 @@ export const WithFiltering: Story = {
               placeholder="件名・申請番号・申請者で検索"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
-              leftIcon={<Search className="w-4 h-4" />}
+              leftIcon={<Search />}
             />
           </div>
           <div className="sm:w-40">
@@ -347,7 +347,7 @@ export const WithFiltering: Story = {
             <ApplicationButton
               variant="ghost"
               size="sm"
-              leftIcon={<X className="w-4 h-4" />}
+              leftIcon={<X />}
               onClick={() => {
                 setKeyword("");
                 setStatus("all");
@@ -437,7 +437,7 @@ export const WithActionsAndSelection: Story = {
       <div className="space-y-4">
         <div className="flex items-center justify-between gap-3">
           <h2 className="text-xl font-bold text-foreground">申請一覧</h2>
-          <ApplicationButton variant="primary" leftIcon={<Plus className="w-4 h-4" />}>
+          <ApplicationButton variant="primary" leftIcon={<Plus />}>
             新規申請
           </ApplicationButton>
         </div>
@@ -452,7 +452,7 @@ export const WithActionsAndSelection: Story = {
           <ApplicationButton
             variant="danger"
             size="sm"
-            leftIcon={<Trash className="w-4 h-4" />}
+            leftIcon={<Trash />}
             disabled={selected.length === 0}
             onClick={() => setBulkOpen(true)}
           >
@@ -656,7 +656,7 @@ export const Mobile: Story = {
     <div className="space-y-4">
       <div className="flex items-center justify-between gap-2">
         <h2 className="text-lg font-bold text-foreground">申請一覧</h2>
-        <ApplicationButton variant="primary" size="sm" leftIcon={<Plus className="w-4 h-4" />}>
+        <ApplicationButton variant="primary" size="sm" leftIcon={<Plus />}>
           新規
         </ApplicationButton>
       </div>
@@ -664,7 +664,7 @@ export const Mobile: Story = {
       <ApplicationInput
         aria-label="申請を検索"
         placeholder="検索"
-        leftIcon={<Search className="w-4 h-4" />}
+        leftIcon={<Search />}
       />
 
       <ApplicationTable<Request>

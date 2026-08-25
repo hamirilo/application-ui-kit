@@ -1,6 +1,6 @@
 {
   "name": "@hamirilo/application-ui-kit",
-  "version": "3.0.0",
+  "version": "4.0.0",
   "description": "Shared React application UI components, semantic design tokens, and Storybook specification",
   "type": "module",
   "sideEffects": ["**/auto-mount.tsx", "dist/components/islands/auto-mount.js", "**/*.css"],

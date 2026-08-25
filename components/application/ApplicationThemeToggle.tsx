@@ -62,7 +62,8 @@ export function ApplicationThemeToggle({
       type="button"
       onClick={handleToggle}
       className={cn(
-        "p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring",
+        // [--icon-box:1rem] はアイコンの光学補正の計算基準（iconClassName の既定 w-4 と揃える）
+        "[--icon-box:1rem] p-2 rounded-xl text-muted-foreground hover:text-foreground hover:bg-accent transition-colors cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-ring",
         className,
       )}
       title={isDark ? "ライトモードに切り替え" : "ダークモードに切り替え"}
