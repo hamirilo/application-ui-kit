@@ -1,0 +1,12 @@
+{
+  "projectId": "44a70dfc-0c60-4cf3-8173-eebc0bf9d1b2",
+  "shape": "storybook",
+  "pkg": "@hamirilo/application-ui-kit",
+  "storybookConfigDir": ".storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "buildCmd": "bun run build",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "ApplicationPagination": { "cardMode": "column" }
+  }
+}
