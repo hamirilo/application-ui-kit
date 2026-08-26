@@ -1,0 +1,14 @@
+/* 実アプリの backend/static/css/input.css と同じ構成
+ * (見本は .storybook/storybook.css)。
+ *
+ * tw-animate-css をここで import しているのは意図的。theme.css は import せず、
+ * dialog / dropdown / toast の animate-in 系は利用側の import に依存している。
+ * 宣言漏れを検出したいので package.json の dependencies にも入れてある。 */
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ★ トークン + 共有コンポーネントクラスの SSOT */
+@import "@hamirilo/application-ui-kit/styles.css";
+
+/* 利用側自身のコード。パッケージの .tsx は theme.css 側の @source が拾う。 */
+@source "../../../islands/**/*.{ts,tsx}";

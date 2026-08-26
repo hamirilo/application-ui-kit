@@ -5,6 +5,15 @@ name: Publish
 # 発火は GitHub Release の publish 時。タグと package.json の version が
 # 食い違ったまま公開されないよう、事前に突き合わせる。
 # 手動実行 (workflow_dispatch) では package.json の version をそのまま使う。
+#
+# <important>
+# パッケージのスコープは package.json に固定せず、**リポジトリ所有者から導出**する。
+# GitHub Packages は「スコープ = リポジトリ所有者」でなければ publish できないため、
+# フォークから公開する場合はスコープを変えなければならない。
+# ここで publish 時に書き換えることで、フォーク側がソースに差分を持たずに
+# 自分のスコープ (@<owner>/application-ui-kit) で配布できる。
+# 上流では所有者が変わらないので、従来と同じ名前で公開される。
+# </important>
 
 on:
   release:
@@ -27,6 +36,16 @@ jobs:
 
       - name: 依存のインストール
         run: bun install --frozen-lockfile
+
+      # npm のスコープは小文字でなければならない。GitHub の owner 名は
+      # 大文字を含み得るため、ここで小文字化しておく。
+      - name: パッケージ名を決める
+        id: pkg
+        run: |
+          SCOPE="$(echo "${{ github.repository_owner }}" | tr '[:upper:]' '[:lower:]')"
+          BASE="$(node -p "require('./package.json').name.split('/').pop()")"
+          echo "scope=@${SCOPE}" >> "$GITHUB_OUTPUT"
+          echo "name=@${SCOPE}/${BASE}" >> "$GITHUB_OUTPUT"
 
       # 公開物が壊れていないことを、publish の前に必ず通す。
       - name: 検証
@@ -54,7 +73,22 @@ jobs:
         with:
           node-version: "22"
           registry-url: "https://npm.pkg.github.com"
-          scope: "@hamirilo"
+          scope: "${{ steps.pkg.outputs.scope }}"
+
+      # 上流ではこの書き換えは no-op になる。
+      - name: パッケージ名をリポジトリ所有者のスコープへ合わせる
+        run: |
+          node -e '
+            const fs = require("node:fs");
+            const path = "./package.json";
+            const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
+            const name = process.argv[1];
+            if (pkg.name !== name) {
+              console.log(`package.json の name を ${pkg.name} から ${name} へ変更します`);
+              pkg.name = name;
+              fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
+            }
+          ' "${{ steps.pkg.outputs.name }}"
 
       - name: publish
         run: npm publish
