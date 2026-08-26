@@ -2,12 +2,14 @@
 
 Claude Design 等の AI や人間が**画面をデザインするとき**に渡す、自己完結した設計参照です。
 実装コードの正は [components/](../components/)、見た目の正は [tokens/theme.css](../tokens/theme.css)、
-使用例の正は Storybook（`bun run storybook`）。ここには判断に必要な要約だけを置きます。
+使用例の正は Storybook（`bun run storybook`）。ここには判断に必要な要約だけを置きます。\n\n同期ツールのID・実行ログ、props一覧、実装手順、業務ドメイン固有の画面はここに置きません。
 
 | ファイル | 内容 |
 |---|---|
 | このファイル | デザインの方向性・Token・部品一覧・フィードバックの使い分け |
 | [screen-layouts.md](screen-layouts.md) | 画面の起点レイアウト 3 種（Standard / Simple / Focus） |
+| [feedback.md](feedback.md) | エラー、確認、成功、空状態の使い分け |
+| [component-usage.md](component-usage.md) | 既存部品を選ぶ基準 |
 
 ---
 
