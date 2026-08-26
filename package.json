@@ -12,6 +12,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "lint": "bunx --bun @biomejs/biome@1.9.4 check .",
+    "verify:package": "./scripts/verify-package.sh",
     "format": "bunx --bun @biomejs/biome@1.9.4 check --write ."
   },
   "publishConfig": {
