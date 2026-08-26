@@ -2,7 +2,9 @@
 
 Claude Design 等の AI や人間が**画面をデザインするとき**に渡す、自己完結した設計参照です。
 実装コードの正は [components/](../components/)、見た目の正は [tokens/theme.css](../tokens/theme.css)、
-使用例の正は Storybook（`bun run storybook`）。ここには判断に必要な要約だけを置きます。\n\n同期ツールのID・実行ログ、props一覧、実装手順、業務ドメイン固有の画面はここに置きません。
+使用例の正は Storybook（`bun run storybook`）。ここには判断に必要な要約だけを置きます。
+
+同期ツールのID・実行ログ、props一覧、実装手順、業務ドメイン固有の画面はここに置きません。
 
 | ファイル | 内容 |
 |---|---|

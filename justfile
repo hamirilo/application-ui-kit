@@ -10,6 +10,10 @@ check:
 build:
     bun run build
 
+# 配布物が利用側プロジェクトでビルドできるかを検証する（npm install を伴うため遅い）
+verify-package:
+    bun run verify:package
+
 typecheck:
     bun run typecheck
 

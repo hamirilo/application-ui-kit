@@ -2,6 +2,13 @@ import * as React from "react"
 
 import { cn } from "../../lib/utils"
 
+/**
+ * <important>
+ * size の "lg" は上流との差分。テンプレート側の `.card` / `.card-sm` / `.card-lg` と
+ * 1:1 に対応させるために必要。上流を取り込み直すときは再適用すること
+ * （README の差分表を参照）。
+ * </important>
+ */
 function Card({
   className,
   size = "default",

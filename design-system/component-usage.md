@@ -19,3 +19,12 @@
 - primaryは主操作、secondaryはキャンセル・戻る、dangerは削除に使う。
 - Reactでは既存のReactコンポーネントを使う。テンプレート用CSSクラスやraw utilityの組み合わせで同じ部品を再実装しない。
 - 業務ドメイン固有の部品（社員選択、組織ツリーなど）は、このUI Kitではなく所有アプリに置く。
+
+## 忘れても失敗しないが、動かない2点
+
+エラーにならず、症状だけが出ます。
+
+- **Toastは `<ApplicationToaster />` をアプリのルートに1つ置く。** 無くても
+  `ApplicationToast.success(...)` の呼び出しは成功し、何も表示されないだけになる。
+- **ダークモードはpropでもmedia queryでもなく、`<html>` の `dark` クラス。**
+  ライトが既定で、何も要らない。切替UIが必要なら `ApplicationThemeToggle` を使う。

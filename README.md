@@ -83,6 +83,7 @@ components/ui/ は shadcn/ui（Base UIベース）をそのまま取り込んだ
 | ui/toggle.tsx | `primary` バリアント | ApplicationButtonGroup の「選択中をprimary色で塗る」表現に必要 |
 | ui/combobox.tsx | ComboboxChip の `removeLabel` | 上流の削除ボタンにアクセシブルな名前が付かない |
 | ui/toast.tsx | 閉じるボタンのラベルを日本語化 | 上流は "Close toast" 固定 |
+| ui/card.tsx | `size="lg"` | テンプレート側の `.card-lg` と 1:1 に対応させるため |
 
 ### 公開APIの2種類
 
@@ -119,6 +120,10 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
     <ApplicationButton variant="primary">保存</ApplicationButton>
 
 Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
+
+パッケージのスコープは、publishワークフローが**リポジトリ所有者から導出**します（`package.json`のnameは公開時に書き換えられます）。GitHub Packagesは「スコープ = リポジトリ所有者」でなければ公開できないため、このリポジトリをフォークして自分の組織向けに配布する場合も、ソースに差分を持たずに `@<owner>/application-ui-kit` として公開できます。フォーク側で持つ差分を増やさないでください（[ai-dev-standards ADR-0005](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0005-upstream-fork-operation.md)）。
+
+配布物が利用側で本当にビルドできるかは `bun run verify:package`（`just verify-package`）で確認します。`scripts/fixtures/consumer/` の最小プロジェクトへtarballを非巻き上げレイアウトでインストールし、宣言漏れの依存（phantom dependency）とTailwindの`@source`到達を検出します。CIでも実行します。
 
 ## Django 連携（Islands）
 
