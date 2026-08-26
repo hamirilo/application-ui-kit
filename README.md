@@ -24,7 +24,7 @@ Storybookは包括的なデザインシステムではなく、**UI Kitのショ
 ### 構成
 
     Getting Started      使い方とStory作成の基準
-    Foundations          Colors / Typography / Spacing / Radius & Shadow / Icons
+    Foundations          Colors / Typography / Spacing / Radius & Shadow / Icons / CSS Classes
     Components           部品1つずつ（Overview + 個別Story）
     Patterns             Form / EmptyState / ErrorState / Search / DataTable など
     Gallery              All Components（全体の俯瞰）
@@ -83,6 +83,7 @@ components/ui/ は shadcn/ui（Base UIベース）をそのまま取り込んだ
 | ui/toggle.tsx | `primary` バリアント | ApplicationButtonGroup の「選択中をprimary色で塗る」表現に必要 |
 | ui/combobox.tsx | ComboboxChip の `removeLabel` | 上流の削除ボタンにアクセシブルな名前が付かない |
 | ui/toast.tsx | 閉じるボタンのラベルを日本語化 | 上流は "Close toast" 固定 |
+| ui/card.tsx | `size="lg"` | テンプレート側の `.card-lg` と 1:1 に対応させるため |
 
 ### 公開APIの2種類
 

@@ -266,7 +266,7 @@
  * React コンポーネントの中では対応する Application コンポーネントを使う。
  *   btn-primary  ↔ <ApplicationButton variant="primary">
  *   input-field  ↔ <ApplicationInput>
- *   card         ↔ <ApplicationCard>
+ *   card         ↔ <Card>（shadcn/ui の Card を re-export したもの）
  *
  * 見本は Storybook の Foundations を参照。
  * ========================================================================== */
@@ -347,7 +347,7 @@
 
   /* フォーム入力フィールド */
   .input-field {
-    @apply w-full h-8 px-3 text-sm rounded-lg
+    @apply w-full h-8 px-3.5 text-sm rounded-lg
            placeholder:text-muted-foreground
            focus:outline-none focus:ring-2
            transition-colors;
