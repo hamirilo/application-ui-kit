@@ -22,7 +22,7 @@ const PRIORITIES: ApplicationRadioGroupItem[] = [
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationRadioGroup",
+  title: "Forms/ApplicationRadioGroup",
   component: ApplicationRadioGroup,
   parameters: {
     layout: "padded",

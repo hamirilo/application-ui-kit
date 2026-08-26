@@ -14,7 +14,7 @@ import { Labeled, Section, Showcase, Stack } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationDatePicker",
+  title: "Forms/ApplicationDatePicker",
   component: ApplicationDatePicker,
   parameters: {
     layout: "padded",

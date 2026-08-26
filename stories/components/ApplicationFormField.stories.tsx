@@ -16,7 +16,7 @@ import { Labeled, Section, Showcase, Stack } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationFormField",
+  title: "Forms/ApplicationFormField",
   component: ApplicationFormField,
   parameters: {
     layout: "padded",

@@ -35,7 +35,7 @@ const DEPARTMENTS: ApplicationSelectItem[] = [
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationSelect",
+  title: "Forms/ApplicationSelect",
   component: ApplicationSelect,
   parameters: {
     layout: "padded",

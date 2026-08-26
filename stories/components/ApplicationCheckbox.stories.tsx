@@ -12,7 +12,7 @@ import { Section, Showcase, Stack } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationCheckbox",
+  title: "Forms/ApplicationCheckbox",
   component: ApplicationCheckbox,
   parameters: {
     layout: "padded",

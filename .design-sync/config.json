@@ -1,0 +1,32 @@
+{
+  "projectId": "7b3fbcce-f433-4f60-87d1-48ff86e627b8",
+  "pkg": "@hamirilo/application-ui-kit",
+  "shape": "storybook",
+  "storybookConfigDir": ".storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "buildCmd": "bun run build",
+  "guidelinesGlob": [
+    "design-system/*.md"
+  ],
+  "titleMap": {
+    "Form": null,
+    "EmptyState": null,
+    "ErrorState": null,
+    "Search": null,
+    "DataTable": null,
+    "ButtonGroupExample": null,
+    "AllComponents": null
+  },
+  "overrides": {
+    "ApplicationPagination": {
+      "cardMode": "column"
+    },
+    "Progress": {
+      "cardMode": "column"
+    }
+  },
+  "provider": {
+    "component": "ApplicationToaster"
+  },
+  "readmeHeader": ".design-sync/conventions.md"
+}

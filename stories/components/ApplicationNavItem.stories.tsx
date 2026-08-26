@@ -5,7 +5,7 @@ import { ApplicationNavItem } from "../../components/application/ApplicationNavI
 import { Section, Showcase } from "../_showcase";
 
 const meta = {
-  title: "Components/ApplicationNavItem",
+  title: "Navigation/ApplicationNavItem",
   component: ApplicationNavItem,
   parameters: {
     layout: "padded",

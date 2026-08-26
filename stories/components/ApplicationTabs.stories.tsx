@@ -13,7 +13,7 @@ import { Section, Showcase } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationTabs",
+  title: "Navigation/ApplicationTabs",
   component: ApplicationTabs,
   parameters: {
     layout: "padded",

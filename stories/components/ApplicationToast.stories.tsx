@@ -13,7 +13,7 @@ import { Cluster, Section, Showcase } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationToast",
+  title: "Overlays/ApplicationToast",
   component: ApplicationToaster,
   parameters: {
     layout: "padded",
