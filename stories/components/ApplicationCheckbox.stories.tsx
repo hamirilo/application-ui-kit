@@ -56,6 +56,9 @@ const meta = {
   （即時反映が必要なら、その旨を \`description\` に明記する）
 - \`indeterminate\` は「一部だけ選択されている」状態を表す。
   自動では解除されないので、アプリ側で選択数に応じて計算する
+- \`indeterminate\` の記号は**ダッシュ**、チェック済みは**チェック**。
+  見た目の出し分けは \`tokens/components.css\` の
+  \`.cn-checkbox-indicator-icon-*\` が \`data-indeterminate\` を見て行う
         `,
       },
     },
@@ -93,6 +96,16 @@ export const Overview: Story = {
           <ApplicationCheckbox label="無効" disabled />
           <ApplicationCheckbox label="無効かつチェック済み" disabled defaultChecked />
         </Stack>
+      </Section>
+
+      <Section
+        title="Checked と Indeterminate の見分け"
+        note="チェック済みはチェック、一部選択はダッシュ。同じ記号になっていたら不具合。"
+      >
+        <div className="flex items-center gap-8">
+          <ApplicationCheckbox label="チェック済み（チェック）" defaultChecked />
+          <ApplicationCheckbox label="一部選択（ダッシュ）" indeterminate />
+        </div>
       </Section>
 
       <Section
@@ -157,6 +170,7 @@ export const DisabledChecked: Story = {
  *
  * 「すべて選択」のチェックボックスで、一部の行だけ選ばれているときに使う。
  * チェック済みでも未チェックでもない第 3 の状態。
+ * 記号はダッシュで、チェック済み（チェック）とは別物として読めること。
  */
 export const Indeterminate: Story = {
   args: { label: "すべて選択", indeterminate: true },
