@@ -427,8 +427,12 @@
    * MARK: Checkbox / Radio — 移行前の見た目を維持
    * ====================================================================== */
 
+  /* Base UI の Checkbox.Root は <span role="checkbox"> を描画するため、display を
+   * 明示しないと inline のままになり size-4 が効かず、幅が border だけの線になる。
+   * ラベル付き（flex 子）では blockify されて偶然直るので、ここで必ず指定する。 */
   .cn-checkbox {
-    @apply size-4 shrink-0 rounded border border-input bg-background transition-colors
+    @apply inline-flex items-center justify-center
+           size-4 shrink-0 rounded border border-input bg-background transition-colors
            focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
            data-checked:border-primary data-checked:bg-primary
            data-checked:text-primary-foreground
@@ -466,8 +470,11 @@
     @apply w-full;
   }
 
+  /* cn-checkbox と同じ理由: <span role="radio"> は display を明示しないと
+   * inline のままになり size-4 が効かない。常に flex 行の中で使われるため
+   * 今は blockify されて偶然直っているが、単体使用に備えて明示する。 */
   .cn-radio-group-item {
-    @apply size-4 shrink-0 items-center justify-center rounded-full border border-input
+    @apply inline-flex size-4 shrink-0 items-center justify-center rounded-full border border-input
            bg-background transition-colors
            focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2
            data-checked:border-primary
