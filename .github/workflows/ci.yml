@@ -49,3 +49,14 @@ jobs:
       # 崩れは typecheck では捕まらないため、ビルドが通ることを見る。
       - name: build-storybook
         run: bun run build-storybook
+
+      # 上の build はこのリポジトリの node_modules を使うため、
+      # 宣言漏れの依存 (phantom dependency) を検出できない。
+      # 利用側を模した非巻き上げレイアウトでビルドし直して確認する。
+      - name: Node のセットアップ (配布検証の npm pack / npm install 用)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 配布物の検証
+        run: bun run verify:package
