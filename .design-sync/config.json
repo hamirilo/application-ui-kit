@@ -1,6 +1,6 @@
 {
   "projectId": "7b3fbcce-f433-4f60-87d1-48ff86e627b8",
-  "pkg": "@hamirilo/application-ui-kit",
+  "pkg": "@jazmf-dx/application-ui-kit",
   "shape": "storybook",
   "storybookConfigDir": ".storybook",
   "storybookStatic": ".design-sync/sb-reference",

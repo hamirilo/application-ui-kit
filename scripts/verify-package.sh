@@ -22,7 +22,7 @@ CONSUMER_DIR="$SCRIPT_DIR/fixtures/consumer"
 
 # fixture の import 文に書いてあるパッケージ名。
 # フォークでスコープを変えて publish する場合に備え、実際の name へ置き換える。
-FIXTURE_PKG_NAME="@hamirilo/application-ui-kit"
+FIXTURE_PKG_NAME="@jazmf-dx/application-ui-kit"
 PKG_NAME="$(node -p "require('$KIT_DIR/package.json').name")"
 
 WORKDIR="$(mktemp -d)"

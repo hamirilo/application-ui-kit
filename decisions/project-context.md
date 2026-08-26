@@ -20,7 +20,7 @@ Web アプリケーションではないため、アプリ向け前提の多く�
 
 - **利用側の想定構成**: Django テンプレート + React Islands + htmx（ai-dev-standards ADR-0002）。
   純 React アプリからも `.` エントリだけで利用できる。
-- **配布**: GitHub Packages の npm パッケージ（`@hamirilo/application-ui-kit`）。
+- **配布**: GitHub Packages の npm パッケージ（`@jazmf-dx/application-ui-kit`）。
   dist（ビルド済み JS + 型定義）を import させる。詳細は README「Package」。
 - **技術**: React 19 + shadcn/ui（Base UI / gen3）+ Tailwind CSS v4。
   ツールチェーンは bun / vite / vitest / biome。

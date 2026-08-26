@@ -1,4 +1,4 @@
-# design-sync ノート（@hamirilo/application-ui-kit）
+# design-sync ノート（@jazmf-dx/application-ui-kit）
 
 claude.ai/design への同期で判明したこのリポジトリ固有の事情。次回の同期はここを先に読むこと。
 
@@ -108,9 +108,54 @@ README と全 `.prompt.md` に「ツリーを `<ApplicationToaster>` で包め�
   `.d.ts` とプレビューから合成されている。`design-system/*.md` は `guidelinesGlob` で
   `guidelines/` に 4 ファイル同梱済み（コンポーネント単位の docs とは別枠）。
   コンポーネント単位で書くなら `cfg.docsDir` を設定する。
-- **`ApplicationTable` の行選択チェックボックスが約 2px の縦線に潰れる。**
-  Storybook 側でも同じなので同期の問題ではなく **v5.1.0 の描画バグ**。
-  別タスクとして起票済み。直ったら `sb-reference` を作り直して再同期すること。
+- ~~`ApplicationTable` の行選択チェックボックスが約 2px に潰れる~~ → **解決済み**
+  （`2c38af0 fix(checkbox,radio): select 系コントロールに display を明示する`、PR #5）。
+  原因は Base UI の `Checkbox.Root` が `<span role="checkbox">` を描くため `display`
+  未指定だと inline のままで `size-4` が効かないこと。ラベル付きは flex 子として
+  blockify され偶然直っていた。2026-08-26 の再同期で反映済み。
+
+## 再同期の実績と、そのとき学んだこと
+
+- **2026-08-26 第 2 回（差分同期）。** アンカー照合で 29 unchanged / 1 changed
+  （`ApplicationCheckbox`）。`ApplicationCheckbox` を再採点（9/9 match、indeterminate が
+  `MinusIcon` のダッシュで checked と描き分けられていることを確認）、canary 5 件は
+  記録どおり変化なし。`ApplicationTable` は差分上 unchanged だが、変わった CSS が
+  チェックボックス周りだったため自主的に spot-check し、潰れの解消を確認した。
+  **教訓: 差分が unchanged と言っても、変更された CSS が触る領域のコンポーネントは
+  自分で spot-check する。**
+- **ドライバは既定で `--max-stories 6`。** `--max-stories 13` を明示的に渡すこと
+  （渡さないと 30 中 16 コンポーネントで末尾ストーリーが未採点のまま
+  「アップロード済みで検証済み」扱いになる）。
+- **ドライバは前景 10 分では終わらない。** capture 段階まで含めると超える。
+  必ずバックグラウンド実行して完了通知を待つ（前景で走らせると SIGTERM で
+  capture 途中に死に、verdict が出ない）。
+- **`_ds_manifest.json` と `_adherence.oxlintrc.json` はアプリ側が生成する。**
+  削除しても次回開いたときに復活する。旧構成の残骸ではないので消さなくてよい。
+- **conventions.md で「この utility は CSS に無い」と書いてはいけない。**
+  第 1 回で `min-h-screen` / `space-y-6` / `m-0` を「無い」と例示したが、実際には
+  全部存在した（確認に使った grep が Tailwind v4 の `.space-y-6>:not(...)` の形を
+  取りこぼしていた）。JIT の集合は Story を 1 つ足すだけで動くため、具体名の列挙は
+  そもそも維持できない。原則（コンパイル済みサブセットである・使う前に grep する）
+  だけを書く。クラスの存在確認は `grep -F ".<class>"` を使う。
+
+## 日本語化について（調査済み・結論あり）
+
+- **README のヘッダ部（`.design-sync/conventions.md`）は日本語**。ここは `readmeHeader`
+  で差し込む自前の文書なので自由に書ける。ただし**識別子は英語のまま残すこと** —
+  クラス名・トークン名・コンポーネント名・コードは訳すと存在しない名前になる。
+- **README の生成部（`Where things are` / `Loading` / `Tokens` / `Components`）は
+  英語のままにする。** これは `emit.mjs` の出力で、スキルが
+  「`emit.mjs` and `bundle.mjs` are app-contract surface - never fork them」と
+  明示的に禁じている。安定した部分だけヘッダ側に日本語で併記済み。
+- **カードのグループ名は日本語にできない。** `lib/common.mjs` の `titleParts` は
+  `[^a-z0-9]+` → `-` で正規化するため、`アクション/` も `データ表示/` も `misc` になり、
+  **7 グループが単一の `misc` に潰れる**（実測済み）。グループ名はカードのパス
+  （`components/<group>/<Name>/`）でもあるので、`common.mjs` をフォークしても
+  アップロード先のパスに日本語が入るリスクを負う。**やらない方針で決着済み。**
+- 生成部には誤りが 2 つある。日本語ヘッダ側で明示的に打ち消してある:
+  `tokens/*.css` は存在しない（`tokens/` は空、トークンは `_ds_bundle.css` の中）、
+  および「most components read theme/i18n from context」は不正確
+  （`ApplicationToaster` はトーストマネージャのみ）。
 
 ## Re-sync risks（次回、黙って古くなりうるもの）
 

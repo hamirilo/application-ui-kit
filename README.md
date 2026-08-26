@@ -112,10 +112,10 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 ## Package
 
-パッケージ名は @hamirilo/application-ui-kit です。公開リポジトリ名とパッケージ名を一致させ、初回公開版からこの名前を正式なAPIとして扱います。
+パッケージ名は @jazmf-dx/application-ui-kit です。公開リポジトリ名とパッケージ名を一致させ、初回公開版からこの名前を正式なAPIとして扱います。
 
-    import { ApplicationButton } from '@hamirilo/application-ui-kit'
-    import '@hamirilo/application-ui-kit/styles.css'
+    import { ApplicationButton } from '@jazmf-dx/application-ui-kit'
+    import '@jazmf-dx/application-ui-kit/styles.css'
 
     <ApplicationButton variant="primary">保存</ApplicationButton>
 
@@ -137,7 +137,7 @@ Django テンプレート + htmx のアプリ向けに、`data-react` 属性か�
 アプリの Vite エントリで auto-mount を import するだけで使えます。
 
     // islands/main.ts
-    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    import '@jazmf-dx/application-ui-kit/islands/auto-mount'
 
     <!-- base.html に一度だけ（全ページトースト） -->
     <div data-react="toast-listener"></div>
@@ -162,8 +162,8 @@ form-dialog の送信成功は Django View が `HX-Trigger: application-form-suc
 
 アプリ固有の Island は、このリポジトリに追加せずアプリ側で登録します。
 
-    import { registerIslandComponents } from '@hamirilo/application-ui-kit/islands'
-    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    import { registerIslandComponents } from '@jazmf-dx/application-ui-kit/islands'
+    import '@jazmf-dx/application-ui-kit/islands/auto-mount'
     registerIslandComponents({ 'my-widget': MyWidget })
 
 islands を import しない純 React アプリには、これまで通り `.` エントリだけで影響ありません。
@@ -186,7 +186,7 @@ islands を import しない純 React アプリには、これまで通り `.` �
 GitHub Packages配信のため、利用側には `read:packages` 権限のトークンが要ります。
 
     # 利用側リポジトリの .npmrc
-    @hamirilo:registry=https://npm.pkg.github.com
+    @jazmf-dx:registry=https://npm.pkg.github.com
     //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 
 ### 公開

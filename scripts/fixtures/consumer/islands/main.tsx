@@ -4,11 +4,11 @@
  * fixture を追従させなくて済むようにするため。非巻き上げレイアウトでは、
  * パッケージが package.json に宣言していない依存 (phantom dependency) を
  * ここで解決できずビルドが落ちる。 */
-import * as kit from "@hamirilo/application-ui-kit";
-import * as islands from "@hamirilo/application-ui-kit/islands";
+import * as kit from "@jazmf-dx/application-ui-kit";
+import * as islands from "@jazmf-dx/application-ui-kit/islands";
 
 // 副作用エントリ。import しただけで data-react 要素を自動マウントする。
-import "@hamirilo/application-ui-kit/islands/auto-mount";
+import "@jazmf-dx/application-ui-kit/islands/auto-mount";
 
 const surface: Record<string, unknown> = { ...kit, ...islands };
 
