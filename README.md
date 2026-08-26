@@ -121,6 +121,10 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
 
+パッケージのスコープは、publishワークフローが**リポジトリ所有者から導出**します（`package.json`のnameは書き換えられます）。GitHub Packagesは「スコープ = リポジトリ所有者」でなければ公開できないため、このリポジトリをフォークして自分の組織向けに配布する場合も、ソースに差分を持たずに `@<owner>/application-ui-kit` として公開できます。フォーク側で持つ差分を増やさないでください（[ai-dev-standards ADR-0005](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0005-upstream-fork-operation.md)）。
+
+配布物が利用側で本当にビルドできるかは `bun run verify:package` で確認します。`scripts/fixtures/consumer/` の最小プロジェクトへtarballを非巻き上げレイアウトでインストールし、宣言漏れの依存（phantom dependency）とTailwindの`@source`到達を検出します。CIでも実行します。
+
 ## Django 連携（Islands）
 
 Django テンプレート + htmx のアプリ向けに、`data-react` 属性から React コンポーネントを自動マウントする仕組みと、標準 Island 4 種を提供します（ai-dev-standards ADR-0002 の htmx 許可パターンの共有実装。設計判断は [decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。
