@@ -443,8 +443,25 @@
   }
 
   .cn-checkbox-indicator {
-    @apply flex items-center justify-center text-current [&_svg]:size-3.5;
+    @apply flex items-center justify-center text-current transition-none [&_svg]:size-3.5;
     --icon-box: 0.875rem;
+  }
+
+  /* チェック済み = チェック / 一部選択 = ダッシュ。
+   * Indicator は checked と indeterminate の両方でマウントされ、
+   * indeterminate のときは data-checked が付かない（Base UI の仕様）。
+   * そのため切り替えは data-indeterminate だけを見る。
+   * これを入れないと「すべて選択」の一部選択がチェック済みと同じ見た目になる。 */
+  .cn-checkbox-indicator-icon-indeterminate {
+    @apply hidden;
+  }
+
+  .cn-checkbox-indicator[data-indeterminate] .cn-checkbox-indicator-icon-checked {
+    @apply hidden;
+  }
+
+  .cn-checkbox-indicator[data-indeterminate] .cn-checkbox-indicator-icon-indeterminate {
+    @apply block;
   }
 
   /* 並び方向は利用側（ApplicationRadioGroup の orientation）が決めるため、
