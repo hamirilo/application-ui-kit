@@ -24,7 +24,7 @@ Storybookは包括的なデザインシステムではなく、**UI Kitのショ
 ### 構成
 
     Getting Started      使い方とStory作成の基準
-    Foundations          Colors / Typography / Spacing / Radius & Shadow / Icons / CSS Classes
+    Foundations          Colors / Typography / Spacing / Radius & Shadow / Icons
     Components           部品1つずつ（Overview + 個別Story）
     Patterns             Form / EmptyState / ErrorState / Search / DataTable など
     Gallery              All Components（全体の俯瞰）

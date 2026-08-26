@@ -93,7 +93,7 @@ const preview: Preview = {
         order: [
           'Getting Started',
           'Foundations',
-          ['Colors', 'Typography', 'Spacing', 'Radius & Shadow', 'Icons', 'CSS Classes'],
+          ['Colors', 'Typography', 'Spacing', 'Radius & Shadow', 'Icons'],
           'Components',
           'Patterns',
           // 見る順（画面の組み立て方 → 状態の見せ方 → 一覧の作り方）
