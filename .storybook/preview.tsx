@@ -69,7 +69,7 @@ const preview: Preview = {
     options: {
       /*
        * サイドバーの並び。
-       * Getting Started → Foundations → Components → Patterns → Gallery の順に置く。
+       * Getting Started → Foundations → Components → Patterns → Templates → Gallery の順に置く。
        *
        * <important>
        * 各コンポーネント内で Overview が先頭に来るのは、**Story ファイルの先頭に
@@ -96,8 +96,9 @@ const preview: Preview = {
           ['Colors', 'Typography', 'Spacing', 'Radius & Shadow', 'Icons'],
           'Components',
           'Patterns',
-          // 見る順（画面の組み立て方 → 状態の見せ方 → 一覧の作り方）
-          ['Form', 'EmptyState', 'ErrorState', 'Search', 'DataTable', '*'],
+          '*',
+          'Templates',
+          '*',
           'Gallery',
         ],
       },
