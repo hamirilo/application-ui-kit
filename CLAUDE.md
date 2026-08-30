@@ -2,10 +2,9 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-> **共通ルール**: このプロジェクトは開発Standard（`ai-dev-standards`）に準拠する。
-> AI エージェントは最初に `../ai-dev-standards/ai/ONBOARDING.md` を読むこと
-> （sibling checkout がない場合は https://github.com/hamirilo/ai-dev-standards/blob/main/ai/ONBOARDING.md ）。
-> ここには **このプロジェクト固有の差分だけ** を書く。
+> **共通入口**: AI エージェントは最初に `../ai-dev-platform/ai/ONBOARDING.md` を読むこと。
+> sibling checkout がない場合は https://github.com/hamirilo/ai-dev-platform/blob/main/ai/ONBOARDING.md を参照する。
+> Standards / Recommendations / Playbook の選択は ai-dev-platform のルーティングに従い、ここには **このプロジェクト固有の差分だけ** を書く。
 
 ## プロジェクト概要
 
@@ -41,5 +40,5 @@ Django + htmx との汎用的な接続（Islands）は `./islands` エントリ�
 - 必須ゲート: `bun run typecheck` / `bun run test` / `bun run lint` / `bun run build` /
   `bun run build-storybook` を通すこと。
 
-判断基準の正は [Application UI Standard](../ai-dev-standards/standards/application-ui/README.md) §1 / §6。
+判断基準の正は [Application UI Standard](https://github.com/hamirilo/ai-dev-standards/blob/main/standards/application-ui/README.md) §1 / §6。
 UI Platform内の責務分担は [UI_PLATFORM.md](UI_PLATFORM.md)、追加・削除の詳細は [README.md](README.md) を参照。
