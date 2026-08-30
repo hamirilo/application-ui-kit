@@ -1,49 +1,46 @@
-# Application UI Kit
+# UI Platform
 
-汎用的なReact UIコンポーネント、セマンティックToken、StorybookによるUI仕様をまとめる公開リポジトリです。
+社内アプリケーション向けの **UI設計とUI実装の統合入口** です。
+
+再利用可能なReact UIコンポーネントとSemantic Tokenを中核に、UI設計時に比較するPattern、画面レベルのTemplate、StorybookによるCatalog、Claude Design / 人間向けの設計参照を管理します。詳細な責務分担は [UI_PLATFORM.md](UI_PLATFORM.md) を参照してください。
 
 ## 役割
 
-- Standard: UIに関する判断原則は ai-dev-standards が所有します。
-- Playbook: 実装手順・検証方法・運用のコツは ai-dev-playbook が所有します。
-- UI Kit: このリポジトリは、実際に参照・利用する汎用UIとToken、Storybook仕様、および Claude Design / 人間向けの設計参照（[design-system/](design-system/)）を所有します。
+- Standard: UIを含む開発上の原則・制約は `ai-dev-standards` が所有します。
+- Recommendations: 現時点のライブラリや技術の既定選択は `ai-dev-platform/recommendations` が所有します。
+- Playbook: 実装手順・検証方法・トラブルシュートは `ai-dev-playbook` が所有します。
+- UI Platform: このリポジトリは、Foundations / Components / Patterns / Templates / Catalogを所有します。
 
 社員検索、組織ツリー、Authentik連携などの業務ドメインUIは各アプリで管理してください。このリポジトリにはアプリ固有設定や、認証・エンドポイントを焼き込んだ連携を置きません。Django + htmx との**汎用的な**接続だけを Islands（後述）として提供します（[decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。
 
 AIエージェント向けの入口は [CLAUDE.md](CLAUDE.md)、実装前に読むプロジェクト前提は [decisions/project-context.md](decisions/project-context.md) にあります。
 
-## Storybook
+## Storybook / Catalog
 
-StorybookをUIの視覚的な仕様・使用例として扱います。新しいUIを作る前に既存のComponentとPatternを確認し、共通化するものにはStoryを追加してください。
+StorybookをComponents / Patterns / Templatesの視覚的なCatalog兼、開発・テスト環境として扱います。新しいUIを作る前に既存のComponent / Pattern / Templateを確認し、共通化するものにはStoryを追加してください。
 
     bun install
     bun run storybook
 
-Storybookは包括的なデザインシステムではなく、**UI Kitのショールーム兼 開発・テスト環境**として位置付けます。Storyを増やすことが目的ではありません。UIを探す・比較する・理解する・検証するコストを下げることが目的です。
+Storyを増やすこと自体は目的ではありません。UIを探す・比較する・理解する・検証するコストを下げることが目的です。
 
 ### 構成
 
     Getting Started      使い方とStory作成の基準
     Foundations          Colors / Typography / Spacing / Radius & Shadow / Icons
     Components           部品1つずつ（Overview + 個別Story）
-    Patterns             Form / EmptyState / ErrorState / Search / DataTable など
+    Patterns             UX上の問題ごとに有力な解決候補を比較
+    Templates            複数のPattern / Componentを組み合わせた画面構成例
     Gallery              All Components（全体の俯瞰）
-
-### 3段階で見る
-
-    Gallery              何があるか
-       ↓
-    Component Overview   どんな種類・状態があるか
-       ↓
-    Individual Story     実際にどう動くか
 
 - **Gallery** は主要な部品を1画面に並べます。代表的な状態だけを載せ、Propsは網羅しません。
 - **Overview** は各コンポーネントの先頭のStoryです。variant / size / 状態を1画面で比較します。デザイン確認・UIレビュー用のため、Controlsは無効にします。
 - **個別Story** は1状態を1Storyで持ちます。操作・Props変更・Visual Regression Test・不具合再現に使います。
-- **Patterns** は複数の部品を組み合わせた画面の作り方を示します。「どの部品を使うか」ではなく「アプリではどう組み合わせるか」です。
+- **Patterns** は「ユーザーに1つ選ばせる」などの設計上の問題を単位に、Radio / Select / Comboboxなど複数の有力な解決候補と選択条件を比較します。
+- **Templates** は複数のPattern / Componentを組み合わせた画面レベルの構成例です。アプリ固有の業務ルールは持ち込みません。
 - **Foundations** は実装時に確認が必要な情報だけに限定します。
 
-サイドバーのセクション順は `.storybook/preview.tsx` の `storySort` が決めます。コンポーネント内の並びはStoryファイル内の定義順のままなので、**Overviewはファイルの先頭に書きます**。
+Patternは一般的なUIパターンを網羅するために増やしません。「実際の開発で一度迷い、次回も同じ判断に迷いそうか」を追加基準とします。
 
 ### Story作成の基準
 
@@ -61,11 +58,11 @@ Storybookは包括的なデザインシステムではなく、**UI Kitのショ
 
 ## Token
 
-tokens/theme.css がスタイルTokenの入口です。コンポーネントではraw colorではなく、bg-primary、text-foreground、border-borderなどのsemantic tokenを使います。アプリごとのブランド差分はアプリ側のToken overrideで表現し、コンポーネント実装を複製しないでください。
+`tokens/theme.css` がスタイルTokenの入口です。コンポーネントではraw colorではなく、`bg-primary`、`text-foreground`、`border-border`などのsemantic tokenを使います。アプリごとのブランド差分はアプリ側のToken overrideで表現し、コンポーネント実装を複製しないでください。
 
 ## shadcn/ui との関係
 
-components/ui/ は shadcn/ui（Base UIベース）をそのまま取り込んだものです。見た目は `.tsx` に直書きせず、`cn-button-variant-default` のような **cn-\* クラス**を介して tokens/components.css が持ちます。
+`components/ui/` は shadcn/ui（Base UIベース）をそのまま取り込んだものです。見た目は `.tsx` に直書きせず、`cn-button-variant-default` のような **cn-* クラス**を介して `tokens/components.css` が持ちます。
 
     components/ui/*.tsx      構造。shadcn/ui のソースをそのまま置く
     tokens/components.css    見た目。cn-* クラスの定義（このリポジトリが所有）
@@ -88,13 +85,13 @@ components/ui/ は shadcn/ui（Base UIベース）をそのまま取り込んだ
 ### 公開APIの2種類
 
 - `Application*` — このリポジトリがAPIを設計したもの。items配列やcolumns/rowsのようなprops API、非同期ダイアログ、日本語の既定ラベルなど、shadcn/uiにないvalueを持つものだけを置きます。
-- shadcn/ui の名前のまま re-export しているもの（`Card` / `Spinner` / `Textarea` / `Field` / `Empty` / `Item` 等）。ラップする理由がないため素のまま公開しています。APIは[shadcn/uiのドキュメント](https://ui.shadcn.com/docs/components)と同じです。
+- shadcn/ui の名前のまま re-export しているもの（`Card` / `Spinner` / `Textarea` / `Field` / `Empty` / `Item` 等）。ラップする理由がないため素のまま公開しています。APIはshadcn/uiのドキュメントと同じです。
 
 ラップは「足せるvalueがあるとき」だけ行ってください。名前を付け替えるだけのラッパーは作らないでください。
 
 ## 品質確認（推奨）
 
-このリポジトリでは、アプリ全体の性能スコアを保証するのではなく、コンポーネントとStory単位の品質を確認します。アプリ全体のLighthouseや主要導線の確認は、[品質確認プレイブック](https://github.com/hamirilo/ai-dev-playbook/blob/main/playbooks/quality-checks.md)に従って利用側アプリで実施してください。
+このリポジトリでは、アプリ全体の性能スコアを保証するのではなく、コンポーネントとStory単位の品質を確認します。アプリ全体のLighthouseや主要導線の確認は、ai-dev-playbookの品質確認プレイブックに従って利用側アプリで実施してください。
 
 新しいコンポーネントやStoryを追加・変更するときは、該当する範囲で次を確認します。
 
@@ -112,7 +109,7 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 ## Package
 
-パッケージ名は @hamirilo/application-ui-kit です。公開リポジトリ名とパッケージ名を一致させ、初回公開版からこの名前を正式なAPIとして扱います。
+このリポジトリ全体の名称は `ui-platform` ですが、アプリケーションが依存する公開パッケージ名は当面 `@hamirilo/application-ui-kit` のまま維持します。リポジトリの責務拡張とpackage APIのversioningを分離し、既存利用側に不要な破壊的変更を発生させないためです。
 
     import { ApplicationButton } from '@hamirilo/application-ui-kit'
     import '@hamirilo/application-ui-kit/styles.css'
@@ -121,13 +118,13 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
 
-パッケージのスコープは、publishワークフローが**リポジトリ所有者から導出**します（`package.json`のnameは公開時に書き換えられます）。GitHub Packagesは「スコープ = リポジトリ所有者」でなければ公開できないため、このリポジトリをフォークして自分の組織向けに配布する場合も、ソースに差分を持たずに `@<owner>/application-ui-kit` として公開できます。フォーク側で持つ差分を増やさないでください（[ai-dev-standards ADR-0005](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0005-upstream-fork-operation.md)）。
+パッケージのスコープは、publishワークフローが**リポジトリ所有者から導出**します（`package.json`のnameは公開時に書き換えられます）。GitHub Packagesではスコープをリポジトリ所有者に合わせ、このリポジトリをフォークして自分の組織向けに配布する場合も、ソースに差分を持たずに `@<owner>/application-ui-kit` として公開できる構成を維持します。
 
 配布物が利用側で本当にビルドできるかは `bun run verify:package`（`just verify-package`）で確認します。`scripts/fixtures/consumer/` の最小プロジェクトへtarballを非巻き上げレイアウトでインストールし、宣言漏れの依存（phantom dependency）とTailwindの`@source`到達を検出します。CIでも実行します。
 
 ## Django 連携（Islands）
 
-Django テンプレート + htmx のアプリ向けに、`data-react` 属性から React コンポーネントを自動マウントする仕組みと、標準 Island 4 種を提供します（ai-dev-standards ADR-0002 の htmx 許可パターンの共有実装。設計判断は [decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。
+Django テンプレート + htmx のアプリ向けに、`data-react` 属性から React コンポーネントを自動マウントする仕組みと、標準 Island 4 種を提供します。設計判断は [decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md) を参照してください。
 
     confirm-dialog     確認ダイアログ。data-url への fetch・CSRF・成功トーストを内包
     form-dialog        htmx が data-form-url から Django Form HTML を取得して表示
@@ -195,14 +192,11 @@ GitHub Releaseをpublishすると `.github/workflows/publish.yml` が公開し�
 
 ## 資産を追加するとき
 
-1. 複数アプリで再利用できる汎用UIか確認する。
-2. shadcn/uiに相当物がないか確認する（`npx shadcn@latest add <name>` で components/ui/ に入れられる）。
-   相当物があり、足せるvalueがないなら、ラップせず index.ts から re-export するだけにする。
-3. ラップする場合は components/application/ に実装し、何を足したのかをファイル冒頭に書く。
-4. 見た目は tokens/components.css の cn-* に置き、.tsx にクラスを直書きしない。
-   テンプレート用クラス（tokens/theme.css の @layer components）も併せて揃える。
-5. Storybookに目的、状態、使い方、使わない場面を追加する。Overviewを先頭に置き、必要な状態を個別Storyにする。Galleryに代表的な見た目を1つ足す。
+1. Componentなら、複数アプリで再利用できる汎用UIか確認する。Pattern / Templateなら、実案件で再び同じ設計判断に迷う可能性があるか確認する。
+2. Component追加時はshadcn/uiに相当物がないか確認する。相当物があり、足せるvalueがないなら、ラップせずindex.tsからre-exportするだけにする。
+3. ラップする場合はcomponents/application/に実装し、何を足したのかを明確にする。
+4. 見た目はtokens/components.cssのcn-*とSemantic Tokenを使う。
+5. Storybook Catalogに目的、状態、使い方、使わない場面を追加する。Patternは複数候補を比較できるStoryを優先する。
 6. typecheck、test、lint、Storybook buildを確認する。
 
-実装の詳細な手順や昇格判断はPlaybookを参照してください。
-
+一般的な実装手順・検証・トラブルシュートはPlaybookを参照してください。UI設計上の選択条件や再利用可能なUI実装は、このUI Platformに残します。
