@@ -76,31 +76,29 @@ function ExampleSection({
 }
 
 function CardChoiceExample() {
-  const [value, setValue] = React.useState("standard");
-
   return (
-    <div className="grid gap-3 sm:grid-cols-3" role="radiogroup" aria-label="登録方法">
-      {CHOICES.map((choice) => {
-        const selected = value === choice.value;
-        return (
-          <button
-            key={choice.value}
-            type="button"
-            role="radio"
-            aria-checked={selected}
-            onClick={() => setValue(choice.value)}
-            className="text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
-          >
-            <Card className={selected ? "border-primary ring-1 ring-primary" : undefined}>
+    <fieldset>
+      <legend className="sr-only">登録方法</legend>
+      <div className="grid gap-3 sm:grid-cols-3">
+        {CHOICES.map((choice, index) => (
+          <label key={choice.value} className="block cursor-pointer">
+            <input
+              type="radio"
+              name="card-choice-example"
+              value={choice.value}
+              defaultChecked={index === 0}
+              className="peer sr-only"
+            />
+            <Card className="transition peer-checked:border-primary peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
               <CardContent className="space-y-1 p-4">
                 <div className="font-medium text-foreground">{choice.label}</div>
                 <p className="text-sm text-muted-foreground">{choice.description}</p>
               </CardContent>
             </Card>
-          </button>
-        );
-      })}
-    </div>
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
 }
 
