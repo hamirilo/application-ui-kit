@@ -117,11 +117,17 @@ export const Comparison: Story = {
           items={CHOICES.map(({ value, label }) => ({ value, label }))}
           defaultValue="standard"
           placeholder="登録方法を選択"
+          aria-label="登録方法"
         />
       </ExampleSection>
 
       <ExampleSection title="Combobox" guidance="部署・社員など候補が多く、入力して絞り込みたい場合。">
-        <ApplicationCombobox items={DEPARTMENTS} placeholder="部署を検索" clearable />
+        <ApplicationCombobox
+          items={DEPARTMENTS}
+          placeholder="部署を検索"
+          clearable
+          aria-label="部署"
+        />
       </ExampleSection>
 
       <ExampleSection title="Button Group" guidance="2〜4件程度の短いモード・表示切替。長い説明を伴うフォーム選択には使わない。">
