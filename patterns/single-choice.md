@@ -45,3 +45,6 @@
 ## Catalog
 
 Storybookの `Patterns/Single Choice` で主要な候補を同一画面上で比較します。
+
+Button Group を選んだ場合の具体例は `Patterns/ButtonGroupExample` にあります
+（独立したPatternにはしていません。Button Groupはこの問題の解決候補の1つです）。

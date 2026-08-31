@@ -101,6 +101,9 @@ export type { ApplicationSearchInputProps } from "./ApplicationSearchInput";
 export { ApplicationNavItem } from "./ApplicationNavItem";
 export type { ApplicationNavItemProps, ApplicationNavItemColor } from "./ApplicationNavItem";
 
+export { ApplicationActiveIndicator } from "./ApplicationActiveIndicator";
+export type { ApplicationActiveIndicatorProps } from "./ApplicationActiveIndicator";
+
 export { ApplicationThemeToggle } from "./ApplicationThemeToggle";
 export type { ApplicationThemeToggleProps } from "./ApplicationThemeToggle";
 
