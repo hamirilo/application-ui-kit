@@ -109,14 +109,26 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 ## Package
 
-このリポジトリ全体の名称は `ui-platform` ですが、アプリケーションが依存する公開パッケージ名は当面 `application-ui-kit` のまま維持します。リポジトリの責務拡張とpackage APIのversioningを分離し、既存利用側に不要な破壊的変更を発生させないためです。
+このリポジトリ全体の名称は `ui-platform` ですが、アプリケーション側で使う依存名は `application-ui-kit` に固定します。リポジトリ所有者に依存する publish 名と、アプリコードが import する名前を分離するためです。
 
-**スコープは `package.json` の値ではなく、publish 元リポジトリの所有者から導出されます。** publishワークフローが `package.json` のnameを公開時に書き換えます。GitHub Packagesはスコープがリポジトリ所有者と一致しなければpublishできないためで、このリポジトリをフォークして自分の組織向けに配布する場合も、**ソースに差分を持たずに** `@<owner>/application-ui-kit` として公開できます。
+**GitHub Packages へ publish される実パッケージ名は `@<owner>/application-ui-kit` です。** publishワークフローが `package.json` のnameを公開時にリポジトリ所有者のscopeへ書き換えます。そのため fork から公開しても、UI Platform のソース自体に organization 固有差分を持たせる必要はありません。
 
-このため、ドキュメント中の例と設定はすべて `@<owner>` と表記します。**`<owner>` は、依存しているパッケージを publish したリポジトリの所有者に置き換えてください**（このリポジトリから配布されたものなら `hamirilo`）。置き換えが要るのは導入時の `.npmrc` と `package.json` の 2 箇所だけで、依存に入れたあとの import は実際のパッケージ名で解決されます。
+利用側では npm alias を使って実パッケージを `application-ui-kit` という固定名で依存に入れます。
 
-    import { ApplicationButton } from '@<owner>/application-ui-kit'
-    import '@<owner>/application-ui-kit/styles.css'
+```json
+{
+  "dependencies": {
+    "application-ui-kit": "npm:@<owner>/application-ui-kit@^6.0.0"
+  }
+}
+```
+
+`<owner>` は publish 元のリポジトリ所有者に置き換えます。このリポジトリから公開されたものなら `hamirilo`、fork から公開したものならその fork の所有者です。owner差分を持つのは利用側の `.npmrc` と `package.json` だけです。
+
+アプリケーションコード、Story、JSDoc では常に固定 alias を使います。
+
+    import { ApplicationButton } from 'application-ui-kit'
+    import 'application-ui-kit/styles.css'
 
     <ApplicationButton variant="primary">保存</ApplicationButton>
 
@@ -136,7 +148,7 @@ Django テンプレート + htmx のアプリ向けに、`data-react` 属性か�
 アプリの Vite エントリで auto-mount を import するだけで使えます。
 
     // islands/main.ts
-    import '@<owner>/application-ui-kit/islands/auto-mount'
+    import 'application-ui-kit/islands/auto-mount'
 
     <!-- base.html に一度だけ（全ページトースト） -->
     <div data-react="toast-listener"></div>
@@ -161,8 +173,8 @@ form-dialog の送信成功は Django View が `HX-Trigger: application-form-suc
 
 アプリ固有の Island は、このリポジトリに追加せずアプリ側で登録します。
 
-    import { registerIslandComponents } from '@<owner>/application-ui-kit/islands'
-    import '@<owner>/application-ui-kit/islands/auto-mount'
+    import { registerIslandComponents } from 'application-ui-kit/islands'
+    import 'application-ui-kit/islands/auto-mount'
     registerIslandComponents({ 'my-widget': MyWidget })
 
 islands を import しない純 React アプリには、これまで通り `.` エントリだけで影響ありません。
