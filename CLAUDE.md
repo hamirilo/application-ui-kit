@@ -3,7 +3,7 @@
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
 > **共通入口**: AI エージェントは最初に `../ai-dev-platform/ai/ONBOARDING.md` を読むこと。
-> sibling checkout がない場合は https://github.com/hamirilo/ai-dev-platform/blob/main/ai/ONBOARDING.md を参照する。
+> sibling checkout がない場合は https://github.com/jazmf-dx/ai-dev-platform/blob/main/ai/ONBOARDING.md を参照する。
 > Standards / Recommendations / Playbook の選択は ai-dev-platform のルーティングに従い、ここには **このプロジェクト固有の差分だけ** を書く。
 
 ## プロジェクト概要
@@ -14,8 +14,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 画面レベルの Template、Storybook による Catalog、Claude Design / 人間向けの設計参照
 （`design-system/`）を同じ入口から提供する。
 
-アプリケーションが依存する公開パッケージは当面 `@hamirilo/application-ui-kit` のまま維持し、
+アプリケーションが依存する公開パッケージは当面 `application-ui-kit` のまま維持し、
 リポジトリ全体の役割変更と package API のversioningを分離する。
+scope は publish 時にリポジトリ所有者から導出されるため、この組織では
+`@jazmf-dx/application-ui-kit` として配布される（`package.json` の scope は公開時に
+書き換えられるので、そのままの名前で install できるとは限らない）。
 
 Django + htmx との汎用的な接続（Islands）は `./islands` エントリで提供する
 （[decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。
@@ -40,5 +43,5 @@ Django + htmx との汎用的な接続（Islands）は `./islands` エントリ�
 - 必須ゲート: `bun run typecheck` / `bun run test` / `bun run lint` / `bun run build` /
   `bun run build-storybook` を通すこと。
 
-判断基準の正は [Application UI Standard](https://github.com/hamirilo/ai-dev-standards/blob/main/standards/application-ui/README.md) §1 / §6。
+判断基準の正は [Application UI Standard](https://github.com/jazmf-dx/ai-dev-standards/blob/main/standards/application-ui/README.md) §1 / §6。
 UI Platform内の責務分担は [UI_PLATFORM.md](UI_PLATFORM.md)、追加・削除の詳細は [README.md](README.md) を参照。

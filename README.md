@@ -109,10 +109,12 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 ## Package
 
-このリポジトリ全体の名称は `ui-platform` ですが、アプリケーションが依存する公開パッケージ名は当面 `@hamirilo/application-ui-kit` のまま維持します。リポジトリの責務拡張とpackage APIのversioningを分離し、既存利用側に不要な破壊的変更を発生させないためです。
+このリポジトリ全体の名称は `ui-platform` ですが、アプリケーションが依存する公開パッケージ名は当面 `application-ui-kit` のまま維持します。リポジトリの責務拡張とpackage APIのversioningを分離し、既存利用側に不要な破壊的変更を発生させないためです。
 
-    import { ApplicationButton } from '@hamirilo/application-ui-kit'
-    import '@hamirilo/application-ui-kit/styles.css'
+**scope は `package.json` の値ではなく、公開元リポジトリの所有者で決まります**（理由は後述）。この組織から公開したものは `@jazmf-dx/application-ui-kit` で、以下の例もその名前です。
+
+    import { ApplicationButton } from '@jazmf-dx/application-ui-kit'
+    import '@jazmf-dx/application-ui-kit/styles.css'
 
     <ApplicationButton variant="primary">保存</ApplicationButton>
 
@@ -134,7 +136,7 @@ Django テンプレート + htmx のアプリ向けに、`data-react` 属性か�
 アプリの Vite エントリで auto-mount を import するだけで使えます。
 
     // islands/main.ts
-    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    import '@jazmf-dx/application-ui-kit/islands/auto-mount'
 
     <!-- base.html に一度だけ（全ページトースト） -->
     <div data-react="toast-listener"></div>
@@ -159,8 +161,8 @@ form-dialog の送信成功は Django View が `HX-Trigger: application-form-suc
 
 アプリ固有の Island は、このリポジトリに追加せずアプリ側で登録します。
 
-    import { registerIslandComponents } from '@hamirilo/application-ui-kit/islands'
-    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    import { registerIslandComponents } from '@jazmf-dx/application-ui-kit/islands'
+    import '@jazmf-dx/application-ui-kit/islands/auto-mount'
     registerIslandComponents({ 'my-widget': MyWidget })
 
 islands を import しない純 React アプリには、これまで通り `.` エントリだけで影響ありません。
@@ -182,13 +184,20 @@ islands を import しない純 React アプリには、これまで通り `.` �
 
 GitHub Packages配信のため、利用側には `read:packages` 権限のトークンが要ります。
 
-    # 利用側リポジトリの .npmrc
-    @hamirilo:registry=https://npm.pkg.github.com
+    # 利用側リポジトリの .npmrc（scope は公開元リポジトリの所有者に合わせる）
+    @jazmf-dx:registry=https://npm.pkg.github.com
     //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 
 ### 公開
 
 GitHub Releaseをpublishすると `.github/workflows/publish.yml` が公開します。タグは `v<version>` とし、package.json の version と一致させてください（不一致はワークフローが検出して止めます）。
+
+### バージョンの読み方
+
+**6.0.0 は公開APIの破壊的変更ではありません。** リポジトリを `application-ui-kit` から
+`ui-platform` へ再定義し、Pattern / Template / Catalog を責務に加えたことを表すメジャーバンプです。
+5.1.1 からの差分はドキュメントとa11y修正で、`Application*` の公開APIとexports mapは変わっていません。
+5.x を利用しているアプリが 6.0.0 へ上げるための移行作業はありません。
 
 ## 資産を追加するとき
 
