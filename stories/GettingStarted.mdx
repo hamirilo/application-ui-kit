@@ -40,11 +40,11 @@ Component を利用するときは、Gallery → Overview → Individual Story �
 実装時は、必要に応じて Pattern / Template も先に確認してください。UI設計の候補を比較したい場合は Pattern、画面全体の構成を参考にしたい場合は Template を使います。
 
 `application-ui-kit` を採用しているアプリでは、利用する Component を実際の依存versionで確認してから import します。
-scope は publish 元リポジトリの所有者から導出されるため、例の `<owner>` は実際の依存に読み替えてください。
+実パッケージの scope は publish 元で変わりますが、利用側 `package.json` の npm alias によりコード上の名前は固定します。
 
 ```tsx
-import { ApplicationButton } from '@<owner>/application-ui-kit'
-import '@<owner>/application-ui-kit/styles.css'
+import { ApplicationButton } from 'application-ui-kit'
+import 'application-ui-kit/styles.css'
 
 <ApplicationButton variant="primary">保存</ApplicationButton>
 ```
