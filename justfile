@@ -6,11 +6,12 @@ check:
     bun run test
     bun run lint
     bun run build
+    bun run build-storybook
 
 build:
     bun run build
 
-# 配布物が利用側プロジェクトでビルドできるかを検証する（npm install を伴うため遅い）
+# package release前に、利用側を模した環境でもbuildできることを確認する。
 verify-package:
     bun run verify:package
 
@@ -31,4 +32,3 @@ storybook:
 
 build-storybook:
     bun run build-storybook
-
