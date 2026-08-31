@@ -96,7 +96,6 @@ const preview: Preview = {
           ['Colors', 'Typography', 'Spacing', 'Radius & Shadow', 'Icons'],
           'Components',
           'Patterns',
-          '*',
           'Templates',
           '*',
           'Gallery',
