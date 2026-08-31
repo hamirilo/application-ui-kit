@@ -109,16 +109,30 @@ Lighthouseの点数だけを上げるために、意味のあるHTML、アクセ
 
 ## Package
 
-このリポジトリ全体の名称は `ui-platform` ですが、アプリケーションが依存する公開パッケージ名は当面 `@hamirilo/application-ui-kit` のまま維持します。リポジトリの責務拡張とpackage APIのversioningを分離し、既存利用側に不要な破壊的変更を発生させないためです。
+このリポジトリ全体の名称は `ui-platform` ですが、アプリケーション側で使う依存名は `application-ui-kit` に固定します。リポジトリ所有者に依存する publish 名と、アプリコードが import する名前を分離するためです。
 
-    import { ApplicationButton } from '@hamirilo/application-ui-kit'
-    import '@hamirilo/application-ui-kit/styles.css'
+**GitHub Packages へ publish される実パッケージ名は `@<owner>/application-ui-kit` です。** publishワークフローが `package.json` のnameを公開時にリポジトリ所有者のscopeへ書き換えます。そのため fork から公開しても、UI Platform のソース自体に organization 固有差分を持たせる必要はありません。
+
+利用側では npm alias を使って実パッケージを `application-ui-kit` という固定名で依存に入れます。
+
+```json
+{
+  "dependencies": {
+    "application-ui-kit": "npm:@<owner>/application-ui-kit@^6.0.0"
+  }
+}
+```
+
+`<owner>` は publish 元のリポジトリ所有者に置き換えます。このリポジトリから公開されたものなら `hamirilo`、fork から公開したものならその fork の所有者です。owner差分を持つのは利用側の `.npmrc` と `package.json` だけです。
+
+アプリケーションコード、Story、JSDoc では常に固定 alias を使います。
+
+    import { ApplicationButton } from 'application-ui-kit'
+    import 'application-ui-kit/styles.css'
 
     <ApplicationButton variant="primary">保存</ApplicationButton>
 
 Application*という名前を公開APIとして採用しています。旧名称の互換exportは提供しません。
-
-パッケージのスコープは、publishワークフローが**リポジトリ所有者から導出**します（`package.json`のnameは公開時に書き換えられます）。GitHub Packagesではスコープをリポジトリ所有者に合わせ、このリポジトリをフォークして自分の組織向けに配布する場合も、ソースに差分を持たずに `@<owner>/application-ui-kit` として公開できる構成を維持します。
 
 配布物が利用側で本当にビルドできるかは `bun run verify:package`（`just verify-package`）で確認します。`scripts/fixtures/consumer/` の最小プロジェクトへtarballを非巻き上げレイアウトでインストールし、宣言漏れの依存（phantom dependency）とTailwindの`@source`到達を検出します。CIでも実行します。
 
@@ -134,7 +148,7 @@ Django テンプレート + htmx のアプリ向けに、`data-react` 属性か�
 アプリの Vite エントリで auto-mount を import するだけで使えます。
 
     // islands/main.ts
-    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    import 'application-ui-kit/islands/auto-mount'
 
     <!-- base.html に一度だけ（全ページトースト） -->
     <div data-react="toast-listener"></div>
@@ -159,8 +173,8 @@ form-dialog の送信成功は Django View が `HX-Trigger: application-form-suc
 
 アプリ固有の Island は、このリポジトリに追加せずアプリ側で登録します。
 
-    import { registerIslandComponents } from '@hamirilo/application-ui-kit/islands'
-    import '@hamirilo/application-ui-kit/islands/auto-mount'
+    import { registerIslandComponents } from 'application-ui-kit/islands'
+    import 'application-ui-kit/islands/auto-mount'
     registerIslandComponents({ 'my-widget': MyWidget })
 
 islands を import しない純 React アプリには、これまで通り `.` エントリだけで影響ありません。
@@ -183,7 +197,7 @@ islands を import しない純 React アプリには、これまで通り `.` �
 GitHub Packages配信のため、利用側には `read:packages` 権限のトークンが要ります。
 
     # 利用側リポジトリの .npmrc
-    @hamirilo:registry=https://npm.pkg.github.com
+    @<owner>:registry=https://npm.pkg.github.com
     //npm.pkg.github.com/:_authToken=${NPM_TOKEN}
 
 ### 公開

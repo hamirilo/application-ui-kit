@@ -9,12 +9,12 @@
  * import するだけで使えます:
  *
  *   // islands/main.ts（アプリの Vite エントリ）
- *   import '@hamirilo/application-ui-kit/islands/auto-mount'
+ *   import 'application-ui-kit/islands/auto-mount'
  *
  * アプリ固有の Island を追加する場合はこちらを使います:
  *
- *   import { registerIslandComponents } from '@hamirilo/application-ui-kit/islands'
- *   import '@hamirilo/application-ui-kit/islands/auto-mount'
+ *   import { registerIslandComponents } from 'application-ui-kit/islands'
+ *   import 'application-ui-kit/islands/auto-mount'
  *   registerIslandComponents({ 'my-widget': MyWidget })
  *
  * <important>
