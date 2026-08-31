@@ -1,0 +1,10 @@
+{
+  "projectId": "7b3fbcce-f433-4f60-87d1-48ff86e627b8",
+  "shape": "storybook",
+  "storybookConfigDir": ".storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "pkg": "@hamirilo/application-ui-kit",
+  "globalName": "JazmfDxApplicationUiKit",
+  "entry": "dist/components/application/index.js",
+  "buildCmd": "bun run build"
+}
