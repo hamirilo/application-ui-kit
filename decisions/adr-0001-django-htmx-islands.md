@@ -4,7 +4,7 @@
 
 ## コンテキスト
 
-ai-dev-standards の [ADR-0002](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0002-frontend-technology-boundary.md) は React Islands をインタラクティブ UI の標準手段とし、htmx を次の 3 用途に限定している。
+ai-dev-standards の [ADR-0002](https://github.com/jazmf-dx/ai-dev-standards/blob/main/decisions/adr-0002-frontend-technology-boundary.md) は React Islands をインタラクティブ UI の標準手段とし、htmx を次の 3 用途に限定している。
 
 1. サーバー起点のリスト更新
 2. React Island 内部からの HTML 取得（Django Form HTML をダイアログに表示）
@@ -24,12 +24,12 @@ ai-dev-standards の [ADR-0002](https://github.com/hamirilo/ai-dev-standards/blo
 ## 理由
 
 - ADR-0002 の許可パターン 2・3 は実装がワンパターンで、アプリごとに差が出ることに価値がない。繰り返しが既に複数アプリで確認されている（先行抽象化ではない）。
-- ai-dev-standards の [ADR-0004](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0004-shared-asset-boundaries.md) は「UI 実装は application-ui-kit がパッケージとして配布する」と定めており、Island 層は UI 実装の一部である。
+- ai-dev-standards の [ADR-0004](https://github.com/jazmf-dx/ai-dev-standards/blob/main/decisions/adr-0004-shared-asset-boundaries.md) は「UI 実装は application-ui-kit がパッケージとして配布する」と定めており、Island 層は UI 実装の一部である。
 - 副作用（自動マウント）をエントリ単位で分離すれば、ライブラリとしての tree-shaking と純 React 利用を損なわない。
 
 ## 結果
 
-- Django + htmx のアプリは `import '@hamirilo/application-ui-kit/islands/auto-mount'` の 1 行で標準 Island を利用できる。
+- Django + htmx のアプリは `import '@jazmf-dx/application-ui-kit/islands/auto-mount'` の 1 行で標準 Island を利用できる。
 - `HX-Trigger` の既定イベント名は `application-form-success`。旧 dx-ui（`dx-form-success`）からの移行時は Django View 側のイベント名を変更するか、`data-success-event` で上書きする。
 - 旧 dx-ui の `window.DxToast` / `window.showToast` は提供しない。`window.ApplicationToast` に一本化する（README「旧名称の互換 export は提供しない」方針に従う）。
 
