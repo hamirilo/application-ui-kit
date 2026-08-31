@@ -1,0 +1,22 @@
+{
+  "shape": "storybook",
+  "storybookConfigDir": ".storybook",
+  "storybookStatic": ".design-sync/sb-reference",
+  "pkg": "@hamirilo/application-ui-kit",
+  "globalName": "ApplicationUiKit",
+  "entry": "dist/components/application/index.js",
+  "buildCmd": "bun run build",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "ApplicationPagination": { "cardMode": "column" },
+    "ApplicationTable": { "viewport": "900x1150" },
+    "ApplicationNavItem": { "viewport": "900x1100" },
+    "ApplicationFormField": { "viewport": "900x1020" },
+    "ApplicationInput": { "viewport": "900x980" },
+    "ApplicationButtonGroup": { "viewport": "900x900" },
+    "ApplicationCombobox": { "viewport": "900x870" },
+    "ApplicationDatePicker": { "viewport": "900x870" },
+    "ApplicationRadioGroup": { "viewport": "900x850" },
+    "ApplicationSelect": { "viewport": "900x780" }
+  }
+}
