@@ -6,7 +6,7 @@
  * import するだけで動きます:
  *
  *   // islands/main.ts
- *   import '@hamirilo/application-ui-kit/islands/auto-mount'
+ *   import '@<owner>/application-ui-kit/islands/auto-mount'
  *
  * Django テンプレートでの使い方:
  *   1. エントリを読み込む: {% vite_asset 'main' %}

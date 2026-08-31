@@ -16,7 +16,7 @@ const registry = new Map<string, ComponentType<any>>();
  *
  * @example
  * ```ts
- * import { registerIslandComponents } from '@hamirilo/application-ui-kit/islands'
+ * import { registerIslandComponents } from '@<owner>/application-ui-kit/islands'
  * registerIslandComponents({ 'my-widget': MyWidget })
  * ```
  */

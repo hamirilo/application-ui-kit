@@ -14,8 +14,10 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 画面レベルの Template、Storybook による Catalog、Claude Design / 人間向けの設計参照
 （`design-system/`）を同じ入口から提供する。
 
-アプリケーションが依存する公開パッケージは当面 `@hamirilo/application-ui-kit` のまま維持し、
+アプリケーションが依存する公開パッケージは当面 `application-ui-kit` のまま維持し、
 リポジトリ全体の役割変更と package API のversioningを分離する。
+scope は publish 時にリポジトリ所有者から導出されるため、ドキュメント中は
+`@<owner>/application-ui-kit` と表記する。詳細は README「Package」。
 
 Django + htmx との汎用的な接続（Islands）は `./islands` エントリで提供する
 （[decisions/adr-0001](decisions/adr-0001-django-htmx-islands.md)）。

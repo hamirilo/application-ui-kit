@@ -29,7 +29,7 @@ ai-dev-standards の [ADR-0002](https://github.com/hamirilo/ai-dev-standards/blo
 
 ## 結果
 
-- Django + htmx のアプリは `import '@hamirilo/application-ui-kit/islands/auto-mount'` の 1 行で標準 Island を利用できる。
+- Django + htmx のアプリは `import '@<owner>/application-ui-kit/islands/auto-mount'` の 1 行で標準 Island を利用できる。
 - `HX-Trigger` の既定イベント名は `application-form-success`。旧 dx-ui（`dx-form-success`）からの移行時は Django View 側のイベント名を変更するか、`data-success-event` で上書きする。
 - 旧 dx-ui の `window.DxToast` / `window.showToast` は提供しない。`window.ApplicationToast` に一本化する（README「旧名称の互換 export は提供しない」方針に従う）。
 
