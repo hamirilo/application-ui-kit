@@ -2,13 +2,15 @@ name: Publish
 
 # GitHub Packages へ application-ui-kit を公開する。
 #
-# GitHub Release のうち、タグが `application-ui-kit-v<version>` のものだけを
-# package release として扱う。UI Platform 全体の通常リリースやドキュメント更新では
+# GitHub Release のうち、タグが `application-ui-kit-v<version>` のものを
+# package release として扱う。移行期間中は README に残る旧形式 `v<version>` も
+# 互換のため受け付ける。UI Platform 全体の通常リリースやドキュメント更新では
 # publish job を実行しない。
 #
 # 例:
 #   application-ui-kit-v6.0.1 -> package.json version 6.0.1 と一致すれば publish
-#   ui-platform-v1.2.0         -> publish job は skip
+#   v6.0.1                    -> 互換形式。package.json version 6.0.1 なら publish
+#   ui-platform-v1.2.0        -> publish job は skip
 #
 # 手動実行 (workflow_dispatch) では package.json の version をそのまま使う。
 #
@@ -35,7 +37,8 @@ jobs:
     name: npm publish
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      startsWith(github.event.release.tag_name, 'application-ui-kit-v')
+      startsWith(github.event.release.tag_name, 'application-ui-kit-v') ||
+      startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -71,7 +74,9 @@ jobs:
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG_VERSION="${RELEASE_TAG#application-ui-kit-v}"
+          TAG_VERSION="$RELEASE_TAG"
+          TAG_VERSION="${TAG_VERSION#application-ui-kit-v}"
+          TAG_VERSION="${TAG_VERSION#v}"
           VERSION="$(node -p "require('./package.json').version")"
           if [ "$TAG_VERSION" != "$VERSION" ]; then
             echo "::error::package release tag ($RELEASE_TAG) と package.json の version ($VERSION) が一致しません"
