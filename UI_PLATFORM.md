@@ -25,7 +25,7 @@
 
 ## Packageとの関係
 
-このリポジトリ全体を UI Platform として扱いますが、アプリケーションが依存する公開パッケージは当面 `application-ui-kit` のまま維持します。scope は publish 時にリポジトリ所有者から導出されるため、本文では `@<owner>/application-ui-kit` と表記します（README「Package」）。
+このリポジトリ全体を UI Platform として扱いますが、アプリケーション側では依存名を `application-ui-kit` に固定します。実際に GitHub Packages へ publish されるパッケージは `@<owner>/application-ui-kit` ですが、利用側 `package.json` で npm alias を設定するため、実装コードは所有者に依存しません（README「Package」）。
 
 リポジトリの役割変更とパッケージAPIの変更を分離し、既存利用側へ不要な破壊的変更を発生させないためです。
 
