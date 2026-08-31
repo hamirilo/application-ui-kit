@@ -1,38 +1,48 @@
-# ADR-0001: Django 連携 Islands をこのパッケージの公開 API に含める
+# ADR-0001: Django連携Islandsをpackageの公開APIに含める
 
 **ステータス**: 採用
 
 ## コンテキスト
 
-ai-dev-standards の [ADR-0002](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0002-frontend-technology-boundary.md) は React Islands をインタラクティブ UI の標準手段とし、htmx を次の 3 用途に限定している。
+[Architecture Standard](https://github.com/hamirilo/ai-dev-standards/blob/main/standards/architecture/README.md) はDjango Templatesをpage shell / SSRの基盤とし、interactive UIにはReact Islandsを利用します。htmxはserver起点の部分HTML更新へ限定します。
 
-1. サーバー起点のリスト更新
-2. React Island 内部からの HTML 取得（Django Form HTML をダイアログに表示）
-3. `HX-Trigger` によるサーバー → クライアント通知（Toast 表示トリガー等）
+この構成では、複数Applicationで次の接続処理が繰り返されます。
 
-この 2 と 3、および「`data-react` 属性から React コンポーネントを自動マウントする」仕組みは、Django + React Islands 構成のすべてのアプリが同じものを必要とする。前身の共有ライブラリ（jazmf-ui / dx-ui）は `./islands` としてこれを配布していたが、本リポジトリへの移行時に取り込まれておらず、このままでは各アプリが Island 層を再実装することになる（ONBOARDING 必守事項 2「採用済みの Shared UI 実装がある場合は再実装しない」と矛盾する）。
+- `data-*` 属性からReact Componentをmountする
+- Django Form HTMLをDialogへ表示する
+- `HX-Trigger` 等のserver eventをUI feedbackへ接続する
+- Django CSRF tokenを状態変更requestへ渡す
 
-一方、本リポジトリは従来「サーバー連携を置かない」としてきた。また Application UI Standard §6 は「データ取得・認証・CSRF・エンドポイント設定を内包する UI パッケージ共有」を禁じている（Domain Component について）。
+これらは業務domainではなくDjango + React Islands間の汎用接続です。Applicationごとに再実装する価値が低いため、UI Platformのpackageで共通化します。
 
 ## 決定
 
-1. Django 連携 Island（confirm-dialog / form-dialog / toast-listener / date-picker）、自動マウント、レジストリ、CSRF ヘルパーを `components/islands/` に置き、`./islands`（副作用なし）と `./islands/auto-mount`（副作用あり）の 2 エントリで配布する。
-2. メインエントリ `.` は変更しない。純 React アプリは islands を import しなければ、これまで通りフレームワーク非依存のまま利用できる。
-3. **焼き込まない境界を維持する。** エンドポイント URL・認証方式はテンプレート側の `data-*` 属性から渡す。CSRF は Django 既定の cookie 名 `csrftoken` を既定値とし、cookie 名だけを設定可能にする（Application UI Standard §6 が禁じるのは業務ドメイン UI への内包であり、ここでは接続方法をアプリ固有情報なしでパラメータ化する）。
-4. 業務ドメイン固有の Island はこのパッケージへ追加しない。アプリ側で実装し `registerIslandComponents()` で登録する。
+1. Django連携Island、自動mount、registry、CSRF helperを `components/islands/` に置く。
+2. `./islands` を副作用なしのentry、`./islands/auto-mount` をauto mount用の副作用entryとして公開する。
+3. Main entry `.` はframework非依存のUI Componentとして保ち、pure React ApplicationはIslands entryをimportしなければDjango依存を持たない。
+4. **Application固有情報をpackageへ焼き込まない。** Endpoint URL、業務data、認証方式等は利用側からparameter / `data-*` 等で渡す。
+5. Django CSRFの汎用接続は提供できるが、認証・業務認可の判断自体は利用側Applicationの責務とする。
+6. 業務domain固有IslandはUI Platformへ追加せず、Application側で実装してregistryへ登録する。
 
 ## 理由
 
-- ADR-0002 の許可パターン 2・3 は実装がワンパターンで、アプリごとに差が出ることに価値がない。繰り返しが既に複数アプリで確認されている（先行抽象化ではない）。
-- ai-dev-standards の [ADR-0004](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0004-shared-asset-boundaries.md) は「UI 実装は application-ui-kit がパッケージとして配布する」と定めており、Island 層は UI 実装の一部である。
-- 副作用（自動マウント）をエントリ単位で分離すれば、ライブラリとしての tree-shaking と純 React 利用を損なわない。
+- 接続方法が複数Applicationで同じ形になりやすく、差が出ることに価値がない。
+- UI PlatformはComponentだけでなく、UIをApplicationへ接続する再利用可能な汎用実装も所有できる。
+- 副作用entryを分けることで、main package APIのtree-shakingとframework-independentな利用を維持できる。
+- Domain data / endpoint / authをparameter化することで、UI PlatformとApplicationのownership boundaryを維持できる。
 
 ## 結果
 
-- Django + htmx のアプリは `import 'application-ui-kit/islands/auto-mount'` の 1 行で標準 Island を利用できる。実パッケージの owner 差分は利用側 `package.json` の npm alias が吸収する。
-- `HX-Trigger` の既定イベント名は `application-form-success`。旧 dx-ui（`dx-form-success`）からの移行時は Django View 側のイベント名を変更するか、`data-success-event` で上書きする。
-- 旧 dx-ui の `window.DxToast` / `window.showToast` は提供しない。`window.ApplicationToast` に一本化する（README「旧名称の互換 export は提供しない」方針に従う）。
+Django + htmx Applicationは必要に応じて次を利用できます。
+
+```ts
+import 'application-ui-kit/islands/auto-mount'
+```
+
+Packageの実scopeはpublish ownerに依存しますが、Application側はnpm aliasにより `application-ui-kit` を固定の依存名として利用します。
+
+Island APIを変更する場合も、UI packageの公開契約としてSemVerで扱います。
 
 ## 見直し
 
-htmx 以外の接続（WebSocket 等）や、Island の数が増えて配布単位を分けたくなった場合は、ai-dev-standards ADR-0004 の 7 に従い、このリポジトリ内でのパッケージ分割として扱う。
+WebSocket等、異なる接続方式が複数Applicationで繰り返される場合は、同じpackage内の別entryへ分けるか、独立packageが必要かを利用実績に基づいて判断します。
