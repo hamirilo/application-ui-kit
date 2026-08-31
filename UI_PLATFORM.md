@@ -1,80 +1,84 @@
 # UI Platform
 
-このリポジトリは、社内アプリケーション向けの **UI設計とUI実装の統合入口** として扱います。
+このリポジトリは、社内Application向けの **UI設計とUI実装の統合入口** です。
 
-従来の Application UI Kit（再利用可能なコンポーネント）を中核に残しつつ、UI設計時に参照する Pattern、画面レベルの Template、そしてそれらを見て比較する Catalog を同じ場所で管理します。
+UIの具体的なFoundations、Components、Patterns、Templates、Catalogを同じ場所で管理し、Application UI Standardが定める制約を実際のdesignと実装へ落とし込みます。
 
 ## 役割
 
 | 領域 | 問い | 内容 |
-| --- | --- | --- |
-| Foundations | どんな見た目の基盤を使う？ | Semantic Token、Typography、Spacing など |
-| Components | 使える部品は？ | 実際にアプリから import する再利用可能なUI |
-| Patterns | どういうUI設計を選ぶ？ | 同じUX課題に対する複数の良い解決パターン |
-| Templates | 画面全体をどう組み立てる？ | 一覧、詳細、CRUD、設定画面などの構成例 |
-| Catalog | 実物を見て比較したい | Storybook。Components / Patterns / Templates の表示・検証面 |
+|---|---|---|
+| Foundations | どんな見た目の基盤を使う？ | Semantic Token、Typography、Spacing等 |
+| Components | 使える部品は？ | Applicationからimportする再利用可能UI |
+| Patterns | どういうUI設計を選ぶ？ | UX課題に対する有力な解決候補と選択条件 |
+| Templates | 画面全体をどう組み立てる？ | 複数Pattern / Componentを組み合わせた構成例 |
+| Catalog | 実物を見て比較・検証したい | Storybook |
+| Design reference | AI / 人間へ何を渡す？ | `design-system/` の自己完結した設計参照 |
 
 ## AI Dev Platformとの境界
 
-- `ai-dev-standards`: UIを含む開発上の原則・制約
-- `ai-dev-playbook`: 実装手順、検証、トラブルシュート
-- `ai-dev-platform`: Standards / Playbook / Recommendations への統合入口
-- **UI Platform（このリポジトリ）**: UIの設計候補、画面例、実装部品、視覚的Catalog
+- `ai-dev-platform`: Applicationから見た統合入口、Recommendations、Standards / Playbookのversion組合せ
+- `ai-dev-standards`: UIを含む開発上の技術選定・責務境界・守る制約
+- `ai-dev-playbook`: 実装・移行・検証・troubleshootingの手順
+- **UI Platform**: UIの具体的な設計候補、画面例、実装部品、視覚的Catalog
 
-たとえば「単一選択をどう見せるか」は UI Pattern、「どのフォームライブラリを標準候補にするか」は Recommendation、「DjangoとReactをどう接続するか」は Playbook の責務です。
+UI PlatformへStandard本文や一般的な実装Playbookを複製しません。
 
 ## Packageとの関係
 
-このリポジトリ全体を UI Platform として扱いますが、アプリケーション側では依存名を `application-ui-kit` に固定します。実際に GitHub Packages へ publish されるパッケージは `@<owner>/application-ui-kit` ですが、利用側 `package.json` で npm alias を設定するため、実装コードは所有者に依存しません（README「Package」）。
+リポジトリ名は `ui-platform`、Applicationから利用するpackage依存名は `application-ui-kit` とします。
 
-リポジトリの役割変更とパッケージAPIの変更を分離し、既存利用側へ不要な破壊的変更を発生させないためです。
+GitHub Packages上の実package名は `@<owner>/application-ui-kit` です。利用側はnpm aliasを使い、Application codeではownerに依存しない固定名でimportします。
 
 ```text
 UI Platform repository
 ├── components/       packageとして配布するUI
 ├── tokens/           packageとして配布するToken
-├── patterns/         設計判断用のPattern定義
-├── templates/        画面構成例の定義
-└── stories/          Storybook Catalogの実体
+├── patterns/         設計判断用のPattern
+├── templates/        画面構成例
+├── stories/          Storybook Catalog
+└── design-system/    AI / 人間向け設計参照
 ```
 
-## Patternの考え方
+## Component / Pattern / Templateの境界
 
-Patternは「コンポーネントの説明」ではなく、**実際の設計上の問題をどう解くか**を単位にします。
+### Component
 
-たとえば `single-choice` は Radio / Select / Combobox / Button Group などを個別Patternに分けず、「ユーザーに1つ選ばせる」という問題の中で比較します。
+複数Applicationから再利用する実装部品です。既存のshadcn/uiを名前だけ変えてwrapせず、追加できるvalueがある場合だけ独自APIを作ります。
 
-Patternを追加する目安は次の1点です。
+### Pattern
+
+Component名ではなく **設計上の問題** を単位にします。
+
+例: `single-choice` ではRadio / Select / Combobox / Button Groupを別々のPatternにせず、「1つ選ばせる」という問題の中で比較します。
+
+追加基準は次の1点です。
 
 > 実際の開発で一度迷い、次回も同じ判断に迷いそうか。
 
-一般的に存在するUIパターンを網羅するためだけには追加しません。
+### Template
+
+複数Pattern / Componentを組み合わせた画面levelの構成例です。Application固有API、権限、業務ruleを持ち込みません。
 
 ## Catalog
 
-Catalogは新しい知識レイヤーではなく、Components / Patterns / Templates を人間とAIが確認するための表示面です。
-
-既存のStorybookをCatalogとして利用します。
+StorybookはComponents / Patterns / Templatesを人間とAIが確認する表示・比較・検証面です。Catalog自体を別の知識layerとして増やしません。
 
 ```bash
 bun install
 bun run storybook
 ```
 
-Storybookで、部品単体だけでなく「複数候補を横並びで比較できるPattern」を優先して整備します。
-
-## PatternからComponentへの昇格
-
-Patternで使った組み合わせをすぐ共通Componentにしません。
+## 共通化の成熟
 
 ```text
-Patternとして試す
+Projectで実装する
   ↓
-複数の実案件で採用する
+Patternとして比較・再利用する
   ↓
-実装もほぼ同じ形で繰り返される
+複数Applicationで同じ実装が繰り返される
   ↓
 Component化を検討する
 ```
 
-これにより、UI Platform自体が過剰な抽象化や大量の専用Componentで肥大化することを防ぎます。
+1つ目の利用だけで先行抽象化しません。
