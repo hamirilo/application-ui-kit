@@ -13,11 +13,11 @@ React コンポーネントとして直接使う場合（`.tsx` の中）はこ�
 
 ## 使い方
 
-アプリの Vite エントリで auto-mount を import します。`<owner>` は、依存しているパッケージを
-publish したリポジトリの所有者に読み替えてください。
+アプリの Vite エントリで auto-mount を import します。実際の GitHub Packages の scope は
+利用側 `package.json` の npm alias が吸収するため、アプリコードでは常に `application-ui-kit` を使います。
 
 <Code>{`// islands/main.ts
-import '@<owner>/application-ui-kit/islands/auto-mount'`}</Code>
+import 'application-ui-kit/islands/auto-mount'`}</Code>
 
 これだけで、ページ内の `data-react` 要素（htmx スワップで後から入ったものも含む）が
 自動でマウントされます。
