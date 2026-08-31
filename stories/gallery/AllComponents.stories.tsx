@@ -81,7 +81,7 @@ const meta = {
 各見本の上に付いている名前が、そのまま公開 API の名前です。
 
 \`\`\`tsx
-import { ApplicationButton } from '@<owner>/application-ui-kit'
+import { ApplicationButton } from 'application-ui-kit'
 \`\`\`
 
 ## ここに載せないもの
