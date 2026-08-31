@@ -2,26 +2,12 @@ name: Publish
 
 # GitHub Packages へ application-ui-kit を公開する。
 #
-# GitHub Release のうち、タグが `application-ui-kit-v<version>` のものを
-# package release として扱う。移行期間中は README に残る旧形式 `v<version>` も
-# 互換のため受け付ける。UI Platform 全体の通常リリースやドキュメント更新では
-# publish job を実行しない。
+# UI Platform repository のreleaseとnpm packageのreleaseを分離する。
+# - v1.0.0                         -> UI Platform repository release。package publishは行わない
+# - application-ui-kit-v1.0.0      -> application-ui-kit package release
 #
-# 例:
-#   application-ui-kit-v6.0.1 -> package.json version 6.0.1 と一致すれば publish
-#   v6.0.1                    -> 互換形式。package.json version 6.0.1 なら publish
-#   ui-platform-v1.2.0        -> publish job は skip
-#
-# 手動実行 (workflow_dispatch) では package.json の version をそのまま使う。
-#
-# <important>
-# パッケージのスコープは package.json に固定せず、**リポジトリ所有者から導出**する。
-# GitHub Packages は「スコープ = リポジトリ所有者」でなければ publish できないため、
-# フォークから公開する場合はスコープを変えなければならない。
-# ここで publish 時に書き換えることで、フォーク側がソースに差分を持たずに
-# 自分のスコープ (@<owner>/application-ui-kit) で配布できる。
-# 上流では所有者が変わらないので、従来と同じ名前で公開される。
-# </important>
+# package release tagのversionは package.json と一致しなければならない。
+# workflow_dispatchでは package.json のversionをそのままpublishする。
 
 on:
   release:
@@ -37,8 +23,7 @@ jobs:
     name: npm publish
     if: >-
       github.event_name == 'workflow_dispatch' ||
-      startsWith(github.event.release.tag_name, 'application-ui-kit-v') ||
-      startsWith(github.event.release.tag_name, 'v')
+      startsWith(github.event.release.tag_name, 'application-ui-kit-v')
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -49,8 +34,6 @@ jobs:
       - name: 依存のインストール
         run: bun install --frozen-lockfile
 
-      # npm のスコープは小文字でなければならない。GitHub の owner 名は
-      # 大文字を含み得るため、ここで小文字化しておく。
       - name: パッケージ名を決める
         id: pkg
         run: |
@@ -59,31 +42,26 @@ jobs:
           echo "scope=@${SCOPE}" >> "$GITHUB_OUTPUT"
           echo "name=@${SCOPE}/${BASE}" >> "$GITHUB_OUTPUT"
 
-      # 公開物が壊れていないことを、publish の前に必ず通す。
       - name: 検証
         run: |
           bun run typecheck
           bun run test
           bun run lint
-
-      - name: build
-        run: bun run build
+          bun run build
+          bun run verify:package
 
       - name: package release tag と version の一致を確認
         if: github.event_name == 'release'
         env:
           RELEASE_TAG: ${{ github.event.release.tag_name }}
         run: |
-          TAG_VERSION="$RELEASE_TAG"
-          TAG_VERSION="${TAG_VERSION#application-ui-kit-v}"
-          TAG_VERSION="${TAG_VERSION#v}"
+          TAG_VERSION="${RELEASE_TAG#application-ui-kit-v}"
           VERSION="$(node -p "require('./package.json').version")"
           if [ "$TAG_VERSION" != "$VERSION" ]; then
             echo "::error::package release tag ($RELEASE_TAG) と package.json の version ($VERSION) が一致しません"
             exit 1
           fi
 
-      # publish は bun ではなく npm で行う (GitHub Packages の認証は .npmrc 経由)。
       - name: Node のセットアップ
         uses: actions/setup-node@v4
         with:
@@ -91,8 +69,7 @@ jobs:
           registry-url: "https://npm.pkg.github.com"
           scope: "${{ steps.pkg.outputs.scope }}"
 
-      # 上流ではこの書き換えは no-op になる。
-      - name: パッケージ名をリポジトリ所有者のスコープへ合わせる
+      - name: パッケージ名をrepository ownerのscopeへ合わせる
         run: |
           node -e '
             const fs = require("node:fs");
@@ -100,7 +77,6 @@ jobs:
             const pkg = JSON.parse(fs.readFileSync(path, "utf8"));
             const name = process.argv[1];
             if (pkg.name !== name) {
-              console.log(`package.json の name を ${pkg.name} から ${name} へ変更します`);
               pkg.name = name;
               fs.writeFileSync(path, `${JSON.stringify(pkg, null, 2)}\n`);
             }
