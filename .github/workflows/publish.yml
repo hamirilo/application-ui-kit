@@ -3,8 +3,8 @@ name: Publish
 # GitHub Packages へ application-ui-kit を公開する。
 #
 # UI Platform repository のreleaseとnpm packageのreleaseを分離する。
-# - v1.0.0                         -> UI Platform repository release。package publishは行わない
-# - application-ui-kit-v1.0.0      -> application-ui-kit package release
+# - v1.0.0                              -> UI Platform repository release。package publishは行わない
+# - application-ui-kit-v<package-version> -> application-ui-kit package release
 #
 # package release tagのversionは package.json と一致しなければならない。
 # workflow_dispatchでは package.json のversionをそのままpublishする。
