@@ -6,13 +6,20 @@
  * できなければ文字列として渡します。
  */
 
-export function parseProps(element: HTMLElement): Record<string, unknown> {
+export function parseProps(
+  element: HTMLElement,
+  rawAttributeNames: readonly string[] = [],
+): Record<string, unknown> {
   const props: Record<string, unknown> = {};
 
   // 個別の data-* 属性（data-react / data-props / data-react-mounted は除外）
   for (const key of Object.keys(element.dataset)) {
     if (key === "react" || key === "props" || key === "reactMounted") continue;
     const value = element.dataset[key];
+    if (rawAttributeNames.includes(key)) {
+      props[key] = value;
+      continue;
+    }
     try {
       props[key] = JSON.parse(value ?? "");
     } catch {
