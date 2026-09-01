@@ -25,4 +25,17 @@ describe("tokens/components.css", () => {
   it("cn-radio-group-item は display を明示する", () => {
     expect(ruleBody(".cn-radio-group-item")).toMatch(/\b(inline-flex|flex|inline-grid|grid)\b/);
   });
+
+  /* 素の `rounded` は @theme の --radius（0.5rem）を引く。16px の箱では
+   * 半径 8px = 円になり、チェックボックスがラジオボタンと区別できない。 */
+  it("cn-checkbox は角丸を rounded-sm で固定する（円に見せない）", () => {
+    const body = ruleBody(".cn-checkbox");
+    expect(body).toMatch(/\brounded-sm\b/);
+    expect(body).not.toMatch(/\brounded(?![-\w])/);
+    expect(body).not.toMatch(/\brounded-full\b/);
+  });
+
+  it("cn-radio-group-item は丸のままにする（チェックボックスと形で区別する）", () => {
+    expect(ruleBody(".cn-radio-group-item")).toMatch(/\brounded-full\b/);
+  });
 });

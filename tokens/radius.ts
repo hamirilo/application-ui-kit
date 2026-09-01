@@ -5,9 +5,17 @@
  * 出典: design-system/spacing-and-layout.md
  */
 
-/** 角丸 */
+/**
+ * 角丸
+ *
+ * <important>
+ * 素の `rounded` は `--radius`（0.5rem）を引くため 0.25rem ではない。
+ * 16px 程度の小さい箱に当てると円に見える（チェックボックスがラジオボタンと
+ * 区別できなくなった原因）。小さい要素には `rounded-sm` を使う。
+ * </important>
+ */
 export const RADIUS_SCALE = [
-  { cls: "rounded", rem: "0.25rem", usage: "メンションピル等の小さい要素" },
+  { cls: "rounded-sm", rem: "0.25rem", usage: "チェックボックス等の小さい要素" },
   { cls: "rounded-lg", rem: "0.5rem", usage: "ボタン・入力欄（--radius と同値・標準）" },
   { cls: "rounded-xl", rem: "0.75rem", usage: "カード（card / card-sm / card-lg）" },
   { cls: "rounded-2xl", rem: "1rem", usage: "大きなパネル・モーダル" },
