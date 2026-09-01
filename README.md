@@ -94,7 +94,7 @@ import 'application-ui-kit/styles.css'
 <ApplicationButton variant="primary">保存</ApplicationButton>
 ```
 
-Package versionのSource of Truthは利用側Applicationの `package.json` / lockfileです。
+`application-ui-kit` の公開versionは、このrepositoryの `package.json` をSource of Truthとします。各Applicationが実際に利用するversionは、そのApplicationの `package.json` / lockfileをSource of Truthとします。
 
 ### Release
 
