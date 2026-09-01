@@ -59,18 +59,21 @@ ADR-0005の4に従い、組織名、内部URL、内部host、特定Application�
 
 ### 3. 組織内で先に検証する場合
 
-ADR-0005はforkの目的に「組織内で検証した汎用改善をupstreamへ返せる」ことを挙げており、fork先行は想定内である。ただし差分の滞留を恒常化させない。
+ADR-0005はforkの目的に「組織内で検証した汎用改善をupstreamへ返せる」ことを挙げており、fork先行検証は想定内である。ただし**検証は作業branch上で行い、`origin/main` へ先にmergeしない。**
 
-- 同じ作業branchを `origin/main` へ先にsquash mergeしてよい。
-- その場合、**upstream PRを同時に出す**。upstreamのmerge待ちとしてのみ差分を持つ。
-- upstreamでmergeされたら `origin/main` をupstreamへ合わせ直す。先行mergeした内容はupstream側のsquash commitで置き換わる。
+- 作業branchを `origin` へpushし、**そのbranch上で**CIと組織内検証を行う。
+- 同じbranchからupstream PRを出す。
+- upstreamでsquash mergeされたあと、`origin/main` を1のfast-forwardで同期する。
+- 作業branchを削除する。
 
-先行状態が長期化する場合は、ADR-0005の6に従い独立repositoryとして分岐すべきかを先に検討する。
+`origin/main` へ先行mergeしてはならない。先行mergeするとupstream側のsquash commitと別のidentityを持つcommitが `origin/main` に載り、どちらも他方の祖先でなくなるため、1で定めた `git merge --ff-only upstream/main` が成立しなくなる。例外的なreset / force-push手順を用意するのではなく、先行mergeを禁止することで通常系と先行検証系の同期手順を分岐させない。
+
+これにより「`main` はmirror」「同期はfast-forward限定」「恒常差分なし」「upstreamへ一本化」を同時に満たせる。組織内検証を長期間続ける必要が生じた場合は、ADR-0005の6に従い独立repositoryとして分岐すべきかを先に検討する。
 
 ### 4. package versionとrelease tag
 
 - **package versionのbumpはupstreamで行う。** forkは追従してからpublishする。
-- forkが `origin/main` 先行状態のままpublishしない。upstream未マージの内容をupstreamの正式version番号で配布すると、同じ `6.x.y` がownerによって別内容を指すことになる。
+- upstream未マージの内容をupstreamの正式version番号で配布しない。同じ `6.x.y` がownerによって別内容を指すことになる。
 - upstream mergeを待てない事情がある場合に限り、prerelease版（例 `6.1.0-<owner>.1`）としてpublishし、無印の `6.1.0` をforkで消費しない。
 - release tagはsource差分ではないため、fork側にも立ててよい。
   - `v<version>` — UI Platform repositoryのrelease。upstreamで打つ。package publishは行わない。
@@ -83,7 +86,7 @@ package scopeをpublish時にrepository ownerから導出する理由は `.githu
 - `origin/main` は `upstream/main` のmirrorとして保たれ、ADR-0005が求める「恒常差分なし」を既定で満たす。
 - fast-forward限定の同期により、意図しないfork差分が混入した時点で検知できる。
 - 汎用改善の反映経路が1本になり、upstreamへPRを出す前提で作業branchを切る癖がつく。
-- fork先行検証は可能だが、upstream PRとの同時進行を条件とすることで滞留しにくい。
+- fork先行検証を作業branch上に限定したことで、`main` の同期手順が通常系と先行検証系で分岐しない。例外的なreset / force-pushを運用へ持ち込まずに済む。
 - package versionをupstream起点に固定することで、ownerごとに同じversion番号が別内容を指す事故を避けられる。
 - 制約として、fork側だけで完結する迅速なリリースはできない。それが必要になった時点で独立repositoryへの分岐を検討する。
 
