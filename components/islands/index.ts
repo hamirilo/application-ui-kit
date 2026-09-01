@@ -35,6 +35,9 @@ export type { ToastListenerIslandProps } from "./ToastListenerIsland";
 export { DatePickerIsland } from "./DatePickerIsland";
 export type { DatePickerIslandProps } from "./DatePickerIsland";
 
+export { CopyFieldIsland } from "./CopyFieldIsland";
+export type { CopyFieldIslandProps } from "./CopyFieldIsland";
+
 export {
   getIslandComponent,
   getRegisteredIslandComponents,

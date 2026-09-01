@@ -16,14 +16,15 @@
  *   - data-props='{"key": "value"}'（JSON 文字列）
  *   - 個別の data-* 属性（例: data-title="Hello"）
  *
- * このパッケージ標準の 4 Island は自動登録されます:
- *   confirm-dialog / form-dialog / toast-listener / date-picker
+ * このパッケージ標準の 5 Island は自動登録されます:
+ *   confirm-dialog / form-dialog / toast-listener / date-picker / copy-field
  * アプリ固有の Island は registerIslandComponents() で追加します。
  */
 
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import { ConfirmDialogIsland } from "./ConfirmDialogIsland";
+import { CopyFieldIsland } from "./CopyFieldIsland";
 import { DatePickerIsland } from "./DatePickerIsland";
 import { FormDialogIsland } from "./FormDialogIsland";
 import { ToastListenerIsland } from "./ToastListenerIsland";
@@ -41,6 +42,7 @@ registerIslandComponents({
   "form-dialog": FormDialogIsland,
   "toast-listener": ToastListenerIsland,
   "date-picker": DatePickerIsland,
+  "copy-field": CopyFieldIsland,
 });
 
 /**
