@@ -10,6 +10,7 @@
 | 入力ラベル・必須・エラー | ApplicationFormField |
 | 一時通知 | ApplicationToast |
 | 一覧 | ApplicationTable。空状態を必ず考慮する |
+| 候補を見比べて1つ選ぶ | 説明で足りる: ApplicationRadioGroup `variant="cards"` / 列で比較する: ApplicationRadioTable |
 | 画面内の切替 | ApplicationTabs |
 | 状態表示 | ApplicationBadge / ApplicationActiveIndicator |
 | 日付入力 | ApplicationDatePicker |

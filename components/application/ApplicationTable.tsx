@@ -71,6 +71,13 @@ export interface ApplicationTableProps<T> {
   /** 行クリック時の処理。渡すと行にホバー・カーソルが付く */
   onRowClick?: (row: T, index: number) => void;
 
+  /**
+   * 行ごとに付けるクラス。選択中・警告などの強調に使う。
+   * 行の意味そのもの（無効・エラー）は文字やバッジでも分かるようにする
+   * （背景色だけで伝えると色覚特性によって読めない）。
+   */
+  rowClassName?: (row: T, index: number) => string | undefined;
+
   /** テーブルの用途を支援技術に伝える説明（視覚的には非表示） */
   caption?: string;
 
@@ -110,6 +117,7 @@ export function ApplicationTable<T>({
   emptyMessage = "データがありません",
   emptySubMessage,
   onRowClick,
+  rowClassName,
   caption,
   className,
 }: ApplicationTableProps<T>) {
@@ -151,7 +159,10 @@ export function ApplicationTable<T>({
             <TableRow
               key={rowKey ? rowKey(row, i) : i}
               onClick={onRowClick ? () => onRowClick(row, i) : undefined}
-              className={cn(onRowClick && "cursor-pointer hover:bg-accent focus-within:bg-accent")}
+              className={cn(
+                onRowClick && "cursor-pointer hover:bg-accent focus-within:bg-accent",
+                rowClassName?.(row, i),
+              )}
             >
               {columns.map((col) => (
                 <TableCell

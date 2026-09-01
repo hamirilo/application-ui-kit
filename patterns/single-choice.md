@@ -15,6 +15,7 @@
 | Combobox | 候補が多く、名前などで検索したい | 候補が数件しかなく検索が不要 |
 | Button Group | 2〜4件程度の短いラベルで、軽量なモード切替に近い | 長い説明が必要、フォーム入力として意味を明示したい |
 | Card Choice | 各候補に説明や特徴を伴わせ、違いを比較して選ばせたい | 候補が多い、単純な値選択だけで十分 |
+| Radio Table | 候補を複数の属性（人数・容量・金額など）で列に並べて比較させたい | 1〜2行の説明で決められる、候補が多い |
 
 ## Selection guide
 
@@ -24,7 +25,10 @@
 └─ No
    ↓
 候補の違いを説明・比較する必要がある？
-├─ Yes → Card Choice または Radio + description
+├─ Yes
+│  └─ 比較したい属性が複数ある（人数・容量・金額…）？
+│     ├─ Yes → Radio Table
+│     └─ No  → Card Choice または Radio + description
 └─ No
    ↓
 2〜5件程度を常時見せたい？
@@ -40,7 +44,21 @@
 - 候補が大量にある場合、巨大なRadio一覧にしません。
 - 同姓同名の社員など、ラベルだけでは識別できない候補では補足情報を表示します。
 - Card Choiceは見た目のためだけに採用せず、説明や比較そのものに価値がある場合に使います。
+- Radio Tableは「一覧を見せる」ためのものではありません。選んだ1件をフォームの値として送る場合に使います。見せるだけならTableを使います。
 - Button GroupはフォームのRadioを単に装飾した代替ではなく、短いモード・表示切替など即時性の高い選択に向きます。
+
+## Implementation
+
+| Option | 実装 |
+| --- | --- |
+| Radio | `ApplicationRadioGroup` |
+| Select | `ApplicationSelect` |
+| Combobox | `ApplicationCombobox` |
+| Button Group | `ApplicationButtonGroup` |
+| Card Choice | `ApplicationRadioGroup variant="cards"` |
+| Radio Table | `ApplicationRadioTable` |
+
+いずれも同じ排他選択なので、Patternを乗り換えるときに書き換えるのは見せ方だけです。
 
 ## Catalog
 

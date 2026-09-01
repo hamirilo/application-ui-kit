@@ -4,9 +4,9 @@ import {
   ApplicationButtonGroup,
   ApplicationCombobox,
   ApplicationRadioGroup,
+  ApplicationRadioTable,
   ApplicationSelect,
-  Card,
-  CardContent,
+  type ApplicationTableColumn,
 } from "../../components/application";
 
 const CHOICES = [
@@ -45,7 +45,8 @@ const meta = {
 - **Select**: やや多い候補を省スペースで選ぶ
 - **Combobox**: 候補が多く検索が必要
 - **Button Group**: 短いモード・表示切替
-- **Card Choice**: 候補ごとの説明や違いを比較したい
+- **Card Choice**（\`ApplicationRadioGroup variant="cards"\`）: 候補ごとの説明や違いを比較したい
+- **Radio Table**（\`ApplicationRadioTable\`）: 候補を複数の属性（人数・金額など）で並べて比較したい
         `,
       },
     },
@@ -75,32 +76,24 @@ function ExampleSection({
   );
 }
 
-function CardChoiceExample() {
-  return (
-    <fieldset>
-      <legend className="sr-only">登録方法</legend>
-      <div className="grid gap-3 sm:grid-cols-3">
-        {CHOICES.map((choice, index) => (
-          <label key={choice.value} className="block cursor-pointer">
-            <input
-              type="radio"
-              name="card-choice-example"
-              value={choice.value}
-              defaultChecked={index === 0}
-              className="peer sr-only"
-            />
-            <Card className="transition peer-checked:border-primary peer-checked:ring-1 peer-checked:ring-primary peer-focus-visible:ring-2 peer-focus-visible:ring-ring peer-focus-visible:ring-offset-2">
-              <CardContent className="space-y-1 p-4">
-                <div className="font-medium text-foreground">{choice.label}</div>
-                <p className="text-sm text-muted-foreground">{choice.description}</p>
-              </CardContent>
-            </Card>
-          </label>
-        ))}
-      </div>
-    </fieldset>
-  );
-}
+type Plan = { id: string; name: string; users: number; price: number };
+
+const PLANS: Plan[] = [
+  { id: "light", name: "ライト", users: 10, price: 9800 },
+  { id: "standard", name: "スタンダード", users: 50, price: 29800 },
+  { id: "enterprise", name: "エンタープライズ", users: 300, price: 98000 },
+];
+
+const PLAN_COLUMNS: ApplicationTableColumn<Plan>[] = [
+  { key: "name", header: "プラン", cell: (plan) => plan.name },
+  { key: "users", header: "利用人数", align: "right", cell: (plan) => `${plan.users} 人` },
+  {
+    key: "price",
+    header: "月額",
+    align: "right",
+    cell: (plan) => `${plan.price.toLocaleString()} 円`,
+  },
+];
 
 /** 主要な選択肢を同一画面で比較する。新しい単一選択UIを設計するときはまずここを見る。 */
 export const Comparison: Story = {
@@ -140,8 +133,27 @@ export const Comparison: Story = {
         />
       </ExampleSection>
 
-      <ExampleSection title="Card Choice" guidance="各候補の違いや説明を見比べて選ぶこと自体に価値がある場合。">
-        <CardChoiceExample />
+      <ExampleSection title="Card Choice" guidance="各候補の違いや説明を見比べて選ぶこと自体に価値がある場合。ApplicationRadioGroup の cards バリアント。">
+        <ApplicationRadioGroup
+          variant="cards"
+          orientation="horizontal"
+          items={CHOICES}
+          defaultValue="standard"
+          name="card-choice-example"
+        />
+      </ExampleSection>
+
+      <ExampleSection title="Radio Table" guidance="候補を人数・金額のような複数の属性で並べて比較させたい場合。列が要らないなら Card Choice で足りる。">
+        <ApplicationRadioTable<Plan>
+          columns={PLAN_COLUMNS}
+          rows={PLANS}
+          rowValue={(plan) => plan.id}
+          rowLabel={(plan) => plan.name}
+          name="plan-example"
+          defaultValue="standard"
+          caption="契約プランの選択"
+          emptyMessage="選べるプランがありません"
+        />
       </ExampleSection>
     </div>
   ),
