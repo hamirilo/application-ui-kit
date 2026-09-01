@@ -1,30 +1,32 @@
 # Project Context
 
-AI エージェントが実装前に読む、このリポジトリの現在の前提。
-（[Project Setup](https://github.com/hamirilo/ai-dev-standards/blob/main/standards/governance/optional/project-setup.md) の「決めるもの」に対応）
+AI agentが実装前に読む、このrepositoryの現在の前提です。
 
-## このリポジトリは何か
+## このrepositoryは何か
 
-複数アプリで再利用する **UI ライブラリ**（npm パッケージ + Storybook + design-system/）。
-Web アプリケーションではないため、アプリ向け前提の多くは「該当なし」。
+複数Applicationで再利用する **UI Platform** です。
+
+- npm packageとして再利用可能なUIを配布する。
+- StorybookでComponents / Patterns / Templatesを表示・比較・検証する。
+- `design-system/` をAI / 人間向けの設計参照として提供する。
+- Web Applicationそのものではないため、認証・業務認可等のApplication向け前提は原則として持たない。
 
 | 項目 | 決定 |
 |---|---|
-| A. ログインの要否 | 該当なし（ライブラリのため認証を持たない。認証・認可は利用側アプリの責務） |
-| B. ユーザー識別子 | 該当なし |
-| C. 主対象デバイス | PC を優先する。ただしコンポーネントは狭い画面幅でも主要操作を失わないこと（README「品質確認」） |
-| D. 起点レイアウト | 該当なし（Layout Profile は利用側アプリが選ぶ。このリポジトリは部品とパターンを提供する） |
-| E. 業務権限の単位 | 該当なし |
+| Login | 該当なし。認証・認可は利用側Applicationの責務 |
+| User identifier | 該当なし |
+| Primary device | PCを優先。ただしComponentは狭い画面幅でも主要操作を失わない |
+| Layout Profile | 利用側Applicationが選ぶ。UI PlatformはComponent / Pattern / Templateを提供 |
+| Business authorization | 該当なし |
 
-## ライブラリ固有の前提
+## UI Platform固有の前提
 
-- **利用側の想定構成**: Django テンプレート + React Islands + htmx（ai-dev-standards ADR-0002）。
-  純 React アプリからも `.` エントリだけで利用できる。
-- **配布**: GitHub Packages の npm パッケージ。実パッケージ名は publish 元に応じて
-  `@<owner>/application-ui-kit` になるが、利用側では npm alias により `application-ui-kit` へ固定する。
-  dist（ビルド済み JS + 型定義）を import させる。詳細は README「Package」。
-- **技術**: React 19 + shadcn/ui（Base UI / gen3）+ Tailwind CSS v4。
-  ツールチェーンは bun / vite / vitest / biome。
-- **Token**: `tokens/theme.css` が SSOT。コンポーネントは semantic token のみを使う。
-- **置かないもの**: 業務ドメイン固有 UI、アプリ固有設定、認証・エンドポイントを焼き込んだ連携。
-  Django/htmx との**汎用的な**接続だけを `islands/` に置く（[ADR-0001](adr-0001-django-htmx-islands.md)）。
+- **利用側の想定構成**: Django Templates + React Islands + htmx。純React Applicationからもpackageのroot entryを利用できる。
+- **Package**: Applicationからの依存名は `application-ui-kit`。GitHub Packages上の実package名は `@<owner>/application-ui-kit` とし、npm aliasでowner差分を利用側へ閉じ込める。
+- **技術**: React 19 + shadcn/ui（Base UI）+ Tailwind CSS v4。toolchainはbun / Vite / Vitest / Biome。
+- **Token**: `tokens/theme.css` が具体値のSource of Truth。ComponentはSemantic Tokenを利用する。
+- **UI ownership**: Foundations / Components / Patterns / Templates / Catalog / design-systemをこのrepositoryが所有する。
+- **置かないもの**: 業務domain固有UI、Application固有設定、認証やendpointを焼き込んだdomain連携。
+- Django / htmxとの汎用的な接続だけをIslandsとして提供する。判断背景は [ADR-0001](adr-0001-django-htmx-islands.md) を参照する。
+
+共有開発資産全体の境界は [ai-dev-platform](https://github.com/hamirilo/ai-dev-platform) のONBOARDINGと、[ai-dev-standards](https://github.com/hamirilo/ai-dev-standards) の共有資産境界ADRを正とします。
