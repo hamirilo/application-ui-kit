@@ -349,14 +349,28 @@ export function ApplicationTreeSelect({
       </Popover>
 
       {/* Popover のトリガーはフォームコントロールではないため、
-          通常のフォーム送信に値を載せるには hidden input が要る。 */}
+          通常のフォーム送信に値を載せるには input が要る。
+
+          <important>
+          type="hidden" にしてはいけない。hidden input は制約検証の対象外
+          （barred from constraint validation）なので、required を付けても
+          未選択のままフォームが valid になり、name="" が送信される。
+          視覚的に隠した text input にすることで required が実際に効く。
+          sr-only は display:none ではないため、検証メッセージの表示位置も
+          このコンポーネントの近くに出る。
+          </important> */}
       {name && (
         <input
-          type="hidden"
+          type="text"
           name={name}
           value={selectedValue ?? ""}
           required={required}
           disabled={disabled}
+          // 値の変更はツリーの選択で行う。ここへ直接入力させない
+          onChange={() => {}}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="sr-only"
         />
       )}
     </>

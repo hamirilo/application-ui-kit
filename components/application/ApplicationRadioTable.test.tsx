@@ -88,6 +88,30 @@ describe("ApplicationRadioTable", () => {
     expect(onValueChange).not.toHaveBeenCalled();
   });
 
+  it("ラジオを直接クリックしても onValueChange は 1 回だけ呼ばれる", () => {
+    const onValueChange = vi.fn();
+    renderTable({ onValueChange });
+    fireEvent.click(screen.getByRole("radio", { name: "スタンダード" }));
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+    expect(onValueChange).toHaveBeenCalledWith("standard");
+  });
+
+  it("読み上げ用ラベル経由でも onValueChange は 1 回だけ呼ばれる", () => {
+    const onValueChange = vi.fn();
+    const { container } = renderTable({ onValueChange });
+    const label = container.querySelector<HTMLLabelElement>('label[for$="-standard"]');
+    fireEvent.click(label as HTMLLabelElement);
+    expect(onValueChange).toHaveBeenCalledTimes(1);
+  });
+
+  it("ラジオを直接クリックしても選択状態は移る", () => {
+    renderTable({ defaultValue: "light" });
+    fireEvent.click(screen.getByRole("radio", { name: "スタンダード" }));
+    expect(screen.getByRole("radio", { name: "スタンダード" }).getAttribute("aria-checked")).toBe(
+      "true",
+    );
+  });
+
   it("未選択から選択しても制御/非制御の警告を出さない", () => {
     const error = vi.spyOn(console, "error").mockImplementation(() => {});
     renderTable();

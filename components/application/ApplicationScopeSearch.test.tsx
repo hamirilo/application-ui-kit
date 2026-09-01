@@ -230,6 +230,71 @@ describe("ApplicationScopeSearch", () => {
     expect(input.value).toBe("本社");
   });
 
+  /* kind は呼び出し側が自由に決める値なので、チップの内部 ID と衝突してはいけない。
+   * 以前は kind をそのままチップの value にしていたため、kind: "__all__" の候補が
+   * あるとその種別だけに絞れず、React の key も衝突していた。 */
+  it("予約値のように見える kind でもその種別だけに絞れる", () => {
+    const error = vi.spyOn(console, "error").mockImplementation(() => {});
+    render(
+      <ApplicationScopeSearch
+        items={[
+          { value: "a", kind: "all", label: "予約 ID と同じ種別", description: "共通" },
+          { value: "b", kind: "__all__", label: "旧予約値と同じ種別", description: "共通" },
+          { value: "c", kind: "社員", label: "青木 里佐", description: "共通" },
+        ]}
+        placeholder="検索"
+      />,
+    );
+    const input = screen.getByRole("combobox");
+    fireEvent.focus(input);
+    type(input, "共通");
+    expect(screen.getAllByRole("option")).toHaveLength(3);
+
+    for (const [kind, expected] of [
+      ["all", "予約 ID と同じ種別"],
+      ["__all__", "旧予約値と同じ種別"],
+    ] as const) {
+      fireEvent.click(screen.getByRole("button", { name: kind }));
+      const options = screen.getAllByRole("option");
+      expect(options).toHaveLength(1);
+      expect(options[0]?.textContent).toContain(expected);
+      // 押したチップだけが押下状態になる
+      const pressed = screen
+        .getAllByRole("button")
+        .filter((button) => button.getAttribute("aria-pressed") === "true")
+        .map((button) => button.textContent);
+      expect(pressed).toEqual([kind]);
+    }
+
+    // 「すべて」に戻せる
+    fireEvent.click(screen.getByRole("button", { name: "すべて" }));
+    expect(screen.getAllByRole("option")).toHaveLength(3);
+
+    // key 衝突などの警告を出していない
+    expect(error).not.toHaveBeenCalled();
+    error.mockRestore();
+  });
+
+  it("kinds に無い kind で絞っているときは「すべて」を押下状態にしない", () => {
+    render(
+      <ApplicationScopeSearch
+        items={ITEMS}
+        kinds={["社員", "部署"]}
+        scope="拠点"
+        defaultQuery="本社"
+        placeholder="検索"
+      />,
+    );
+    fireEvent.focus(screen.getByRole("combobox"));
+    // 拠点で絞られている（社員の所属に「本社」を含む候補は出ない）
+    expect(screen.getAllByRole("option")).toHaveLength(1);
+    expect(screen.getByRole("option").textContent).toContain("本社（東京）");
+    const pressed = screen
+      .getAllByRole("button")
+      .filter((button) => button.getAttribute("aria-pressed") === "true");
+    expect(pressed).toHaveLength(0);
+  });
+
   it("種別が1つしかないときは種別チップを出さない", () => {
     const single = ITEMS.filter((item) => item.kind === "社員");
     render(<ApplicationScopeSearch items={single} placeholder="検索" />);
