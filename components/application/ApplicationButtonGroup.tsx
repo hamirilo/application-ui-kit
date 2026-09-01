@@ -165,18 +165,30 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
         </ToggleGroup>
 
         {/* ToggleGroup はフォームコントロールではないため、
-            通常のフォーム送信に値を載せるには hidden input が要る。
+            通常のフォーム送信に値を載せるには input が要る。
             両端の角丸は :first-child / :last-child で付くので、
             この input は ToggleGroup の中に置かない（最後の item が
             last-child でなくなり、右端の角丸が落ちる）。
-            input[type=hidden] は描画されないためレイアウトには影響しない。 */}
+
+            <important>
+            type="hidden" にしてはいけない。hidden input は制約検証の対象外
+            （barred from constraint validation）なので、required を付けても
+            未選択のままフォームが valid になり、name="" が送信される。
+            視覚的に隠した text input にすることで required が実際に効く。
+            sr-only は position: absolute なのでレイアウトには影響しない。
+            </important> */}
         {name && (
           <input
-            type="hidden"
+            type="text"
             name={name}
             value={current}
             required={required}
             disabled={disabled}
+            // 値の変更はボタンの選択で行う。ここへ直接入力させない
+            onChange={() => {}}
+            tabIndex={-1}
+            aria-hidden="true"
+            className="sr-only"
           />
         )}
       </>
