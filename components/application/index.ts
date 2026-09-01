@@ -65,6 +65,12 @@ export {
 } from "./ApplicationCombobox";
 export type { ApplicationComboboxProps, ApplicationComboboxItem } from "./ApplicationCombobox";
 
+export { ApplicationTreeSelect, findTreePath } from "./ApplicationTreeSelect";
+export type {
+  ApplicationTreeSelectProps,
+  ApplicationTreeSelectItem,
+} from "./ApplicationTreeSelect";
+
 export { ApplicationCheckbox } from "./ApplicationCheckbox";
 export type { ApplicationCheckboxProps } from "./ApplicationCheckbox";
 
