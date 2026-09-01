@@ -14,6 +14,8 @@
 | 状態表示 | ApplicationBadge / ApplicationActiveIndicator |
 | 日付入力 | ApplicationDatePicker |
 | ページ送り | ApplicationPagination |
+| 値のコピー | ApplicationCopyButton（テンプレートなら Islands の copy-field）。ワンタイム URL 等は値が見える入力欄と組にする |
+| 種類をまたぐ横断検索 | ApplicationScopeSearch。1 種類だけの絞り込みは ApplicationSearchInput |
 
 - shadcn/uiに相当物があり、追加の価値がない場合は新しいApplicationラッパーを作らない。
 - primaryは主操作、secondaryはキャンセル・戻る、dangerは削除に使う。
