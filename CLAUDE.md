@@ -37,6 +37,7 @@ Django + htmxとの汎用的な接続は `./islands` / `./islands/auto-mount` en
 - 新しいUIを作る前にStorybookで既存Component / Pattern / Templateを確認する。
 - Patternは「実際に一度迷い、次回も同じ判断に迷いそうか」を追加基準とし、網羅性のためだけに増やさない。
 - 共通化するComponentにはStoryを追加する。Patternは候補を比較できるCatalog Storyを優先する。
+- **branchは `upstream/main` から切り、PRはupstream宛に出す。** `main` はupstreamのmirrorとして保つ。fork運用とversionの扱いは [decisions/adr-0002](decisions/adr-0002-fork-branch-and-upstream-flow.md) を正とする。
 
 ## 検証
 

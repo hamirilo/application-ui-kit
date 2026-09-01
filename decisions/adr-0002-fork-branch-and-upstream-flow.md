@@ -1,0 +1,106 @@
+# ADR-0002: forkのbranch運用とupstreamへの反映経路
+
+**ステータス**: 採用
+
+## コンテキスト
+
+このrepositoryは2つのremoteを持ちます。
+
+| remote | repository | 役割 |
+|---|---|---|
+| `upstream` | 上流の `ui-platform` | 共有資産としての正本 |
+| `origin` | 利用組織がforkした `ui-platform` | 組織のfork。`@<owner>/application-ui-kit` のpublish元 |
+
+owner名はここへ固定しません（ADR-0005の2）。各checkoutの `git remote -v` を正とします。
+
+fork運用の原則は [ai-dev-standards / ADR-0005](https://github.com/hamirilo/ai-dev-standards/blob/main/decisions/adr-0005-upstream-fork-operation.md)、branchとmainの扱いは [Governance Standard](https://github.com/hamirilo/ai-dev-standards/blob/main/standards/governance/README.md) 3章を正とします。ここではそれらをこのrepositoryへ適用した具体を決めます。原則自体は再掲しません。
+
+`origin/main` と `upstream/main` が同一commitである状態を既定とし、それを維持する運用を決めます。
+
+決める必要があるのは次の3点です。
+
+1. どのbranchからどこへPRを出すか。
+2. 組織内で先に検証したい変更をどう扱うか。
+3. fork側でpublishするときのpackage versionをどう扱うか。
+
+3はADR-0005の範囲外です。ADR-0005はpackage **scope** をsourceへ固定しないことを決めていますが、package **version** は `package.json` にある共有sourceの一部であり、forkが独自に進めると同じversion番号がupstreamとforkで別内容を指します。
+
+## 決定
+
+### 1. branchの役割
+
+- `main` は `upstream/main` と常に同一に保つ。forkの `main` を独自に進めない。
+- 同期は fast-forward 限定とし、**pushの前にupstreamとの完全一致を明示的に確認する**。
+
+  ```bash
+  git fetch upstream
+  git switch main
+  git merge --ff-only upstream/main
+  test "$(git rev-parse HEAD)" = "$(git rev-parse upstream/main)"
+  git push origin main
+  ```
+
+  `--ff-only` だけでは不十分である。`main` がupstreamより **ahead** の場合、mergeは
+  `Already up to date` として成功してしまい、そのままpushするとfork独自のcommitが公開されて
+  mirrorが破れる。equality checkを併せて初めて3つの状態すべてを塞げる。
+
+  | `main` の状態 | 検知する仕組み |
+  |---|---|
+  | behind | `--ff-only` がfast-forwardして同期する（正常系） |
+  | diverged | `--ff-only` が失敗する |
+  | ahead | equality check が失敗する |
+
+- 作業branchはGovernance 3.1に従い `type/topic/short-description` とする。例: `feat/components/application-tag`、`fix/tokens/dark-border-contrast`。
+- **作業branchは `upstream/main` から切る。** `origin/main` が同期遅れでも取り込み先とズレない。
+- マージ後は削除する。fork側にだけ残し続けるbranchを作らない。
+
+### 2. こちらで実装したComponentのupstreamへの反映
+
+UI Platformが所有すべき汎用改善（Foundations / Components / Patterns / Templates / Catalog / design-system）は、すべてこの経路を通す。
+
+1. `upstream/main` から作業branchを切る。
+2. `just check` を通す。公開契約や依存へ影響する場合は `just verify-package` も通す。
+3. `origin` へpushする。
+4. **PRは `upstream/main` 宛に出す**（forkからのcross-repository PR）。
+5. upstreamでsquash mergeする。
+6. `origin/main` を1の同期手順（ff-only + equality check）で同期する。
+7. 作業branchを削除する。
+
+ADR-0005の4に従い、組織名、内部URL、内部host、特定Application固有path、非公開運用を含む変更はこの経路へ載せない。業務domain固有UIはdomainを所有するprojectへ置く（[project-context](project-context.md)）。
+
+### 3. 組織内で先に検証する場合
+
+ADR-0005はforkの目的に「組織内で検証した汎用改善をupstreamへ返せる」ことを挙げており、fork先行検証は想定内である。ただし**検証は作業branch上で行い、`origin/main` へ先にmergeしない。**
+
+- 作業branchを `origin` へpushし、**そのbranch上で**CIと組織内検証を行う。
+- 同じbranchからupstream PRを出す。
+- upstreamでsquash mergeされたあと、`origin/main` を1の同期手順（ff-only + equality check）で同期する。
+- 作業branchを削除する。
+
+`origin/main` へ先行mergeしてはならない。先行mergeするとupstream側のsquash commitと別のidentityを持つcommitが `origin/main` に載り、どちらも他方の祖先でなくなるため、1で定めた `git merge --ff-only upstream/main` が成立しなくなる。例外的なreset / force-push手順を用意するのではなく、先行mergeを禁止することで通常系と先行検証系の同期手順を分岐させない。
+
+これにより「`main` はmirror」「同期はfast-forward限定 + equality check」「恒常差分なし」「upstreamへ一本化」を同時に満たせる。組織内検証を長期間続ける必要が生じた場合は、ADR-0005の6に従い独立repositoryとして分岐すべきかを先に検討する。
+
+### 4. package versionとrelease tag
+
+- **package versionのbumpはupstreamで行う。** forkは追従してからpublishする。
+- upstream未マージの内容をupstreamの正式version番号で配布しない。同じ `6.x.y` がownerによって別内容を指すことになる。
+- upstream mergeを待てない事情がある場合に限り、prerelease版（例 `6.1.0-<owner>.1`）としてpublishし、無印の `6.1.0` をforkで消費しない。
+- release tagはsource差分ではないため、fork側にも立ててよい。
+  - `v<version>` — UI Platform repositoryのrelease。upstreamで打つ。package publishは行わない。
+  - `application-ui-kit-v<package-version>` — package release。publishするownerが自分のrepositoryで打つ。
+
+package scopeをpublish時にrepository ownerから導出する理由は `.github/workflows/publish.yml` の冒頭コメントを正とする。`package.json` のnameが現在のorigin ownerと異なっていても不整合ではない。
+
+## 結果
+
+- `origin/main` は `upstream/main` のmirrorとして保たれ、ADR-0005が求める「恒常差分なし」を既定で満たす。
+- fast-forward限定の同期とcommit equality checkの併用により、意図しないfork差分が混入した時点で検知できる。`--ff-only` 単独ではahead状態を素通りさせるため、両方が必要である。
+- 汎用改善の反映経路が1本になり、upstreamへPRを出す前提で作業branchを切る癖がつく。
+- fork先行検証を作業branch上に限定したことで、`main` の同期手順が通常系と先行検証系で分岐しない。例外的なreset / force-pushを運用へ持ち込まずに済む。
+- package versionをupstream起点に固定することで、ownerごとに同じversion番号が別内容を指す事故を避けられる。
+- 制約として、fork側だけで完結する迅速なリリースはできない。それが必要になった時点で独立repositoryへの分岐を検討する。
+
+## 見直し
+
+upstreamと恒常的に異なる要件を持つようになった場合、fork差分を積み上げず独立repositoryとして分岐する判断をこのrepositoryのADRへ残す。
