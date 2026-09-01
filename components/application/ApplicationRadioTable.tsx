@@ -141,13 +141,14 @@ export function ApplicationRadioTable<T>({
       const rowVal = rowValue(row, i);
       const id = `${idBase}-${rowVal}`;
       return (
-        <>
+        // data-slot は行クリック側の判定に使う（下の onRowClick のコメント参照）
+        <span data-slot="radio-table-control" className="flex items-center">
           <RadioGroupItem id={id} value={rowVal} disabled={rowDisabled?.(row, i)} />
           {/* 読み上げ名。Base UI が hidden input と id で結ぶ */}
           <label htmlFor={id} className="sr-only">
             {rowLabel ? rowLabel(row, i) : rowVal}
           </label>
-        </>
+        </span>
       );
     },
   };
@@ -171,7 +172,12 @@ export function ApplicationRadioTable<T>({
         onRowClick={
           disabled
             ? undefined
-            : (row, i) => {
+            : (row, i, event) => {
+                // ラジオ自身（と読み上げ用 label / hidden input）のクリックは
+                // RadioGroup の onValueChange が拾う。ここで重ねて select すると
+                // 1 回の選択で onValueChange が 2 回走る。
+                const target = event.target as Element | null;
+                if (target?.closest?.("[data-slot='radio-table-control']")) return;
                 if (rowDisabled?.(row, i)) return;
                 select(rowValue(row, i));
               }

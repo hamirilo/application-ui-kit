@@ -49,6 +49,51 @@ describe("findTreePath", () => {
   });
 });
 
+describe("ApplicationTreeSelect のフォーム送信", () => {
+  /* hidden input は制約検証の対象外なので、required を付けても
+   * 未選択でフォームが valid になってしまう。実際に検証されることを固定する。 */
+  it("required で未選択ならフォームが invalid になる", () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect items={UNITS} name="unit" required aria-label="組織" />
+      </form>,
+    );
+    const form = container.querySelector("form") as HTMLFormElement;
+    const field = container.querySelector('input[name="unit"]') as HTMLInputElement;
+    expect(field.type).not.toBe("hidden");
+    expect(field.value).toBe("");
+    expect(field.checkValidity()).toBe(false);
+    expect(form.checkValidity()).toBe(false);
+  });
+
+  it("選択済みならフォームが valid になり、選択値を送信する", async () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect
+          items={UNITS}
+          name="unit"
+          required
+          defaultValue="sales"
+          aria-label="組織"
+        />
+      </form>,
+    );
+    const form = container.querySelector("form") as HTMLFormElement;
+    const field = container.querySelector('input[name="unit"]') as HTMLInputElement;
+    expect(field.value).toBe("sales");
+    expect(form.checkValidity()).toBe(true);
+  });
+
+  it("required なしなら未選択でも valid", () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect items={UNITS} name="unit" aria-label="組織" />
+      </form>,
+    );
+    expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(true);
+  });
+});
+
 describe("ApplicationTreeSelect", () => {
   it("未選択のときは placeholder を出す", () => {
     render(<ApplicationTreeSelect items={UNITS} placeholder="組織を選択" aria-label="組織" />);
@@ -156,17 +201,23 @@ describe("ApplicationTreeSelect", () => {
     await waitFor(() => expect(screen.queryByText("基幹システム課")).toBeNull());
   });
 
-  it("name を渡すとフォーム送信用の hidden input を出す", () => {
+  /* type="hidden" にすると required が検証されない（「フォーム送信」describe 参照）。
+   * 視覚的に隠すだけの input であることを固定する。 */
+  it("name を渡すとフォーム送信用の input を出す（hidden にはしない）", () => {
     const { container } = render(
       <ApplicationTreeSelect items={UNITS} name="unit" value="core" aria-label="組織" />,
     );
-    const hidden = container.querySelector<HTMLInputElement>('input[type="hidden"][name="unit"]');
-    expect(hidden?.value).toBe("core");
+    const field = container.querySelector<HTMLInputElement>('input[name="unit"]');
+    expect(field?.value).toBe("core");
+    expect(field?.type).not.toBe("hidden");
+    expect(field?.className).toContain("sr-only");
+    expect(field?.getAttribute("aria-hidden")).toBe("true");
+    expect(field?.tabIndex).toBe(-1);
   });
 
-  it("name が無ければ hidden input を出さない", () => {
+  it("name が無ければ送信用の input を出さない", () => {
     const { container } = render(<ApplicationTreeSelect items={UNITS} aria-label="組織" />);
-    expect(container.querySelector('input[type="hidden"]')).toBeNull();
+    expect(container.querySelector("input[name]")).toBeNull();
   });
 
   it("error のとき aria-invalid が付く", () => {

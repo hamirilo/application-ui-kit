@@ -24,8 +24,18 @@ import { Spinner } from "../ui/spinner";
 import { ApplicationButtonGroup } from "./ApplicationButtonGroup";
 import { ApplicationSearchInput } from "./ApplicationSearchInput";
 
-/** 種別チップの「すべて」に割り当てる内部値。kind と衝突しない値にしている */
-const ALL_SCOPE_VALUE = "__all__";
+/**
+ * 種別チップに渡す内部 ID。
+ *
+ * <important>
+ * kind の文字列そのものをチップの value にしてはいけない。kind は呼び出し側が
+ * 自由に決める値なので、「すべて」用の予約文字列と衝突し得る（衝突すると
+ * その kind だけに絞れず、チップの押下状態も壊れる）。kinds の index から
+ * 作った ID を渡し、選択されたら kind へ戻す。
+ * </important>
+ */
+const ALL_SCOPE_ID = "all";
+const kindScopeId = (index: number) => `kind-${index}`;
 
 export interface ApplicationScopeSearchItem {
   /** 選択時の値。候補の識別子（社員番号・部署コードなど） */
@@ -305,7 +315,13 @@ export const ApplicationScopeSearch = React.forwardRef<
 
     const flat = React.useMemo(() => groups.flatMap((group) => group.items), [groups]);
 
-    const cursorKey = `${filterMode} ${currentScope ?? ""} ${needle}`;
+    // 絞り込み中の kind → チップの内部 ID。kinds に無い kind で絞っているときは
+    // どのチップも押下状態にしない（「すべて」を光らせると表示と実態が食い違う）。
+    const scopeIndex = currentScope === null ? -1 : scopeKinds.indexOf(currentScope);
+    const currentScopeId =
+      currentScope === null ? ALL_SCOPE_ID : scopeIndex >= 0 ? kindScopeId(scopeIndex) : "";
+
+    const cursorKey = `${filterMode} ${currentScope ?? ""} ${needle}`;
     const cursor = cursorState.key === cursorKey ? cursorState.index : 0;
     const setCursor = (index: number) => setCursorState({ key: cursorKey, index });
     const activeIndex = flat.length === 0 ? -1 : Math.min(cursor, flat.length - 1);
@@ -406,13 +422,17 @@ export const ApplicationScopeSearch = React.forwardRef<
                   variant="primary"
                   aria-label="種別で絞り込む"
                   items={[
-                    { value: ALL_SCOPE_VALUE, label: allLabel },
-                    ...scopeKinds.map((kind) => ({ value: kind, label: kind })),
+                    { value: ALL_SCOPE_ID, label: allLabel },
+                    ...scopeKinds.map((kind, index) => ({
+                      value: kindScopeId(index),
+                      label: kind,
+                    })),
                   ]}
-                  value={currentScope ?? ALL_SCOPE_VALUE}
-                  onValueChange={(next) =>
-                    updateScope(next === ALL_SCOPE_VALUE || next === "" ? null : next)
-                  }
+                  value={currentScopeId}
+                  onValueChange={(id) => {
+                    const index = scopeKinds.findIndex((_, i) => kindScopeId(i) === id);
+                    updateScope(index >= 0 ? (scopeKinds[index] as string) : null);
+                  }}
                 />
               </div>
             )}

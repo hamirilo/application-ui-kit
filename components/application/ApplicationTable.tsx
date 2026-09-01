@@ -68,8 +68,14 @@ export interface ApplicationTableProps<T> {
   /** 空状態の補足説明 */
   emptySubMessage?: React.ReactNode;
 
-  /** 行クリック時の処理。渡すと行にホバー・カーソルが付く */
-  onRowClick?: (row: T, index: number) => void;
+  /**
+   * 行クリック時の処理。渡すと行にホバー・カーソルが付く。
+   *
+   * 第3引数は click event。行の中にボタンやラジオなど独自に反応する要素を
+   * 置く場合は、`event.target` を見てその要素由来のクリックを無視する
+   * （無視しないと、要素側の処理と行クリックが二重に走る）。
+   */
+  onRowClick?: (row: T, index: number, event: React.MouseEvent<HTMLTableRowElement>) => void;
 
   /**
    * 行ごとに付けるクラス。選択中・警告などの強調に使う。
@@ -158,7 +164,7 @@ export function ApplicationTable<T>({
           rows.map((row, i) => (
             <TableRow
               key={rowKey ? rowKey(row, i) : i}
-              onClick={onRowClick ? () => onRowClick(row, i) : undefined}
+              onClick={onRowClick ? (event) => onRowClick(row, i, event) : undefined}
               className={cn(
                 onRowClick && "cursor-pointer hover:bg-accent focus-within:bg-accent",
                 rowClassName?.(row, i),
