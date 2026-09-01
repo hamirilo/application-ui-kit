@@ -107,7 +107,13 @@ Repositoryを1.0として再基準化しても、既に公開済みのnpm packag
 
 Package release tagは `package.json` のversionと一致する必要があります。Genericな `v<version>` tagではpackage publishを実行しません。
 
+`application-ui-kit-v*` tagは1.0再基準化と同時に導入した形式です。現行の公開version 6.0.0はそれ以前のtag形式で公開されているため、対応する `application-ui-kit-v6.0.0` tagはrepositoryに存在しません。次のpackage releaseから新形式でtagを打ちます。
+
+Package scopeは `package.json` に固定せず、publish時にrepository ownerから導出します（`.github/workflows/publish.yml`）。そのため `package.json` のnameが現在のorigin ownerと異なっていても不整合ではありません。利用側は上記のnpm aliasでowner差分を吸収します。
+
 公開物が利用側でbuildできるかは `bun run verify:package` で確認し、CI / publish前のgateとして扱います。
+
+fork（`origin`）とupstreamのbranch運用、こちらで実装したComponentのupstreamへの反映経路、fork先行時のversionの扱いは [ADR-0002](decisions/adr-0002-fork-branch-and-upstream-flow.md) を正とします。
 
 ## Django連携（Islands）
 
