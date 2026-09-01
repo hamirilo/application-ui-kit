@@ -30,14 +30,25 @@ fork運用の原則は [ai-dev-standards / ADR-0005](https://github.com/hamirilo
 ### 1. branchの役割
 
 - `main` は `upstream/main` と常に同一に保つ。forkの `main` を独自に進めない。
-- 同期は fast-forward のみとする。差分が入り込んでいれば失敗して気づけるようにする。
+- 同期は fast-forward 限定とし、**pushの前にupstreamとの完全一致を明示的に確認する**。
 
   ```bash
   git fetch upstream
   git switch main
   git merge --ff-only upstream/main
+  test "$(git rev-parse HEAD)" = "$(git rev-parse upstream/main)"
   git push origin main
   ```
+
+  `--ff-only` だけでは不十分である。`main` がupstreamより **ahead** の場合、mergeは
+  `Already up to date` として成功してしまい、そのままpushするとfork独自のcommitが公開されて
+  mirrorが破れる。equality checkを併せて初めて3つの状態すべてを塞げる。
+
+  | `main` の状態 | 検知する仕組み |
+  |---|---|
+  | behind | `--ff-only` がfast-forwardして同期する（正常系） |
+  | diverged | `--ff-only` が失敗する |
+  | ahead | equality check が失敗する |
 
 - 作業branchはGovernance 3.1に従い `type/topic/short-description` とする。例: `feat/components/application-tag`、`fix/tokens/dark-border-contrast`。
 - **作業branchは `upstream/main` から切る。** `origin/main` が同期遅れでも取り込み先とズレない。
@@ -52,7 +63,7 @@ UI Platformが所有すべき汎用改善（Foundations / Components / Patterns 
 3. `origin` へpushする。
 4. **PRは `upstream/main` 宛に出す**（forkからのcross-repository PR）。
 5. upstreamでsquash mergeする。
-6. `origin/main` を上記のfast-forwardで同期する。
+6. `origin/main` を1の同期手順（ff-only + equality check）で同期する。
 7. 作業branchを削除する。
 
 ADR-0005の4に従い、組織名、内部URL、内部host、特定Application固有path、非公開運用を含む変更はこの経路へ載せない。業務domain固有UIはdomainを所有するprojectへ置く（[project-context](project-context.md)）。
@@ -63,12 +74,12 @@ ADR-0005はforkの目的に「組織内で検証した汎用改善をupstreamへ
 
 - 作業branchを `origin` へpushし、**そのbranch上で**CIと組織内検証を行う。
 - 同じbranchからupstream PRを出す。
-- upstreamでsquash mergeされたあと、`origin/main` を1のfast-forwardで同期する。
+- upstreamでsquash mergeされたあと、`origin/main` を1の同期手順（ff-only + equality check）で同期する。
 - 作業branchを削除する。
 
 `origin/main` へ先行mergeしてはならない。先行mergeするとupstream側のsquash commitと別のidentityを持つcommitが `origin/main` に載り、どちらも他方の祖先でなくなるため、1で定めた `git merge --ff-only upstream/main` が成立しなくなる。例外的なreset / force-push手順を用意するのではなく、先行mergeを禁止することで通常系と先行検証系の同期手順を分岐させない。
 
-これにより「`main` はmirror」「同期はfast-forward限定」「恒常差分なし」「upstreamへ一本化」を同時に満たせる。組織内検証を長期間続ける必要が生じた場合は、ADR-0005の6に従い独立repositoryとして分岐すべきかを先に検討する。
+これにより「`main` はmirror」「同期はfast-forward限定 + equality check」「恒常差分なし」「upstreamへ一本化」を同時に満たせる。組織内検証を長期間続ける必要が生じた場合は、ADR-0005の6に従い独立repositoryとして分岐すべきかを先に検討する。
 
 ### 4. package versionとrelease tag
 
@@ -84,7 +95,7 @@ package scopeをpublish時にrepository ownerから導出する理由は `.githu
 ## 結果
 
 - `origin/main` は `upstream/main` のmirrorとして保たれ、ADR-0005が求める「恒常差分なし」を既定で満たす。
-- fast-forward限定の同期により、意図しないfork差分が混入した時点で検知できる。
+- fast-forward限定の同期とcommit equality checkの併用により、意図しないfork差分が混入した時点で検知できる。`--ff-only` 単独ではahead状態を素通りさせるため、両方が必要である。
 - 汎用改善の反映経路が1本になり、upstreamへPRを出す前提で作業branchを切る癖がつく。
 - fork先行検証を作業branch上に限定したことで、`main` の同期手順が通常系と先行検証系で分岐しない。例外的なreset / force-pushを運用へ持ち込まずに済む。
 - package versionをupstream起点に固定することで、ownerごとに同じversion番号が別内容を指す事故を避けられる。
