@@ -99,7 +99,11 @@ export { ApplicationRadioGroup } from "./ApplicationRadioGroup";
 export type {
   ApplicationRadioGroupProps,
   ApplicationRadioGroupItem,
+  ApplicationRadioGroupVariant,
 } from "./ApplicationRadioGroup";
+
+export { ApplicationRadioTable } from "./ApplicationRadioTable";
+export type { ApplicationRadioTableProps } from "./ApplicationRadioTable";
 
 export { ApplicationSearchInput } from "./ApplicationSearchInput";
 export type { ApplicationSearchInputProps } from "./ApplicationSearchInput";
