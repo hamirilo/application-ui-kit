@@ -108,6 +108,12 @@ export type { ApplicationRadioTableProps } from "./ApplicationRadioTable";
 export { ApplicationSearchInput } from "./ApplicationSearchInput";
 export type { ApplicationSearchInputProps } from "./ApplicationSearchInput";
 
+export { ApplicationScopeSearch } from "./ApplicationScopeSearch";
+export type {
+  ApplicationScopeSearchProps,
+  ApplicationScopeSearchItem,
+} from "./ApplicationScopeSearch";
+
 export { ApplicationNavItem } from "./ApplicationNavItem";
 export type { ApplicationNavItemProps, ApplicationNavItemColor } from "./ApplicationNavItem";
 

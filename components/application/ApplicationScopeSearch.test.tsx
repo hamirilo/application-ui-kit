@@ -1,0 +1,245 @@
+import { fireEvent, render, screen, within } from "@testing-library/react";
+import type * as React from "react";
+import { describe, expect, it, vi } from "vitest";
+import { ApplicationScopeSearch, type ApplicationScopeSearchItem } from "./ApplicationScopeSearch";
+
+const ITEMS: ApplicationScopeSearchItem[] = [
+  {
+    value: "10024",
+    kind: "社員",
+    label: "青木 里佐",
+    description: "首都圏営業部 課長",
+    keywords: "あおき りさ 10024",
+  },
+  {
+    value: "10166",
+    kind: "社員",
+    label: "杉山 直美",
+    description: "情報システム部 課長",
+    keywords: "すぎやま なおみ 10166",
+  },
+  {
+    value: "d1",
+    kind: "部署",
+    label: "首都圏営業部",
+    description: "営業本部 ・ 42 名",
+    keywords: "しゅとけんえいぎょうぶ",
+  },
+  {
+    value: "s1",
+    kind: "拠点",
+    label: "本社（東京）",
+    description: "東京都中央区",
+    keywords: "ほんしゃ とうきょう",
+  },
+];
+
+function open(props: Partial<React.ComponentProps<typeof ApplicationScopeSearch>> = {}) {
+  const result = render(
+    <ApplicationScopeSearch items={ITEMS} placeholder="社員・部署・拠点を検索" {...props} />,
+  );
+  const input = screen.getByRole("combobox");
+  fireEvent.focus(input);
+  return { ...result, input };
+}
+
+function type(input: HTMLElement, value: string) {
+  fireEvent.change(input, { target: { value } });
+}
+
+describe("ApplicationScopeSearch", () => {
+  it("フォーカスするまでパネルを開かない", () => {
+    render(<ApplicationScopeSearch items={ITEMS} placeholder="検索" />);
+    expect(screen.queryByRole("listbox")).toBeNull();
+    fireEvent.focus(screen.getByRole("combobox"));
+    expect(screen.getByRole("listbox")).toBeTruthy();
+  });
+
+  it("空欄のときは recentValues の順で最近見た項目を出す", () => {
+    open({ recentValues: ["s1", "10024"] });
+    const options = screen.getAllByRole("option");
+    expect(options.map((el) => el.textContent)).toEqual([
+      "本社（東京）東京都中央区拠点",
+      "青木 里佐首都圏営業部 課長社員",
+    ]);
+    expect(screen.getByText("最近見た項目")).toBeTruthy();
+  });
+
+  it("空欄で出す候補が無いときは案内文を出す（空のパネルにしない）", () => {
+    open();
+    expect(screen.getByText("キーワードを入力すると候補が出ます")).toBeTruthy();
+  });
+
+  it("入力すると種別ごとに見出しと件数を付けて出す", () => {
+    const { input } = open();
+    type(input, "首都圏");
+    const list = within(screen.getByRole("listbox"));
+    // 社員（青木・所属が首都圏営業部）と 部署（首都圏営業部）で 2 グループ
+    expect(list.getAllByRole("group")).toHaveLength(2);
+    expect(list.getAllByText("1 件")).toHaveLength(2);
+    // フッターには合計が出る
+    expect(screen.getByText("2 件")).toBeTruthy();
+  });
+
+  it("kinds を渡すとその順にグループを並べる", () => {
+    const { input } = open({ kinds: ["部署", "社員", "拠点"] });
+    type(input, "首都圏");
+    const headings = within(screen.getByRole("listbox"))
+      .getAllByRole("group")
+      .map((el) => el.querySelector("span")?.textContent);
+    expect(headings).toEqual(["部署", "社員"]);
+  });
+
+  it("keywords でかな・社員番号から引ける", () => {
+    const { input } = open();
+    type(input, "すぎやま");
+    expect(screen.getAllByRole("option").map((el) => el.textContent?.slice(0, 5))).toEqual([
+      "杉山 直美",
+    ]);
+
+    type(input, "10024");
+    expect(screen.getAllByRole("option")).toHaveLength(1);
+    expect(screen.getByRole("option").textContent).toContain("青木 里佐");
+  });
+
+  it("種別チップで絞り込める", () => {
+    const onScopeChange = vi.fn();
+    const { input } = open({ onScopeChange });
+    type(input, "首都圏");
+    expect(screen.getAllByRole("option")).toHaveLength(2);
+
+    fireEvent.click(screen.getByRole("button", { name: "部署" }));
+    expect(onScopeChange).toHaveBeenCalledWith("部署");
+    expect(screen.getAllByRole("option")).toHaveLength(1);
+    expect(screen.getByRole("option").textContent).toContain("首都圏営業部");
+  });
+
+  it("↑↓ でカーソルが動き、Enter で決定する", () => {
+    const onSelect = vi.fn();
+    const { input } = open({ onSelect });
+    type(input, "首都圏");
+
+    const [first, second] = screen.getAllByRole("option");
+    expect(first?.getAttribute("aria-selected")).toBe("true");
+    expect(input.getAttribute("aria-activedescendant")).toBe(first?.id);
+
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(screen.getAllByRole("option")[1]?.getAttribute("aria-selected")).toBe("true");
+    expect(input.getAttribute("aria-activedescendant")).toBe(second?.id);
+
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(screen.getAllByRole("option")[0]?.getAttribute("aria-selected")).toBe("true");
+
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onSelect.mock.calls[0]?.[0].value).toBe("10024");
+  });
+
+  it("↑↓ は端で止まる（先頭より上・末尾より下へ行かない）", () => {
+    const { input } = open();
+    type(input, "首都圏");
+    fireEvent.keyDown(input, { key: "ArrowUp" });
+    expect(screen.getAllByRole("option")[0]?.getAttribute("aria-selected")).toBe("true");
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    expect(screen.getAllByRole("option")[1]?.getAttribute("aria-selected")).toBe("true");
+  });
+
+  it("入力を変えるとカーソルが先頭へ戻る（Enter が前の行を選ばない）", () => {
+    const onSelect = vi.fn();
+    const { input } = open({ onSelect });
+    type(input, "課長");
+    fireEvent.keyDown(input, { key: "ArrowDown" });
+    type(input, "本社");
+    fireEvent.keyDown(input, { key: "Enter" });
+    expect(onSelect.mock.calls[0]?.[0].value).toBe("s1");
+  });
+
+  it("クリックで決定し、入力欄に決定内容を残してパネルを閉じる", () => {
+    const onSelect = vi.fn();
+    const onQueryChange = vi.fn();
+    const { input } = open({ onSelect, onQueryChange });
+    type(input, "本社");
+    fireEvent.click(screen.getByRole("option"));
+
+    expect(onSelect).toHaveBeenCalledTimes(1);
+    expect(onQueryChange).toHaveBeenLastCalledWith("本社（東京）");
+    expect((input as HTMLInputElement).value).toBe("本社（東京）");
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
+  it("Escape で閉じる", () => {
+    const { input } = open({ recentValues: ["s1"] });
+    expect(screen.getByRole("listbox")).toBeTruthy();
+    fireEvent.keyDown(input, { key: "Escape" });
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
+  it("外側の mousedown で閉じる", () => {
+    open({ recentValues: ["s1"] });
+    expect(screen.getByRole("listbox")).toBeTruthy();
+    fireEvent.mouseDown(document.body);
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+
+  it("ヒット 0 件のときは文言と次の一手を出す", () => {
+    const { input } = open({ emptySubMessage: "種別を「すべて」に戻して試してください" });
+    type(input, "存在しない語");
+    expect(screen.getByText("「存在しない語」に一致する項目がありません")).toBeTruthy();
+    expect(screen.getByText("種別を「すべて」に戻して試してください")).toBeTruthy();
+    expect(screen.queryAllByRole("option")).toHaveLength(0);
+  });
+
+  it('filterMode="none" では文字で絞らず items をそのまま出す（サーバー検索用）', () => {
+    const { input } = open({ filterMode: "none" });
+    type(input, "サーバーが解釈する語");
+    expect(screen.getAllByRole("option")).toHaveLength(ITEMS.length);
+  });
+
+  it('filterMode="none" でも種別チップは効く', () => {
+    const { input } = open({ filterMode: "none", defaultScope: "社員" });
+    type(input, "何でも");
+    expect(screen.getAllByRole("option")).toHaveLength(2);
+  });
+
+  it("loading のあいだは検索中を出す", () => {
+    const { input } = open({ loading: true, filterMode: "none" });
+    type(input, "あ");
+    expect(screen.getByText("検索中")).toBeTruthy();
+    expect(screen.queryByText("一致する項目がありません")).toBeNull();
+  });
+
+  it("query を制御すると親が渡した値だけが表示される", () => {
+    const onQueryChange = vi.fn();
+    render(
+      <ApplicationScopeSearch
+        items={ITEMS}
+        placeholder="検索"
+        query="本社"
+        onQueryChange={onQueryChange}
+      />,
+    );
+    const input = screen.getByRole("combobox") as HTMLInputElement;
+    fireEvent.focus(input);
+    expect(input.value).toBe("本社");
+
+    type(input, "大阪");
+    expect(onQueryChange).toHaveBeenCalledWith("大阪");
+    // 親が query を更新しない限り表示は変わらない
+    expect(input.value).toBe("本社");
+  });
+
+  it("種別が1つしかないときは種別チップを出さない", () => {
+    const single = ITEMS.filter((item) => item.kind === "社員");
+    render(<ApplicationScopeSearch items={single} placeholder="検索" />);
+    fireEvent.focus(screen.getByRole("combobox"));
+    expect(screen.queryByRole("button", { name: "すべて" })).toBeNull();
+  });
+
+  it("disabled ではパネルを開かない", () => {
+    render(<ApplicationScopeSearch items={ITEMS} placeholder="検索" disabled />);
+    fireEvent.focus(screen.getByRole("combobox"));
+    expect(screen.queryByRole("listbox")).toBeNull();
+  });
+});
