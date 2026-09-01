@@ -16,16 +16,16 @@
    * ======================================== */
 
   /* ease-in-out-circ: 柔らかく自然な動き（フェーディング・移動等） */
-  --motion-ease-default: cubic-bezier(0.4, 0.0, 0.2, 1.0);
+  --motion-ease-default: cubic-bezier(0.4, 0.0, 0.2, 1.0); /* @kind other */
 
   /* ease-out-cubic: 素早い開始から柔らかく終わる（展開・アニメーション） */
-  --motion-ease-out: cubic-bezier(0.2, 0.0, 0.0, 1.0);
+  --motion-ease-out: cubic-bezier(0.2, 0.0, 0.0, 1.0); /* @kind other */
 
   /* ease-in: 柔らかく開始して加速（折りたたみ等の退場） */
-  --motion-ease-in: cubic-bezier(0.4, 0.0, 1.0, 1.0);
+  --motion-ease-in: cubic-bezier(0.4, 0.0, 1.0, 1.0); /* @kind other */
 
   /* ease-in-out: リニアに近い等速（距離が短い移動） */
-  --motion-ease-linear: cubic-bezier(0.0, 0.0, 1.0, 1.0);
+  --motion-ease-linear: cubic-bezier(0.0, 0.0, 1.0, 1.0); /* @kind other */
 
   /* ========================================
    * 持続時間（duration）
@@ -35,9 +35,9 @@
    * 主要なナビゲーション（サイドバーアクティブインジケーター移動）は200ms。
    * ========================================= */
 
-  --motion-duration-fast: 150ms; /* hover / focus の状態変化 */
-  --motion-duration-base: 200ms; /* ナビ切り替え・ハイライト移動等 */
-  --motion-duration-slow: 300ms; /* モーダル表示・フェード等（訂正待ち） */
+  --motion-duration-fast: 150ms; /* @kind other — hover / focus の状態変化 */
+  --motion-duration-base: 200ms; /* @kind other — ナビ切り替え・ハイライト移動等 */
+  --motion-duration-slow: 300ms; /* @kind other — モーダル表示・フェード等（訂正待ち） */
 
   /* ========================================
    * デレイ（delay）
@@ -45,8 +45,32 @@
    * キャスケードエフェクト用。通常は不要。
    * ========================================= */
 
-  --motion-delay-none: 0ms;
-  --motion-delay-short: 50ms;
+  --motion-delay-none: 0ms; /* @kind other */
+  --motion-delay-short: 50ms; /* @kind other */
+
+  /* ========================================
+   * Tailwind v4 のモーション既定値（明示的にピン留め）
+   *
+   * この 4 つは Tailwind のデフォルトテーマ由来で、これまでリポジトリ側に
+   * 定義箇所が無かった。値そのものは既定値と同一（コンパイル結果を実測して
+   * 一致を確認済み）で、挙動は変わらない。ここに置く理由は 2 つ:
+   *   1. DS のモーショントークンとして定義箇所を持たせ、@kind を付けられるようにする。
+   *   2. transition の既定値が --motion-* と同値であることを明示する
+   *      （150ms = --motion-duration-fast, ease = --motion-ease-default）。
+   *
+   * <important>
+   * 値を変えるときは --motion-duration-fast / --motion-ease-default と揃える。
+   * var() 参照にすると prefers-reduced-motion の 0ms 化が Tailwind の transition
+   * ユーティリティ全体に波及する（現状は波及しない）。挙動を変えたくないため
+   * 意図的にリテラルで固定している。
+   * </important>
+   * ======================================== */
+
+  --default-transition-duration: 150ms; /* @kind other */
+  --default-transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); /* @kind other */
+
+  --animate-spin: spin 1s linear infinite; /* @kind other */
+  --animate-pulse: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; /* @kind other */
 }
 
 /* ==========================================================================

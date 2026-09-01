@@ -7,6 +7,13 @@
   "entry": "dist/components/application/index.js",
   "buildCmd": "bun run build",
   "readmeHeader": ".design-sync/conventions.md",
+  "tokensIgnore": [
+    "--tw-*",
+    "--lk-halfstep",
+    "--lk-state-hover",
+    "--lk-state-active",
+    "--icon-empty"
+  ],
   "overrides": {
     "ApplicationPagination": { "cardMode": "column" },
     "ApplicationTable": { "viewport": "900x1150" },
