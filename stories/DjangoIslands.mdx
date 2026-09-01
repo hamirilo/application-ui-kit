@@ -31,6 +31,7 @@ import 'application-ui-kit/islands/auto-mount'`}</Code>
     ['confirm-dialog', '確認ダイアログ。確定時の fetch・CSRF・成功トーストを内包', 'data-id / data-title / data-message / data-type / data-url / data-method / data-success-message'],
     ['form-dialog', 'ダイアログの枠だけを React が持ち、中身は htmx が Django Form HTML を取得して表示', 'data-id / data-title / data-form-url / data-success-event'],
     ['date-picker', 'Django Form の hidden input の値を書き換える日付選択（single / range）', 'data-mode / data-target / data-value / data-target-from / data-target-to'],
+    ['copy-field', 'ワンタイム URL・トークン等のコピー欄（readonly 入力 + コピーボタン + 案内行）。secure context でなくても動くフォールバック付き', 'data-props（value / copy-label / selected-message / input-aria-label）'],
   ]}
 />
 
@@ -51,7 +52,10 @@ import 'application-ui-kit/islands/auto-mount'`}</Code>
 <!-- 日付選択 -->
 {{ form.start_date }}
 <div data-react="date-picker" data-mode="single"
-     data-target="{{ form.start_date.id_for_label }}"></div>`}</Code>
+     data-target="{{ form.start_date.id_for_label }}"></div>
+
+<!-- コピー欄（ワンタイム URL など。autoescape が有効なら属性への埋め込みは安全） -->
+<div data-react="copy-field" data-value="{{ issued_link }}"></div>`}</Code>
 
 ## 通知の流れ
 
