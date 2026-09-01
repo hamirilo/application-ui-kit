@@ -110,13 +110,6 @@ export type { ApplicationThemeToggleProps } from "./ApplicationThemeToggle";
 export { ApplicationCopyButton, copyTextToClipboard } from "./ApplicationCopyButton";
 export type { ApplicationCopyButtonProps, ApplicationCopyResult } from "./ApplicationCopyButton";
 
-export { ApplicationScopeSearch } from "./ApplicationScopeSearch";
-export type {
-  ApplicationScopeSearchItem,
-  ApplicationScopeSearchProps,
-} from "./ApplicationScopeSearch";
-
-export { useDebouncedValue } from "../../lib/use-debounced-value";
 
 /* ==========================================================================
  * shadcn/ui をそのまま公開しているもの
