@@ -80,7 +80,7 @@ GitHub Packagesへpublishされる実package名は `@<owner>/application-ui-kit`
 ```json
 {
   "dependencies": {
-    "application-ui-kit": "npm:@<owner>/application-ui-kit@^1.0.0"
+    "application-ui-kit": "npm:@<owner>/application-ui-kit@^6.0.0"
   }
 }
 ```
@@ -98,10 +98,12 @@ Package versionのSource of Truthは利用側Applicationの `package.json` / loc
 
 ### Release
 
-UI Platform repositoryとnpm packageのreleaseを分離します。
+UI Platform repositoryとnpm packageのrelease/versionは独立して管理します。
 
-- `v1.0.0` — UI Platform repository release
-- `application-ui-kit-v1.0.0` — npm package release
+- `v1.0.0` — UI Platform repositoryとしての1.0 release
+- `application-ui-kit-v<package-version>` — npm package release
+
+Repositoryを1.0として再基準化しても、既に公開済みのnpm package versionは巻き戻しません。`application-ui-kit` は既存の6.x seriesを継続し、以後もpackage versionを単調増加させます。
 
 Package release tagは `package.json` のversionと一致する必要があります。Genericな `v<version>` tagではpackage publishを実行しません。
 
