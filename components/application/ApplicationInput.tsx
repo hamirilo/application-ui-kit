@@ -52,10 +52,24 @@ export interface ApplicationInputProps
  * ```
  */
 export const ApplicationInput = React.forwardRef<HTMLInputElement, ApplicationInputProps>(
-  ({ className, error = false, leftIcon, rightIcon, type = "text", ...props }, ref) => {
+  (
+    {
+      className,
+      error = false,
+      leftIcon,
+      rightIcon,
+      type = "text",
+      /* ApplicationFormField は error が無いときも aria-invalid: undefined を
+       * 渡してくる。rest spread に混ぜるとこちらが立てた値を消すため、
+       * 明示的に受け取って合成する（ApplicationButtonGroup と同じ理由）。 */
+      "aria-invalid": ariaInvalid,
+      ...props
+    },
+    ref,
+  ) => {
     // エラーは aria-invalid で表現する。見た目は .cn-input の aria-invalid: が拾う。
     // 色と支援技術への伝達を 1 つの属性に束ねられるため、独自クラスは足さない。
-    const invalid = error || undefined;
+    const invalid = ariaInvalid || error || undefined;
 
     // アイコンがなければ余計な wrapper を作らない（レイアウトへの影響を避ける）
     if (!leftIcon && !rightIcon) {

@@ -87,17 +87,31 @@ export function ApplicationFormField({
   const helpId = helpText ? `${id}-help` : undefined;
   const describedBy = [errorId, helpId].filter(Boolean).join(" ") || undefined;
 
-  // 子要素に id と a11y 属性を注入する。
-  // error は子が受け取れる場合（ApplicationInput / ApplicationSelect）だけ渡す。
+  /* 子要素へ注入するのは標準属性だけにする。
+   *
+   * shadcn/ui のエラー表現は「Field に data-invalid（見た目）＋ コントロールに
+   * aria-invalid（支援技術）」の 2 本立てで、独自 prop を挟む余地は無い。
+   * 以前はここで `error: true` も注入していたが、
+   *   - 受け取らない子（Textarea / ApplicationCheckbox / ApplicationSearchInput /
+   *     ApplicationButtonGroup）では DOM へ漏れ、React が毎レンダー
+   *     「Received `true` for a non-boolean attribute」を出していた
+   *   - 受け取る子でも aria-invalid と二重の経路になっていた
+   * ため、aria-invalid へ一本化した。単体利用のための error prop は
+   * 各コンポーネント側に残っている。 */
   const child = React.cloneElement(children, {
     id,
     "aria-describedby": describedBy,
     "aria-invalid": error ? true : undefined,
-    ...(error ? { error: true } : {}),
   } as React.Attributes);
 
   return (
-    <Field orientation={orientation} className={cn("gap-1.5", className)}>
+    <Field
+      orientation={orientation}
+      // Field 全体を error 表示へ切り替える shadcn/ui の入口
+      // （tokens/components.css の .cn-field data-[invalid=true]）
+      data-invalid={error ? true : undefined}
+      className={cn("gap-1.5", className)}
+    >
       {label && (
         <FieldLabel htmlFor={id}>
           {label}

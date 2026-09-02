@@ -6,6 +6,8 @@ export default defineConfig({
   test: {
     globals: true,
     environment: "happy-dom",
+    // React の警告（独自 prop の DOM への漏れ等）をテスト失敗にする
+    setupFiles: ["./vitest.setup.ts"],
     include: ["**/*.test.{ts,tsx}"],
   },
 });

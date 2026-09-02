@@ -1,4 +1,4 @@
-import { fireEvent, render, screen } from "@testing-library/react";
+import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApplicationButtonGroup, type ApplicationButtonGroupItem } from "./ApplicationButtonGroup";
 import { ApplicationFormField } from "./ApplicationFormField";
@@ -8,6 +8,16 @@ const PERIODS: ApplicationButtonGroupItem[] = [
   { value: "week", label: "週" },
   { value: "month", label: "月" },
 ];
+
+/* checkValidity() は invalid イベントを同期的に発火する。この kit の部品は
+ * それを拾って state を更新するため、act() で包まないと React が警告する。 */
+function checkValidity(el: HTMLFormElement | HTMLInputElement): boolean {
+  let valid = false;
+  act(() => {
+    valid = el.checkValidity();
+  });
+  return valid;
+}
 
 describe("ApplicationButtonGroup", () => {
   it("選択すると onValueChange が呼ばれる", () => {
@@ -40,7 +50,7 @@ describe("ApplicationButtonGroup", () => {
 
       expect(field.type).not.toBe("hidden");
       expect(field.value).toBe("");
-      expect(form.checkValidity()).toBe(false);
+      expect(checkValidity(form)).toBe(false);
     });
 
     it("選択済みならフォームが valid になり、選択値を送信する", () => {
@@ -59,7 +69,7 @@ describe("ApplicationButtonGroup", () => {
       const field = container.querySelector('input[name="period"]') as HTMLInputElement;
 
       expect(field.value).toBe("week");
-      expect(form.checkValidity()).toBe(true);
+      expect(checkValidity(form)).toBe(true);
     });
 
     it("送信用の input は Tab の順路と読み上げから外す", () => {
@@ -99,7 +109,7 @@ describe("ApplicationButtonGroup", () => {
       expect(document.getElementById(messageId)?.textContent).toBe("選択してください");
 
       // 送信のブロックは維持される
-      expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(false);
+      expect(checkValidity(container.querySelector("form") as HTMLFormElement)).toBe(false);
     });
 
     it("選択するとネイティブ検証のエラー表示が消える", () => {
@@ -147,7 +157,7 @@ describe("ApplicationButtonGroup", () => {
           <ApplicationButtonGroup items={PERIODS} name="period" aria-label="表示期間" />
         </form>,
       );
-      expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(true);
+      expect(checkValidity(container.querySelector("form") as HTMLFormElement)).toBe(true);
     });
   });
 });
