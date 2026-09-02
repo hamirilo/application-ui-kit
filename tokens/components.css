@@ -988,8 +988,11 @@
     @apply text-muted-foreground px-2;
   }
 
+  /* .cn-field と対にする。グループ（ApplicationFieldSet）でも error のとき
+   * legend と説明が destructive 色になるようにする。 */
   .cn-field-set {
-    @apply gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3;
+    @apply data-[invalid=true]:text-destructive
+           gap-4 has-[>[data-slot=checkbox-group]]:gap-3 has-[>[data-slot=radio-group]]:gap-3;
   }
 
   .cn-field-title {

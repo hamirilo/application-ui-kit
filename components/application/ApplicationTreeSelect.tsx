@@ -119,6 +119,9 @@ export interface ApplicationTreeSelectProps {
 
   /** ApplicationFormField がエラー・補足説明を紐づけるために注入する */
   "aria-describedby"?: string;
+
+  /** エラー状態（ApplicationFormField / ApplicationFieldSet が自動で渡す） */
+  "aria-invalid"?: boolean;
 }
 
 /** ルートから value までの経路を返す。見つからなければ null */
@@ -187,6 +190,7 @@ export function ApplicationTreeSelect({
   "aria-label": ariaLabel,
   "aria-labelledby": ariaLabelledBy,
   "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
 }: ApplicationTreeSelectProps) {
   const [open, setOpen] = React.useState(false);
   const [activePath, setActivePath] = React.useState<number[]>([]);
@@ -242,10 +246,12 @@ export function ApplicationTreeSelect({
     : null;
 
   const invalid = nativeValidation.message !== null;
-  /* 呼び出し側（ApplicationFormField 等）が既にエラーを出しているときは、
-   * 同じ場所に 2 つ文言が並ばないよう自前の文言は出さない。
-   * フォーカスと aria-invalid だけを引き受ける。 */
-  const showNativeError = invalid && !error;
+  /* 呼び出し側（ApplicationFormField / ApplicationFieldSet 等）が既にエラーを
+   * 出しているときは、同じ場所に 2 つ文言が並ばないよう自前の文言は出さない。
+   * フォーカスと aria-invalid だけを引き受ける。
+   * 判定には注入される aria-invalid も含める（error prop は注入しなくなったため、
+   * ApplicationFormField 経由のエラーは aria-invalid でしか伝わらない）。 */
+  const showNativeError = invalid && !error && ariaInvalid !== true;
 
   const select = (next: string) => {
     if (!isControlled) setInternalValue(next);
@@ -298,7 +304,7 @@ export function ApplicationTreeSelect({
             ariaDescribedBy,
             showNativeError && nativeValidation.messageId,
           )}
-          aria-invalid={error || invalid || undefined}
+          aria-invalid={ariaInvalid || error || invalid || undefined}
           data-empty={!label}
           className={cn(
             "flex h-9 w-full items-center justify-between gap-2 rounded-lg border bg-background px-3 text-left text-sm",

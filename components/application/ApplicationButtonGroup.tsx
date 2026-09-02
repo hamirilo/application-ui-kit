@@ -164,6 +164,12 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
 
     const invalid = nativeValidation.message !== null;
 
+    /* 呼び出し側（ApplicationFormField / ApplicationFieldSet）が既にエラーを
+     * 出しているときは、自前の文言を出さない。出すと同じ意味の赤い文言が 2 つ並び、
+     * aria-describedby に両方の id が入って 2 回読まれる。
+     * 判定は注入される aria-invalid で行う（error prop は注入しなくなったため）。 */
+    const showNativeError = invalid && ariaInvalid !== true;
+
     const handleChange = React.useCallback(
       (next: string[]) => {
         const selected = next[0] ?? "";
@@ -182,7 +188,10 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
             if (typeof ref === "function") ref(node);
             else if (ref) ref.current = node;
           }}
-          aria-describedby={joinDescribedBy(ariaDescribedBy, invalid && nativeValidation.messageId)}
+          aria-describedby={joinDescribedBy(
+            ariaDescribedBy,
+            showNativeError && nativeValidation.messageId,
+          )}
           aria-invalid={ariaInvalid || invalid || undefined}
           value={value !== undefined ? (value === "" ? [] : [value]) : undefined}
           defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
@@ -237,7 +246,7 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
           />
         )}
 
-        {invalid && (
+        {showNativeError && (
           <NativeValidationMessage id={nativeValidation.messageId}>
             {nativeValidation.message}
           </NativeValidationMessage>

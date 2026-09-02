@@ -86,6 +86,9 @@ export type { ApplicationTableProps, ApplicationTableColumn } from "./Applicatio
 export { ApplicationFormField } from "./ApplicationFormField";
 export type { ApplicationFormFieldProps } from "./ApplicationFormField";
 
+export { ApplicationFieldSet } from "./ApplicationFieldSet";
+export type { ApplicationFieldSetProps } from "./ApplicationFieldSet";
+
 export { ApplicationTabs } from "./ApplicationTabs";
 export type { ApplicationTabsProps, ApplicationTabItem } from "./ApplicationTabs";
 

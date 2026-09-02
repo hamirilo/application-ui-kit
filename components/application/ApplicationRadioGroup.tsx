@@ -64,6 +64,22 @@ export interface ApplicationRadioGroupProps {
   /** input の name（通常のフォーム送信に含める場合） */
   name?: string;
 
+  /**
+   * グループのラベルとなる要素の id。
+   *
+   * <important>
+   * グループには `<label for>` が効かない（labelable 要素ではない）。
+   * ラベルを付けるときは ApplicationFieldSet を使うか、この prop を渡す。
+   * </important>
+   */
+  "aria-labelledby"?: string;
+
+  /** 説明・エラー文言の id */
+  "aria-describedby"?: string;
+
+  /** エラー状態 */
+  "aria-invalid"?: boolean;
+
   className?: string;
 }
 
@@ -140,6 +156,9 @@ export const ApplicationRadioGroup = React.forwardRef<HTMLDivElement, Applicatio
       required,
       name,
       className,
+      "aria-labelledby": ariaLabelledBy,
+      "aria-describedby": ariaDescribedBy,
+      "aria-invalid": ariaInvalid,
     },
     ref,
   ) => {
@@ -155,6 +174,9 @@ export const ApplicationRadioGroup = React.forwardRef<HTMLDivElement, Applicatio
         disabled={disabled}
         required={required}
         name={name}
+        aria-labelledby={ariaLabelledBy}
+        aria-describedby={ariaDescribedBy}
+        aria-invalid={ariaInvalid}
         className={cn("flex", LAYOUT_CLASS[variant][orientation], className)}
       >
         {items.map((item) => {

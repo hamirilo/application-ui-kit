@@ -60,6 +60,22 @@ export interface ApplicationRadioTableProps<T> {
   /** input の name（通常のフォーム送信に含める場合） */
   name?: string;
 
+  /**
+   * グループのラベルとなる要素の id。
+   *
+   * <important>
+   * グループには `<label for>` が効かない。ラベルを付けるときは
+   * ApplicationFieldSet を使うか、この prop を渡す。
+   * </important>
+   */
+  "aria-labelledby"?: string;
+
+  /** 説明・エラー文言の id */
+  "aria-describedby"?: string;
+
+  /** エラー状態 */
+  "aria-invalid"?: boolean;
+
   /** 各行の React key を返す。省略すると `rowValue` を使う */
   rowKey?: (row: T, index: number) => string | number;
 
@@ -116,6 +132,9 @@ export function ApplicationRadioTable<T>({
   emptySubMessage,
   caption,
   className,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
 }: ApplicationRadioTableProps<T>) {
   const reactId = React.useId();
   const idBase = name ?? `application-radio-table-${reactId}`;
@@ -160,6 +179,9 @@ export function ApplicationRadioTable<T>({
       disabled={disabled}
       required={required}
       name={name}
+      aria-labelledby={ariaLabelledBy}
+      aria-describedby={ariaDescribedBy}
+      aria-invalid={ariaInvalid}
       className={cn("w-full", className)}
     >
       <ApplicationTable<T>
