@@ -1,6 +1,7 @@
 import { fireEvent, render, screen } from "@testing-library/react";
 import { describe, expect, it, vi } from "vitest";
 import { ApplicationButtonGroup, type ApplicationButtonGroupItem } from "./ApplicationButtonGroup";
+import { ApplicationFormField } from "./ApplicationFormField";
 
 const PERIODS: ApplicationButtonGroupItem[] = [
   { value: "day", label: "日" },
@@ -74,6 +75,63 @@ describe("ApplicationButtonGroup", () => {
       expect(field.tabIndex).toBe(-1);
       expect(field.getAttribute("aria-hidden")).toBe("true");
       expect(field.className).toContain("sr-only");
+    });
+
+    /* aria-hidden な送信用 input へブラウザがフォーカスすると、支援技術には
+     * 「どの項目が無効か」も文言も伝わらない。invalid を横取りして、
+     * 可視のボタンへフォーカスとエラーを載せ替える。 */
+    it("ネイティブ検証が弾いたら可視ボタンへフォーカスとエラーを移す", () => {
+      const { container } = render(
+        <form>
+          <ApplicationButtonGroup items={PERIODS} name="period" required aria-label="表示期間" />
+        </form>,
+      );
+      const field = container.querySelector('input[name="period"]') as HTMLInputElement;
+
+      // ブラウザ既定（aria-hidden な input へのフォーカスと吹き出し）を止めている
+      expect(fireEvent.invalid(field)).toBe(false);
+
+      const group = container.querySelector('[data-slot="toggle-group"]') as HTMLElement;
+      expect(group.getAttribute("aria-invalid")).toBe("true");
+      expect(document.activeElement?.getAttribute("data-slot")).toBe("toggle-group-item");
+
+      const messageId = group.getAttribute("aria-describedby") as string;
+      expect(document.getElementById(messageId)?.textContent).toBe("選択してください");
+
+      // 送信のブロックは維持される
+      expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(false);
+    });
+
+    it("選択するとネイティブ検証のエラー表示が消える", () => {
+      const { container } = render(
+        <form>
+          <ApplicationButtonGroup items={PERIODS} name="period" required aria-label="表示期間" />
+        </form>,
+      );
+      fireEvent.invalid(container.querySelector('input[name="period"]') as HTMLInputElement);
+      const group = container.querySelector('[data-slot="toggle-group"]') as HTMLElement;
+      expect(group.getAttribute("aria-invalid")).toBe("true");
+
+      fireEvent.click(screen.getByRole("button", { name: "週" }));
+
+      expect(group.getAttribute("aria-invalid")).toBeNull();
+      expect(group.getAttribute("aria-describedby")).toBeNull();
+    });
+
+    /* ApplicationFormField は error が無いときも aria-invalid: undefined を
+     * 渡してくる。rest spread に混ぜると、こちらが立てた aria-invalid が
+     * 消える（ブラウザ上でだけ再現し、テストからは見えなかった）。 */
+    it("ApplicationFormField に包まれていても aria-invalid が立つ", () => {
+      const { container } = render(
+        <form>
+          <ApplicationFormField label="表示期間" required>
+            <ApplicationButtonGroup items={PERIODS} name="period" required aria-label="表示期間" />
+          </ApplicationFormField>
+        </form>,
+      );
+      fireEvent.invalid(container.querySelector('input[name="period"]') as HTMLInputElement);
+      const group = container.querySelector('[data-slot="toggle-group"]') as HTMLElement;
+      expect(group.getAttribute("aria-invalid")).toBe("true");
     });
 
     it("name が無ければ送信用の input を出さない", () => {

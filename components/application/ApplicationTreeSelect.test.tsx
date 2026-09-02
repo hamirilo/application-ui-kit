@@ -84,6 +84,74 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
     expect(form.checkValidity()).toBe(true);
   });
 
+  /* aria-hidden な送信用 input へブラウザがフォーカスすると、支援技術には
+   * 「どの項目が無効か」も文言も伝わらない。invalid を横取りして、
+   * 可視のトリガーへフォーカスとエラーを載せ替える。 */
+  it("ネイティブ検証が弾いたら可視トリガーへフォーカスとエラーを移す", () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect items={UNITS} name="unit" required aria-label="組織" />
+      </form>,
+    );
+    const field = container.querySelector('input[name="unit"]') as HTMLInputElement;
+    const trigger = screen.getByRole("combobox");
+
+    // ブラウザ既定（aria-hidden な input へのフォーカスと吹き出し）を止めている
+    expect(fireEvent.invalid(field)).toBe(false);
+
+    expect(document.activeElement).toBe(trigger);
+    expect(trigger.getAttribute("aria-invalid")).toBe("true");
+
+    const messageId = trigger.getAttribute("aria-describedby") as string;
+    expect(messageId).toBeTruthy();
+    const message = document.getElementById(messageId);
+    // ブラウザの validationMessage を出す。空を返す環境では代替文言を出し、
+    // 「赤いだけで何も書いていない」表示にはしない
+    expect(message?.textContent).toBe("選択してください");
+
+    // 送信のブロックは維持される
+    expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(false);
+  });
+
+  it("選択するとネイティブ検証のエラー表示が消える", async () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect items={UNITS} name="unit" required aria-label="組織" />
+      </form>,
+    );
+    fireEvent.invalid(container.querySelector('input[name="unit"]') as HTMLInputElement);
+    const trigger = screen.getByRole("combobox");
+    expect(trigger.getAttribute("aria-invalid")).toBe("true");
+
+    fireEvent.click(trigger);
+    await waitFor(() => expect(screen.getByText("工場")).toBeTruthy());
+    fireEvent.click(screen.getByText("工場"));
+
+    expect(trigger.getAttribute("aria-invalid")).toBeNull();
+    expect(trigger.getAttribute("aria-describedby")).toBeNull();
+  });
+
+  it("呼び出し側が既にエラーを出しているときは文言を重ねない", () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect
+          items={UNITS}
+          name="unit"
+          required
+          error
+          aria-describedby="caller-error"
+          aria-label="組織"
+        />
+      </form>,
+    );
+    fireEvent.invalid(container.querySelector('input[name="unit"]') as HTMLInputElement);
+    const trigger = screen.getByRole("combobox");
+
+    // フォーカスと aria-invalid は引き受けるが、文言は呼び出し側のものだけ
+    expect(document.activeElement).toBe(trigger);
+    expect(trigger.getAttribute("aria-describedby")).toBe("caller-error");
+  });
+
   it("required なしなら未選択でも valid", () => {
     const { container } = render(
       <form>
