@@ -124,6 +124,10 @@ export const ApplicationSelect = React.forwardRef<HTMLButtonElement, Application
       required,
       id,
       className,
+      /* ApplicationFormField は error が無いときも aria-invalid: undefined を
+       * 渡してくる。rest spread に混ぜるとこちらが立てた値を消すため、
+       * 明示的に受け取って合成する（ApplicationButtonGroup と同じ理由）。 */
+      "aria-invalid": ariaInvalid,
       ...aria
     },
     ref,
@@ -159,7 +163,11 @@ export const ApplicationSelect = React.forwardRef<HTMLButtonElement, Application
         <SelectTrigger
           ref={ref}
           id={id}
-          className={cn(error && "border-danger focus-visible:ring-danger", className)}
+          /* error の見た目は className ではなく aria-invalid から出す
+           * （.cn-select-trigger の aria-invalid:border-danger）。
+           * 支援技術にも同時に伝わり、状態の経路が 1 本になる。 */
+          aria-invalid={ariaInvalid || error || undefined}
+          className={className}
           {...aria}
         >
           <SelectValue placeholder={<span className="text-muted-foreground">{placeholder}</span>} />

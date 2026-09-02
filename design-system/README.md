@@ -71,11 +71,13 @@ Django + React Islands で実装困難な構成を避ける。
 | 部品 | 使う場面 |
 |---|---|
 | ApplicationButton / ApplicationButtonGroup | 操作。variant = primary / secondary / danger / success |
-| ApplicationInput / ApplicationSearchInput / ApplicationCheckbox / ApplicationRadioGroup / ApplicationSelect / ApplicationCombobox / ApplicationDatePicker | フォーム入力。Combobox は検索・新規作成つき選択 |
+| ApplicationInput / ApplicationSearchInput / ApplicationCheckbox / ApplicationRadioGroup / ApplicationSelect / ApplicationCombobox / ApplicationDatePicker | フォーム入力。Combobox は検索・新規作成つき選択。説明を見比べて選ばせるなら RadioGroup の `variant="cards"` |
+| ApplicationScopeSearch | 画面上部の共通検索。1 本の入力で複数種別を横断し、種別ごとのグループで候補を出す |
 | ApplicationFormField | ラベル・必須表示・エラー配置の統一 |
 | ApplicationDialog / ApplicationConfirmDialog / ApplicationFormDialog | ダイアログ。破壊的操作の確認は ConfirmDialog（`confirm()` を使わない） |
 | ApplicationToast | 補助的なフィードバック（`alert()` を使わない） |
 | ApplicationTable | 一覧。空状態が必須の API |
+| ApplicationRadioTable | 表から1行を選ばせる。プラン・送付先など列で比較して決める選択 |
 | ApplicationTabs / ApplicationPagination / ApplicationNavItem | 画面内の切替・送り・ナビゲーション |
 | ApplicationBadge / ApplicationActiveIndicator | 状態表示 |
 | ApplicationDropdown | メニュー |

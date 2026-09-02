@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import {
-  ApplicationFormField,
+  ApplicationFieldSet,
   ApplicationRadioGroup,
   type ApplicationRadioGroupItem,
 } from "../../components/application";
@@ -11,6 +11,19 @@ const PRIORITIES: ApplicationRadioGroupItem[] = [
   { value: "high", label: "高" },
   { value: "mid", label: "中" },
   { value: "low", label: "低" },
+];
+
+/** cards は「説明」と「右端の補足」があって初めて意味を持つ。 */
+const SHIPPING: ApplicationRadioGroupItem[] = [
+  { value: "standard", label: "通常配送", description: "3〜5営業日でお届け", meta: "無料" },
+  { value: "express", label: "速達", description: "翌営業日にお届け", meta: "550円" },
+  {
+    value: "pickup",
+    label: "店舗受取",
+    description: "取り扱い店舗が近くにありません",
+    meta: "無料",
+    disabled: true,
+  },
 ];
 
 /**
@@ -46,15 +59,26 @@ const meta = {
 | 選択肢が多い（6個以上） | \`ApplicationSelect\`（省スペース） |
 | 複数選択したい | \`ApplicationCheckbox\` のリスト |
 | ボタンの並びとして見せたい（表示切替・期間選択など） | \`ApplicationButtonGroup\` |
+| 候補を複数の属性（人数・金額など）で並べて比較させたい | \`ApplicationRadioTable\` |
 
 ## Props
 
 選択肢は JSX の子要素ではなく **\`items\` 配列**で渡す（\`ApplicationSelect\` と同じ方針）。
 
+## variant
+
+| variant | 使う場面 |
+|---|---|
+| \`list\`（既定） | 選択肢が短く、説明が要らない・1行で足りる |
+| \`cards\` | 説明や右端の補足（金額・容量）を見比べて決める。クリック領域をカード全体に広げる |
+
+\`cards\` は見た目の飾りではなく「比較して選ぶ」ための形。説明も補足も無いのに
+\`cards\` にすると、枠が増えるだけで読み取れる情報は増えない。
+
 ## 注意事項
 
 - \`orientation="horizontal"\` は選択肢が短い文言のときのみ使う（折り返すと読みにくい）
-- \`ApplicationFormField\` で囲むとラベルとエラー表示が自動で付く
+- ラベル・エラー表示は \`ApplicationFieldSet\` で囲む（\`ApplicationFormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
 - グループ全体の \`name\` を渡すとフォーム送信に含められる
         `,
       },
@@ -62,6 +86,7 @@ const meta = {
   },
   argTypes: {
     items: { table: { disable: true } },
+    variant: { control: "radio", options: ["list", "cards"] },
     orientation: { control: "radio", options: ["vertical", "horizontal"] },
     disabled: { control: "boolean" },
   },
@@ -93,6 +118,28 @@ export const Overview: Story = {
           </Labeled>
           <Labeled label="horizontal">
             <ApplicationRadioGroup items={PRIORITIES} defaultValue="mid" orientation="horizontal" />
+          </Labeled>
+        </Stack>
+      </Section>
+
+      <Section
+        title="Variant"
+        note="cards は「説明や金額を見比べて決める」ときだけ。飾りとして枠を増やさない。"
+      >
+        <Stack className="max-w-xl">
+          <Labeled label='variant="list"（既定）'>
+            <ApplicationRadioGroup items={SHIPPING} defaultValue="standard" />
+          </Labeled>
+          <Labeled label='variant="cards"'>
+            <ApplicationRadioGroup variant="cards" items={SHIPPING} defaultValue="standard" />
+          </Labeled>
+          <Labeled label='variant="cards" + orientation="horizontal"'>
+            <ApplicationRadioGroup
+              variant="cards"
+              orientation="horizontal"
+              items={SHIPPING}
+              defaultValue="standard"
+            />
           </Labeled>
         </Stack>
       </Section>
@@ -161,6 +208,26 @@ export const WithDescription: Story = {
   },
 };
 
+/**
+ * カード。説明と右端の補足（金額・容量）を見比べて決めるとき。
+ *
+ * クリック領域はカード全体。読み上げ名はラベルだけで、description は
+ * `aria-describedby` に回している（カード全部が名前として読まれないように）。
+ */
+export const Cards: Story = {
+  args: { variant: "cards", items: SHIPPING, defaultValue: "standard" },
+};
+
+/** カードの横並び。3〜4件までにする（折り返すと比較しにくい）。 */
+export const CardsHorizontal: Story = {
+  args: {
+    variant: "cards",
+    orientation: "horizontal",
+    items: SHIPPING,
+    defaultValue: "standard",
+  },
+};
+
 /** 一部の選択肢を無効化した例（権限で選べない場合等）。 */
 export const WithDisabledItem: Story = {
   args: {
@@ -196,12 +263,15 @@ export const Controlled: Story = {
 };
 
 /**
- * `ApplicationFormField` と組み合わせた実際の使い方。
+ * `ApplicationFieldSet` と組み合わせた実際の使い方。
+ *
+ * グループには `<label for>` が効かないため、名前は `aria-labelledby` で結ぶ。
+ * `ApplicationFormField` を使うとラベルはあるのにアクセシブル名が無い状態になる。
  */
 export const WithFormField: Story = {
   render: () => (
-    <ApplicationFormField label="優先度" required helpText="後から変更できます">
+    <ApplicationFieldSet label="優先度" required helpText="後から変更できます">
       <ApplicationRadioGroup items={PRIORITIES} name="priority" defaultValue="mid" />
-    </ApplicationFormField>
+    </ApplicationFieldSet>
   ),
 };

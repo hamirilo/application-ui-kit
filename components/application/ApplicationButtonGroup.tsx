@@ -10,6 +10,11 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import {
+  NativeValidationMessage,
+  joinDescribedBy,
+  useNativeValidationRelay,
+} from "./native-validation";
 
 export interface ApplicationButtonGroupItem {
   /** 選択時の値 */
@@ -70,6 +75,20 @@ export interface ApplicationButtonGroupProps {
 
   /** ラベルとなる要素の id（画面上にラベルがある場合はこちらを使う） */
   "aria-labelledby"?: string;
+
+  /** 説明・エラー文言の id（ApplicationFormField が自動で渡す） */
+  "aria-describedby"?: string;
+
+  /**
+   * エラー状態（ApplicationFormField が自動で渡す）。
+   *
+   * <important>
+   * ApplicationFormField は error が無いときも `aria-invalid: undefined` を
+   * 渡してくる。rest spread に混ぜるとこちらが立てた値を消してしまうため、
+   * 明示的に受け取って合成する。
+   * </important>
+   */
+  "aria-invalid"?: boolean;
 }
 
 /** ApplicationButtonGroup のサイズ名 → shadcn/ui の toggle サイズ名 */
@@ -118,6 +137,8 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
       name,
       required,
       className,
+      "aria-describedby": ariaDescribedBy,
+      "aria-invalid": ariaInvalid,
       ...aria
     },
     ref,
@@ -127,19 +148,51 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
     const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? "");
     const current = value !== undefined ? value : uncontrolled;
 
+    const groupRef = React.useRef<HTMLDivElement>(null);
+
+    // 送信用 input は aria-hidden なので、ネイティブ検証が弾いたときの
+    // フォーカスとエラー表示はボタン側へ引き受ける（native-validation.tsx）
+    const nativeValidation = useNativeValidationRelay(() => {
+      // roving tabindex なので、その時点で Tab が当たるボタンへ移す
+      const group = groupRef.current;
+      return (
+        group?.querySelector<HTMLElement>('[data-slot="toggle-group-item"][tabindex="0"]') ??
+        group?.querySelector<HTMLElement>('[data-slot="toggle-group-item"]') ??
+        null
+      );
+    }, "選択してください");
+
+    const invalid = nativeValidation.message !== null;
+
+    /* 呼び出し側（ApplicationFormField / ApplicationFieldSet）が既にエラーを
+     * 出しているときは、自前の文言を出さない。出すと同じ意味の赤い文言が 2 つ並び、
+     * aria-describedby に両方の id が入って 2 回読まれる。
+     * 判定は注入される aria-invalid で行う（error prop は注入しなくなったため）。 */
+    const showNativeError = invalid && ariaInvalid !== true;
+
     const handleChange = React.useCallback(
       (next: string[]) => {
         const selected = next[0] ?? "";
         if (value === undefined) setUncontrolled(selected);
         onValueChange?.(selected);
+        nativeValidation.clear();
       },
-      [onValueChange, value],
+      [onValueChange, value, nativeValidation.clear],
     );
 
     return (
       <>
         <ToggleGroup
-          ref={ref}
+          ref={(node: HTMLDivElement | null) => {
+            groupRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
+          }}
+          aria-describedby={joinDescribedBy(
+            ariaDescribedBy,
+            showNativeError && nativeValidation.messageId,
+          )}
+          aria-invalid={ariaInvalid || invalid || undefined}
           value={value !== undefined ? (value === "" ? [] : [value]) : undefined}
           defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
           onValueChange={handleChange}
@@ -165,19 +218,38 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
         </ToggleGroup>
 
         {/* ToggleGroup はフォームコントロールではないため、
-            通常のフォーム送信に値を載せるには hidden input が要る。
+            通常のフォーム送信に値を載せるには input が要る。
             両端の角丸は :first-child / :last-child で付くので、
             この input は ToggleGroup の中に置かない（最後の item が
             last-child でなくなり、右端の角丸が落ちる）。
-            input[type=hidden] は描画されないためレイアウトには影響しない。 */}
+
+            <important>
+            type="hidden" にしてはいけない。hidden input は制約検証の対象外
+            （barred from constraint validation）なので、required を付けても
+            未選択のままフォームが valid になり、name="" が送信される。
+            視覚的に隠した text input にすることで required が実際に効く。
+            sr-only は position: absolute なのでレイアウトには影響しない。
+            </important> */}
         {name && (
           <input
-            type="hidden"
+            type="text"
             name={name}
             value={current}
             required={required}
             disabled={disabled}
+            // 値の変更はボタンの選択で行う。ここへ直接入力させない
+            onChange={() => {}}
+            onFocus={nativeValidation.onFocus}
+            tabIndex={-1}
+            aria-hidden="true"
+            className="sr-only"
           />
+        )}
+
+        {showNativeError && (
+          <NativeValidationMessage id={nativeValidation.messageId}>
+            {nativeValidation.message}
+          </NativeValidationMessage>
         )}
       </>
     );

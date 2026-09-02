@@ -45,6 +45,13 @@ application の \`includes/molecules/form_field.html\` の React 版。
 | テンプレート（.html） | \`{% include 'includes/molecules/form_field.html' %}\` |
 | ラベルが不要な入力（検索ボックス、テーブル内のインライン編集） | \`ApplicationInput\` 単体 + \`aria-label\` |
 | チェックボックス | \`ApplicationCheckbox\`（ラベルを自前で持っているため二重になる） |
+| グループで選ぶ入力（RadioGroup / RadioTable / ButtonGroup） | **\`ApplicationFieldSet\`** |
+
+**グループには使わない。** \`<label for>\` は button / input / select / textarea /
+meter / output / progress にしか効かず、\`<div role="radiogroup">\` や
+\`<div role="group">\` を指してもブラウザは黙って無視する。結果、ラベルが見えていても
+支援技術からは**名前の無いグループ**になる。\`ApplicationFieldSet\` は
+\`<legend>\` + \`aria-labelledby\` で結ぶ。
 
 ## Props
 
@@ -62,9 +69,11 @@ application の \`includes/molecules/form_field.html\` の React 版。
 - **\`children\` は単一要素。** 複数渡すと \`cloneElement\` が失敗する。
   横並びにしたい場合は \`children\` を \`<div>\` で包み、
   \`htmlFor\` を明示して内側の入力に \`id\` を自分で付ける
-- **\`error\` を渡すと子に \`error: true\` が注入される。**
-  子が \`error\` prop を受け取れない要素（素の \`<textarea>\` 等）でも
-  \`aria-invalid\` は付くが、赤枠にはならない
+- **\`error\` を渡すと 2 つの属性が付く。** shadcn/ui のエラー表現に合わせている。
+  \`Field\` に \`data-invalid\`（ラベルと説明が destructive 色になる）と、
+  子に \`aria-invalid\`（支援技術へ伝わり、枠が danger 色になる）。
+  独自 prop は注入しない（以前は \`error: true\` も注入しており、
+  受け取れない子では DOM へ漏れて React が警告していた）
 - \`required\` は見た目の \`*\` だけでなく \`（必須）\` を \`sr-only\` で出す。
   \`*\` は読み上げでは「アスタリスク」または無視されるため
 - **HTML の \`required\` 属性とは別物。** バリデーションが必要なら

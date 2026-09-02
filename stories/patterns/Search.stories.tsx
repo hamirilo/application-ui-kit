@@ -48,6 +48,7 @@ const meta = {
 | 0 件 | \`Patterns/EmptyState\` の「検索結果 0 件」。条件のクリア手段を置く |
 | クリア | \`onClear\` を渡す（値があるときだけ × が出る） |
 | 絞り込みの併用 | キーワード + \`ApplicationSelect\`。選択中の条件は結果の上に出す |
+| 探す対象が一覧の外にもある | 一覧の絞り込みではなく \`ApplicationScopeSearch\`（種別横断）を検討する |
 
 ## 使う場面
 
@@ -60,7 +61,7 @@ const meta = {
 |---|---|
 | 候補から 1 つ選ぶ（社員・取引先など） | \`ApplicationCombobox\` |
 | 選択肢が固定の絞り込みだけ | \`ApplicationSelect\` 単体。検索欄は要らない |
-| 全画面横断の検索 | 画面上部の共通検索。この Pattern の範囲外 |
+| 全画面横断の検索（人も組織も探す） | \`ApplicationScopeSearch\`。画面上部の共通検索はこちら |
 
 ## 注意事項
 

@@ -202,6 +202,10 @@ export const ApplicationCombobox = React.forwardRef<HTMLInputElement, Applicatio
       required,
       id,
       className,
+      /* ApplicationFormField は error が無いときも aria-invalid: undefined を
+       * 渡してくる。rest spread に混ぜるとこちらが立てた値を消すため、
+       * 明示的に受け取って合成する（ApplicationButtonGroup と同じ理由）。 */
+      "aria-invalid": ariaInvalid,
       ...aria
     },
     ref,
@@ -315,7 +319,9 @@ export const ApplicationCombobox = React.forwardRef<HTMLInputElement, Applicatio
         required={required}
       >
         {multiple ? (
-          <ComboboxChips className={className} data-invalid={error || undefined}>
+          // エラー枠は内側の input の aria-invalid を .cn-combobox-chips が has- で拾う。
+          // 以前ここにあった data-invalid は対応するセレクタが無く効いていなかった。
+          <ComboboxChips className={className}>
             <ComboboxValue>
               {(selected: string[]) =>
                 selected.map((selectedValue) => (
@@ -335,7 +341,7 @@ export const ApplicationCombobox = React.forwardRef<HTMLInputElement, Applicatio
               id={id}
               placeholder={placeholder}
               disabled={disabled}
-              aria-invalid={error || undefined}
+              aria-invalid={ariaInvalid || error || undefined}
               {...aria}
             />
           </ComboboxChips>
@@ -347,7 +353,7 @@ export const ApplicationCombobox = React.forwardRef<HTMLInputElement, Applicatio
             placeholder={placeholder}
             disabled={disabled}
             showClear={clearable}
-            aria-invalid={error || undefined}
+            aria-invalid={ariaInvalid || error || undefined}
             className={className}
             {...aria}
           />
