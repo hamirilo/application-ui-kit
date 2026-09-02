@@ -395,7 +395,7 @@ export function ApplicationTreeSelect({
           disabled={disabled}
           // 値の変更はツリーの選択で行う。ここへ直接入力させない
           onChange={() => {}}
-          onInvalid={nativeValidation.onInvalid}
+          onFocus={nativeValidation.onFocus}
           tabIndex={-1}
           aria-hidden="true"
           className="sr-only"

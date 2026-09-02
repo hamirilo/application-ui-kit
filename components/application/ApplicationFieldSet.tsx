@@ -21,6 +21,7 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { FieldDescription, FieldError, FieldLegend, FieldSet } from "../ui/field";
+import { joinDescribedBy } from "./native-validation";
 
 export interface ApplicationFieldSetProps {
   /** グループのラベル */
@@ -78,11 +79,22 @@ export function ApplicationFieldSet({
   const describedBy = [errorId, helpId].filter(Boolean).join(" ") || undefined;
 
   /* グループには id / htmlFor ではなく aria-labelledby で名前を与える。
-   * <legend> は fieldset の名前にはなるが、中の role="radiogroup" には届かない。 */
+   * <legend> は fieldset の名前にはなるが、中の role="radiogroup" には届かない。
+   *
+   * <important>
+   * cloneElement は undefined でもキーを上書きする。子が自分で持っている
+   * aria-* を消さないよう、必ず合成する（上書きすると、子側で管理している
+   * エラー状態や説明の紐付けが黙って消える）。
+   * </important> */
+  const childProps = children.props as {
+    "aria-labelledby"?: string;
+    "aria-describedby"?: string;
+    "aria-invalid"?: boolean;
+  };
   const child = React.cloneElement(children, {
-    "aria-labelledby": legendId,
-    "aria-describedby": describedBy,
-    "aria-invalid": error ? true : undefined,
+    "aria-labelledby": legendId ?? childProps["aria-labelledby"],
+    "aria-describedby": joinDescribedBy(childProps["aria-describedby"], describedBy),
+    "aria-invalid": error ? true : childProps["aria-invalid"],
   } as React.Attributes);
 
   return (

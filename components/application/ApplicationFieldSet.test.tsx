@@ -88,6 +88,54 @@ describe("ApplicationFieldSet", () => {
     });
   });
 
+  /* cloneElement は undefined でもキーを上書きする。子が自分で持っている
+   * aria-* を消してはいけない（子側で管理しているエラー状態が黙って消える）。 */
+  it("子が自分で持っている aria-invalid / aria-describedby を消さない", () => {
+    const { container } = render(
+      <ApplicationFieldSet label="優先度">
+        <ApplicationRadioGroup
+          items={ITEMS}
+          name="priority"
+          aria-invalid
+          aria-describedby="caller-hint"
+        />
+      </ApplicationFieldSet>,
+    );
+    const group = container.querySelector('[data-slot="radio-group"]');
+    expect(group?.getAttribute("aria-invalid")).toBe("true");
+    expect(group?.getAttribute("aria-describedby")).toBe("caller-hint");
+  });
+
+  it("FieldSet の error と子の aria-describedby は両方残る", () => {
+    const { container } = render(
+      <ApplicationFieldSet label="優先度" error="選択してください">
+        <ApplicationRadioGroup items={ITEMS} name="priority" aria-describedby="caller-hint" />
+      </ApplicationFieldSet>,
+    );
+    const ids = (
+      container.querySelector('[data-slot="radio-group"]')?.getAttribute("aria-describedby") ?? ""
+    ).split(" ");
+    expect(ids).toContain("caller-hint");
+    expect(ids.length).toBe(2);
+  });
+
+  /* name だけで id を組むと、同じ name の同じ行を持つフォームが 2 つ
+   * （別ダイアログ等）同時に載ったとき id が衝突する。 */
+  it("同じ name のグループを 2 つ載せても id が衝突しない", () => {
+    const { container } = render(
+      <>
+        <ApplicationFieldSet label="優先度 A">
+          <ApplicationRadioGroup items={ITEMS} name="priority" />
+        </ApplicationFieldSet>
+        <ApplicationFieldSet label="優先度 B">
+          <ApplicationRadioGroup items={ITEMS} name="priority" />
+        </ApplicationFieldSet>
+      </>,
+    );
+    const ids = [...container.querySelectorAll("input[name=priority]")].map((el) => el.id);
+    expect(new Set(ids).size).toBe(ids.length);
+  });
+
   it("ラジオグループに読み上げ名が付く", () => {
     render(<ApplicationFieldSet label="優先度">{GROUPS[0].render()}</ApplicationFieldSet>);
     expect(screen.getByRole("radiogroup", { name: /優先度/ })).toBeTruthy();

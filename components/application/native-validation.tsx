@@ -12,11 +12,22 @@
  * どの項目が無効なのかもエラー文言も伝わらない（送信はブロックされたまま
  * なので、原因に到達できずに詰まる）。
  *
- * `invalid` イベントをキャンセルすると、その要素は HTML 仕様上の
- * "unhandled invalid controls" から外れ、ブラウザによるフォーカスと
- * 吹き出しが起きなくなる。**フォームが invalid である事実は変わらないので
- * 送信はブロックされたまま**で、フォーカスとエラー表示だけを
- * こちらで引き受けられる。
+ * そこで**そのフォーカスを受けて可視コントロールへ渡し直す**。
+ * 上流（Base UI）が自前の隠し input に対して行っているのと同じ手当てで、
+ * `SelectRoot.js` / `CheckboxRoot.js` / `RadioRoot.js` はいずれも
+ * 隠し input の `onFocus` でトリガーへフォーカスを戻している。
+ *
+ * `invalid` イベント側では**何もしない**。理由は 2 つある。
+ *
+ *   1. `checkValidity()` も `invalid` を発火する。そこでフォーカスや
+ *      エラー表示を行うと、「検証結果を黙って知りたいだけ」の呼び出しで
+ *      画面が動いてしまう（`reportValidity()` と区別が付かない）。
+ *   2. 送信時は invalid な control それぞれで発火するため、各自が自分を
+ *      フォーカスすると**最後の項目**が勝つ。ブラウザは先頭の項目を
+ *      フォーカスするので、挙動が食い違う。
+ *
+ * `focus` はブラウザが対話的検証を行ったときにしか来ず、しかも先頭の
+ * invalid な control にしか来ないため、両方とも起きない。
  * </important>
  *
  * 上流（Base UI）は `Form` / `Field` がこの役目を持つ設計で、`Form` は
@@ -35,8 +46,11 @@ export interface NativeValidationRelay {
   /** 文言を出す要素の id */
   messageId: string;
 
-  /** 送信用 input に渡すハンドラ */
-  onInvalid: React.FormEventHandler<HTMLInputElement>;
+  /**
+   * 送信用 input に渡すハンドラ。
+   * ブラウザが対話的検証でこの input をフォーカスしたときだけ動く。
+   */
+  onFocus: React.FocusEventHandler<HTMLInputElement>;
 
   /** 値が変わったときに呼ぶ。エラー表示を解除する */
   clear: () => void;
@@ -67,16 +81,17 @@ export function useNativeValidationRelay(
     fallbackMessageRef.current = fallbackMessage;
   });
 
-  const onInvalid = React.useCallback<React.FormEventHandler<HTMLInputElement>>((event) => {
-    // ブラウザによるフォーカスと吹き出しを止める（送信のブロックは残る）
-    event.preventDefault();
-    setMessage(event.currentTarget.validationMessage || fallbackMessageRef.current);
+  const onFocus = React.useCallback<React.FocusEventHandler<HTMLInputElement>>((event) => {
+    const input = event.currentTarget;
+    // 通常のフォーカス（あり得ないが、tabIndex=-1 でも script からは来る）では動かさない
+    if (input.validity.valid) return;
+    setMessage(input.validationMessage || fallbackMessageRef.current);
     getControlRef.current()?.focus();
   }, []);
 
   const clear = React.useCallback(() => setMessage(null), []);
 
-  return { message, messageId: `${reactId}-native-error`, onInvalid, clear };
+  return { message, messageId: `${reactId}-native-error`, onFocus, clear };
 }
 
 /**

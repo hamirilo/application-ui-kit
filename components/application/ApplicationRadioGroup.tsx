@@ -163,7 +163,10 @@ export const ApplicationRadioGroup = React.forwardRef<HTMLDivElement, Applicatio
     ref,
   ) => {
     const reactId = React.useId();
-    const idBase = name ?? `application-radio-${reactId}`;
+    /* name があってもインスタンスごとの id を混ぜる。name だけで組むと、
+     * 同じ name の同じ行を持つフォームが 2 つ（別ダイアログ等）同時に載ったとき
+     * id が衝突し、label の htmlFor が先勝ちで別インスタンスを指す。 */
+    const idBase = `application-radio-${reactId}`;
 
     return (
       <RadioGroup

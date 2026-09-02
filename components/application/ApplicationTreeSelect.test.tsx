@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from "@testing-library/react";
+import { fireEvent, render, screen, waitFor } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it, vi } from "vitest";
 import {
@@ -49,16 +49,6 @@ describe("findTreePath", () => {
   });
 });
 
-/* checkValidity() は invalid イベントを同期的に発火する。この kit の部品は
- * それを拾って state を更新するため、act() で包まないと React が警告する。 */
-function checkValidity(el: HTMLFormElement | HTMLInputElement): boolean {
-  let valid = false;
-  act(() => {
-    valid = el.checkValidity();
-  });
-  return valid;
-}
-
 describe("ApplicationTreeSelect のフォーム送信", () => {
   /* hidden input は制約検証の対象外なので、required を付けても
    * 未選択でフォームが valid になってしまう。実際に検証されることを固定する。 */
@@ -72,8 +62,8 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
     const field = container.querySelector('input[name="unit"]') as HTMLInputElement;
     expect(field.type).not.toBe("hidden");
     expect(field.value).toBe("");
-    expect(checkValidity(field)).toBe(false);
-    expect(checkValidity(form)).toBe(false);
+    expect(field.checkValidity()).toBe(false);
+    expect(form.checkValidity()).toBe(false);
   });
 
   it("選択済みならフォームが valid になり、選択値を送信する", async () => {
@@ -91,7 +81,7 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
     const form = container.querySelector("form") as HTMLFormElement;
     const field = container.querySelector('input[name="unit"]') as HTMLInputElement;
     expect(field.value).toBe("sales");
-    expect(checkValidity(form)).toBe(true);
+    expect(form.checkValidity()).toBe(true);
   });
 
   /* aria-hidden な送信用 input へブラウザがフォーカスすると、支援技術には
@@ -106,8 +96,8 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
     const field = container.querySelector('input[name="unit"]') as HTMLInputElement;
     const trigger = screen.getByRole("combobox");
 
-    // ブラウザ既定（aria-hidden な input へのフォーカスと吹き出し）を止めている
-    expect(fireEvent.invalid(field)).toBe(false);
+    // ブラウザが対話的検証でこの input をフォーカスした状況を作る
+    fireEvent.focus(field);
 
     expect(document.activeElement).toBe(trigger);
     expect(trigger.getAttribute("aria-invalid")).toBe("true");
@@ -120,7 +110,7 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
     expect(message?.textContent).toBe("選択してください");
 
     // 送信のブロックは維持される
-    expect(checkValidity(container.querySelector("form") as HTMLFormElement)).toBe(false);
+    expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(false);
   });
 
   it("選択するとネイティブ検証のエラー表示が消える", async () => {
@@ -129,7 +119,7 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
         <ApplicationTreeSelect items={UNITS} name="unit" required aria-label="組織" />
       </form>,
     );
-    fireEvent.invalid(container.querySelector('input[name="unit"]') as HTMLInputElement);
+    fireEvent.focus(container.querySelector('input[name="unit"]') as HTMLInputElement);
     const trigger = screen.getByRole("combobox");
     expect(trigger.getAttribute("aria-invalid")).toBe("true");
 
@@ -154,12 +144,30 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
         />
       </form>,
     );
-    fireEvent.invalid(container.querySelector('input[name="unit"]') as HTMLInputElement);
+    fireEvent.focus(container.querySelector('input[name="unit"]') as HTMLInputElement);
     const trigger = screen.getByRole("combobox");
 
     // フォーカスと aria-invalid は引き受けるが、文言は呼び出し側のものだけ
     expect(document.activeElement).toBe(trigger);
     expect(trigger.getAttribute("aria-describedby")).toBe("caller-error");
+  });
+
+  /* checkValidity() も invalid を発火する。そこでフォーカスやエラー表示を
+   * 行うと「検証結果を黙って知りたいだけ」の呼び出しで画面が動く。
+   * relay は focus 側に置いてあるので動かない。 */
+  it("checkValidity() ではフォーカスもエラー表示も動かさない", () => {
+    const { container } = render(
+      <form>
+        <ApplicationTreeSelect items={UNITS} name="unit" required aria-label="組織" />
+      </form>,
+    );
+    const form = container.querySelector("form") as HTMLFormElement;
+    const before = document.activeElement;
+
+    expect(form.checkValidity()).toBe(false);
+
+    expect(document.activeElement).toBe(before);
+    expect(screen.getByRole("combobox").getAttribute("aria-invalid")).toBeNull();
   });
 
   it("required なしなら未選択でも valid", () => {
@@ -168,7 +176,7 @@ describe("ApplicationTreeSelect のフォーム送信", () => {
         <ApplicationTreeSelect items={UNITS} name="unit" aria-label="組織" />
       </form>,
     );
-    expect(checkValidity(container.querySelector("form") as HTMLFormElement)).toBe(true);
+    expect((container.querySelector("form") as HTMLFormElement).checkValidity()).toBe(true);
   });
 });
 

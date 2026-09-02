@@ -38,7 +38,16 @@ const ALL_SCOPE_ID = "all";
 const kindScopeId = (index: number) => `kind-${index}`;
 
 export interface ApplicationScopeSearchItem {
-  /** 選択時の値。候補の識別子（社員番号・部署コードなど） */
+  /**
+   * 選択時の値。候補の識別子（社員番号・部署コードなど）。
+   *
+   * <important>
+   * **種別をまたいで一意にすること。** この部品は種別を横断して1本の一覧に
+   * 並べるため、value が同じ候補が複数あると `recentValues` がどれを指すか
+   * 決まらない（社員の "1" と部署の "1" が衝突する）。
+   * 種別ごとに採番が独立しているなら `emp-1` / `dept-1` のように前置きする。
+   * </important>
+   */
   value: string;
 
   /** 種別。グループ見出しと種別チップの単位になる（例: 社員 / 部署 / 拠点） */
@@ -96,6 +105,8 @@ export interface ApplicationScopeSearchProps {
   /**
    * 入力が空のときに出す候補の value。「最近見た項目」として使う。
    * 空にすると、入力が空のあいだは `promptMessage` を出す。
+   *
+   * `items` の value が種別をまたいで一意であることが前提（`value` の説明を参照）。
    */
   recentValues?: string[];
 
@@ -314,8 +325,13 @@ export const ApplicationScopeSearch = React.forwardRef<
 
       if (!hasQuery) {
         if (!recentValues?.length) return [];
-        // recentValues の順（= 最近見た順）を保つ
-        const byValue = new Map(scoped.map((item) => [item.value, item]));
+        /* recentValues の順（= 最近見た順）を保つ。
+         * value は種別をまたいで一意である前提だが、破られたときも挙動が
+         * 揺れないよう先に現れたものを採る（Map は後勝ちになるため）。 */
+        const byValue = new Map<string, ApplicationScopeSearchItem>();
+        for (const item of scoped) {
+          if (!byValue.has(item.value)) byValue.set(item.value, item);
+        }
         const recent = recentValues
           .map((value) => byValue.get(value))
           .filter((item): item is ApplicationScopeSearchItem => item !== undefined);

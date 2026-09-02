@@ -137,7 +137,10 @@ export function ApplicationRadioTable<T>({
   "aria-invalid": ariaInvalid,
 }: ApplicationRadioTableProps<T>) {
   const reactId = React.useId();
-  const idBase = name ?? `application-radio-table-${reactId}`;
+  /* name があってもインスタンスごとの id を混ぜる。name だけで組むと、
+   * 同じ name の同じ行を持つフォームが 2 つ（別ダイアログ等）同時に載ったとき
+   * id が衝突し、label の htmlFor が先勝ちで別インスタンスを指す。 */
+  const idBase = `application-radio-table-${reactId}`;
 
   // 行クリックで選択するには、非制御でも現在値を知る必要がある。
   //

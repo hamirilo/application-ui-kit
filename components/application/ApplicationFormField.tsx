@@ -12,6 +12,7 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { Field, FieldDescription, FieldError, FieldLabel } from "../ui/field";
+import { joinDescribedBy } from "./native-validation";
 
 export interface ApplicationFormFieldProps {
   /** ラベル文字列 */
@@ -98,10 +99,16 @@ export function ApplicationFormField({
    *   - 受け取る子でも aria-invalid と二重の経路になっていた
    * ため、aria-invalid へ一本化した。単体利用のための error prop は
    * 各コンポーネント側に残っている。 */
+  const childProps = children.props as {
+    "aria-describedby"?: string;
+    "aria-invalid"?: boolean;
+  };
   const child = React.cloneElement(children, {
     id,
-    "aria-describedby": describedBy,
-    "aria-invalid": error ? true : undefined,
+    /* cloneElement は undefined でもキーを上書きする。子が自分で持っている
+     * aria-* を消さないよう合成する。 */
+    "aria-describedby": joinDescribedBy(childProps["aria-describedby"], describedBy),
+    "aria-invalid": error ? true : childProps["aria-invalid"],
   } as React.Attributes);
 
   return (
