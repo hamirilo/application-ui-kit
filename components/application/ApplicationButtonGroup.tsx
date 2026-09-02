@@ -10,6 +10,11 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { ToggleGroup, ToggleGroupItem } from "../ui/toggle-group";
+import {
+  NativeValidationMessage,
+  joinDescribedBy,
+  useNativeValidationRelay,
+} from "./native-validation";
 
 export interface ApplicationButtonGroupItem {
   /** 選択時の値 */
@@ -70,6 +75,20 @@ export interface ApplicationButtonGroupProps {
 
   /** ラベルとなる要素の id（画面上にラベルがある場合はこちらを使う） */
   "aria-labelledby"?: string;
+
+  /** 説明・エラー文言の id（ApplicationFormField が自動で渡す） */
+  "aria-describedby"?: string;
+
+  /**
+   * エラー状態（ApplicationFormField が自動で渡す）。
+   *
+   * <important>
+   * ApplicationFormField は error が無いときも `aria-invalid: undefined` を
+   * 渡してくる。rest spread に混ぜるとこちらが立てた値を消してしまうため、
+   * 明示的に受け取って合成する。
+   * </important>
+   */
+  "aria-invalid"?: boolean;
 }
 
 /** ApplicationButtonGroup のサイズ名 → shadcn/ui の toggle サイズ名 */
@@ -118,6 +137,8 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
       name,
       required,
       className,
+      "aria-describedby": ariaDescribedBy,
+      "aria-invalid": ariaInvalid,
       ...aria
     },
     ref,
@@ -127,19 +148,42 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
     const [uncontrolled, setUncontrolled] = React.useState(defaultValue ?? "");
     const current = value !== undefined ? value : uncontrolled;
 
+    const groupRef = React.useRef<HTMLDivElement>(null);
+
+    // 送信用 input は aria-hidden なので、ネイティブ検証が弾いたときの
+    // フォーカスとエラー表示はボタン側へ引き受ける（native-validation.tsx）
+    const nativeValidation = useNativeValidationRelay(() => {
+      // roving tabindex なので、その時点で Tab が当たるボタンへ移す
+      const group = groupRef.current;
+      return (
+        group?.querySelector<HTMLElement>('[data-slot="toggle-group-item"][tabindex="0"]') ??
+        group?.querySelector<HTMLElement>('[data-slot="toggle-group-item"]') ??
+        null
+      );
+    }, "選択してください");
+
+    const invalid = nativeValidation.message !== null;
+
     const handleChange = React.useCallback(
       (next: string[]) => {
         const selected = next[0] ?? "";
         if (value === undefined) setUncontrolled(selected);
         onValueChange?.(selected);
+        nativeValidation.clear();
       },
-      [onValueChange, value],
+      [onValueChange, value, nativeValidation.clear],
     );
 
     return (
       <>
         <ToggleGroup
-          ref={ref}
+          ref={(node: HTMLDivElement | null) => {
+            groupRef.current = node;
+            if (typeof ref === "function") ref(node);
+            else if (ref) ref.current = node;
+          }}
+          aria-describedby={joinDescribedBy(ariaDescribedBy, invalid && nativeValidation.messageId)}
+          aria-invalid={ariaInvalid || invalid || undefined}
           value={value !== undefined ? (value === "" ? [] : [value]) : undefined}
           defaultValue={defaultValue !== undefined ? [defaultValue] : undefined}
           onValueChange={handleChange}
@@ -186,10 +230,17 @@ export const ApplicationButtonGroup = React.forwardRef<HTMLDivElement, Applicati
             disabled={disabled}
             // 値の変更はボタンの選択で行う。ここへ直接入力させない
             onChange={() => {}}
+            onInvalid={nativeValidation.onInvalid}
             tabIndex={-1}
             aria-hidden="true"
             className="sr-only"
           />
+        )}
+
+        {invalid && (
+          <NativeValidationMessage id={nativeValidation.messageId}>
+            {nativeValidation.message}
+          </NativeValidationMessage>
         )}
       </>
     );

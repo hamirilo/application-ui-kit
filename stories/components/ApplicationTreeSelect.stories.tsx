@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import {
+  ApplicationButton,
   ApplicationFormField,
   ApplicationTreeSelect,
   type ApplicationTreeSelectItem,
@@ -276,6 +277,34 @@ export const InFormField: Story = {
       </Stack>
     );
   },
+};
+
+/**
+ * ネイティブのフォーム検証（`<form>` + `required` + `type="submit"`）。
+ *
+ * 未選択のまま送信すると、ブラウザ既定の挙動（`aria-hidden` な送信用 input への
+ * フォーカスと吹き出し）を止め、**可視のトリガーへフォーカス**して
+ * `aria-invalid` とエラー文言を紐づける。送信自体はブロックされたまま。
+ *
+ * 呼び出し側が `ApplicationFormField error` で文言を出している場合は
+ * 文言を重ねず、フォーカスと `aria-invalid` だけを引き受ける。
+ */
+export const NativeValidation: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <form
+      className="max-w-md space-y-4"
+      onSubmit={(event) => {
+        event.preventDefault();
+        alert("送信しました");
+      }}
+    >
+      <ApplicationFormField label="所属" required>
+        <ApplicationTreeSelect items={UNITS} name="unit" placeholder="組織を選択" required />
+      </ApplicationFormField>
+      <ApplicationButton type="submit">送信</ApplicationButton>
+    </form>
+  ),
 };
 
 /**

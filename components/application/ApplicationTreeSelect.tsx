@@ -25,6 +25,11 @@ import * as React from "react";
 
 import { cn } from "../../lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import {
+  NativeValidationMessage,
+  joinDescribedBy,
+  useNativeValidationRelay,
+} from "./native-validation";
 
 /** 横に展開する最大階層数の既定値 */
 const DEFAULT_MAX_LEVELS = 4;
@@ -186,6 +191,11 @@ export function ApplicationTreeSelect({
   const [open, setOpen] = React.useState(false);
   const [activePath, setActivePath] = React.useState<number[]>([]);
   const panelRef = React.useRef<HTMLDivElement>(null);
+  const triggerRef = React.useRef<HTMLButtonElement>(null);
+
+  // 送信用 input は aria-hidden なので、ネイティブ検証が弾いたときの
+  // フォーカスとエラー表示はトリガー側へ引き受ける（native-validation.tsx）
+  const nativeValidation = useNativeValidationRelay(() => triggerRef.current, "選択してください");
 
   const isControlled = value !== undefined;
   const [internalValue, setInternalValue] = React.useState<string | null>(defaultValue);
@@ -231,10 +241,17 @@ export function ApplicationTreeSelect({
       : selectedPath[selectedPath.length - 1].label
     : null;
 
+  const invalid = nativeValidation.message !== null;
+  /* 呼び出し側（ApplicationFormField 等）が既にエラーを出しているときは、
+   * 同じ場所に 2 つ文言が並ばないよう自前の文言は出さない。
+   * フォーカスと aria-invalid だけを引き受ける。 */
+  const showNativeError = invalid && !error;
+
   const select = (next: string) => {
     if (!isControlled) setInternalValue(next);
     onValueChange?.(next);
     setOpen(false);
+    nativeValidation.clear();
   };
 
   const activate = (depth: number, index: number) => {
@@ -270,18 +287,22 @@ export function ApplicationTreeSelect({
     <>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger
+          ref={triggerRef}
           disabled={disabled}
           render={<button type="button" />}
           id={id}
           role="combobox"
           aria-label={ariaLabel}
           aria-labelledby={ariaLabelledBy}
-          aria-describedby={ariaDescribedBy}
-          aria-invalid={error || undefined}
+          aria-describedby={joinDescribedBy(
+            ariaDescribedBy,
+            showNativeError && nativeValidation.messageId,
+          )}
+          aria-invalid={error || invalid || undefined}
           data-empty={!label}
           className={cn(
             "flex h-9 w-full items-center justify-between gap-2 rounded-lg border bg-background px-3 text-left text-sm",
-            error ? "border-danger" : "border-input",
+            error || invalid ? "border-danger" : "border-input",
             disabled && "opacity-50",
             "data-[empty=true]:text-muted-foreground",
             className,
@@ -368,10 +389,17 @@ export function ApplicationTreeSelect({
           disabled={disabled}
           // 値の変更はツリーの選択で行う。ここへ直接入力させない
           onChange={() => {}}
+          onInvalid={nativeValidation.onInvalid}
           tabIndex={-1}
           aria-hidden="true"
           className="sr-only"
         />
+      )}
+
+      {showNativeError && (
+        <NativeValidationMessage id={nativeValidation.messageId}>
+          {nativeValidation.message}
+        </NativeValidationMessage>
       )}
     </>
   );

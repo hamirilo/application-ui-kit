@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from "@storybook/react-vite";
 import { LayoutGrid, List, Rows3 } from "lucide-react";
 import * as React from "react";
 import {
+  ApplicationButton,
   ApplicationButtonGroup,
   type ApplicationButtonGroupItem,
   ApplicationFormField,
@@ -241,5 +242,30 @@ export const WithFormField: Story = {
     <ApplicationFormField label="表示期間" required helpText="後から変更できます">
       <ApplicationButtonGroup items={PERIODS} name="period" defaultValue="week" />
     </ApplicationFormField>
+  ),
+};
+
+/**
+ * ネイティブのフォーム検証（`<form>` + `required` + `type="submit"`）。
+ *
+ * 未選択のまま送信すると、ブラウザ既定の挙動（`aria-hidden` な送信用 input への
+ * フォーカスと吹き出し）を止め、**可視のボタンへフォーカス**して
+ * `aria-invalid` とエラー文言を紐づける。送信自体はブロックされたまま。
+ */
+export const NativeValidation: Story = {
+  parameters: { controls: { disable: true } },
+  render: () => (
+    <form
+      className="max-w-md space-y-4"
+      onSubmit={(event) => {
+        event.preventDefault();
+        alert("送信しました");
+      }}
+    >
+      <ApplicationFormField label="表示期間" required>
+        <ApplicationButtonGroup items={PERIODS} name="period" required aria-label="表示期間" />
+      </ApplicationFormField>
+      <ApplicationButton type="submit">送信</ApplicationButton>
+    </form>
   ),
 };
