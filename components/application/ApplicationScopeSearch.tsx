@@ -165,6 +165,25 @@ export interface ApplicationScopeSearchProps {
    * </important>
    */
   "aria-label"?: string;
+
+  /**
+   * 入力欄の id。
+   *
+   * <important>
+   * ApplicationFormField はラベルの htmlFor をこの id に向ける。受け取らないと
+   * `<label for>` が実在しない要素を指し、ラベルクリックが効かない。
+   * </important>
+   */
+  id?: string;
+
+  /** ラベルとなる要素の id。渡すと `aria-label` より優先する */
+  "aria-labelledby"?: string;
+
+  /** 説明・エラー文言の id（ApplicationFormField が自動で渡す） */
+  "aria-describedby"?: string;
+
+  /** エラー状態（ApplicationFormField が自動で渡す） */
+  "aria-invalid"?: boolean;
 }
 
 interface ResolvedGroup {
@@ -246,7 +265,11 @@ export const ApplicationScopeSearch = React.forwardRef<
       hint = "↑↓ で移動 ・ Enter で決定",
       disabled = false,
       className,
+      id,
       "aria-label": ariaLabel,
+      "aria-labelledby": ariaLabelledBy,
+      "aria-describedby": ariaDescribedBy,
+      "aria-invalid": ariaInvalid,
     },
     ref,
   ) => {
@@ -396,7 +419,12 @@ export const ApplicationScopeSearch = React.forwardRef<
           aria-activedescendant={open && activeIndex >= 0 ? optionId(activeIndex) : undefined}
           aria-autocomplete="list"
           autoComplete="off"
-          aria-label={ariaLabel ?? placeholder}
+          id={id}
+          // aria-labelledby があるときは名前をそちらへ譲る（二重に名前を持たせない）
+          aria-label={ariaLabelledBy ? undefined : (ariaLabel ?? placeholder)}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          aria-invalid={ariaInvalid}
           placeholder={placeholder}
           disabled={disabled}
           value={currentQuery}

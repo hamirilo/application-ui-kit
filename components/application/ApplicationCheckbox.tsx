@@ -8,6 +8,7 @@
 import * as React from "react";
 import { cn } from "../../lib/utils";
 import { Checkbox } from "../ui/checkbox";
+import { joinDescribedBy } from "./native-validation";
 
 export interface ApplicationCheckboxProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Checkbox>, "children"> {
@@ -43,13 +44,37 @@ export interface ApplicationCheckboxProps
  * ```
  */
 export const ApplicationCheckbox = React.forwardRef<HTMLButtonElement, ApplicationCheckboxProps>(
-  ({ label, description, className, wrapperClassName, id, ...props }, ref) => {
+  (
+    {
+      label,
+      description,
+      className,
+      wrapperClassName,
+      id,
+      /* 自前の description との紐付けを消さないよう、明示的に受け取って合成する。
+       * ApplicationFormField は常に aria-describedby を注入してくるため、
+       * {...props} でそのまま上書きさせると description が読まれなくなる。 */
+      "aria-describedby": ariaDescribedBy,
+      ...props
+    },
+    ref,
+  ) => {
     const autoId = React.useId();
     const inputId = id ?? autoId;
     const descId = description ? `${inputId}-desc` : undefined;
 
+    const describedBy = joinDescribedBy(ariaDescribedBy, descId);
+
     if (!label && !description) {
-      return <Checkbox ref={ref} id={inputId} className={className} {...props} />;
+      return (
+        <Checkbox
+          ref={ref}
+          id={inputId}
+          aria-describedby={describedBy}
+          className={className}
+          {...props}
+        />
+      );
     }
 
     return (
@@ -57,7 +82,7 @@ export const ApplicationCheckbox = React.forwardRef<HTMLButtonElement, Applicati
         <Checkbox
           ref={ref}
           id={inputId}
-          aria-describedby={descId}
+          aria-describedby={describedBy}
           // ラベル1行目と視覚的に揃える
           className={cn("mt-0.5", className)}
           {...props}

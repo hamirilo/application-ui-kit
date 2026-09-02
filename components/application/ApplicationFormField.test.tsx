@@ -2,9 +2,12 @@ import { render, screen } from "@testing-library/react";
 import * as React from "react";
 import { describe, expect, it } from "vitest";
 import { Textarea } from "../ui/textarea";
+import { ApplicationCheckbox } from "./ApplicationCheckbox";
 import { ApplicationCombobox } from "./ApplicationCombobox";
+import { ApplicationDatePicker } from "./ApplicationDatePicker";
 import { ApplicationFormField } from "./ApplicationFormField";
 import { ApplicationInput } from "./ApplicationInput";
+import { ApplicationScopeSearch } from "./ApplicationScopeSearch";
 import { ApplicationSelect } from "./ApplicationSelect";
 
 /**
@@ -28,6 +31,11 @@ const CONTROLS = [
   { name: "ApplicationSelect", render: () => <ApplicationSelect items={ITEMS} /> },
   { name: "ApplicationCombobox", render: () => <ApplicationCombobox items={ITEMS} /> },
   { name: "Textarea", render: () => <Textarea /> },
+  { name: "ApplicationDatePicker", render: () => <ApplicationDatePicker /> },
+  {
+    name: "ApplicationScopeSearch",
+    render: () => <ApplicationScopeSearch items={[]} placeholder="検索" />,
+  },
 ] as const;
 
 /** Field（role="group" + data-slot="field"）を取り出す */
@@ -133,6 +141,22 @@ describe("ApplicationFormField × 各コントロールの結線", () => {
       );
       expect(screen.getByRole("combobox").getAttribute("aria-invalid")).toBe("true");
     });
+  });
+
+  /* ApplicationCheckbox は description との紐付けを自前で持つ。注入された
+   * aria-describedby で上書きすると、その description が読まれなくなる。 */
+  it("ApplicationCheckbox は自前の description との紐付けを保つ", () => {
+    const { container } = render(
+      <ApplicationFormField label="通知" helpText="あとから変更できます">
+        <ApplicationCheckbox label="メール通知" description="重要な更新のみ送ります" />
+      </ApplicationFormField>,
+    );
+    const ids = (
+      container.querySelector("[role=checkbox]")?.getAttribute("aria-describedby") ?? ""
+    ).split(" ");
+    const texts = ids.map((id) => document.getElementById(id)?.textContent);
+    expect(texts).toContain("重要な更新のみ送ります");
+    expect(texts).toContain("あとから変更できます");
   });
 
   it("単体利用（ApplicationFormField 無し）でも error が aria-invalid になる", () => {

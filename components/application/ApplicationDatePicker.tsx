@@ -79,6 +79,29 @@ export interface ApplicationDatePickerProps {
    * 追加クラス
    */
   className?: string;
+
+  /**
+   * 入力欄の id。
+   *
+   * <important>
+   * ApplicationFormField はラベルの htmlFor をこの id に向ける。受け取らないと
+   * `<label for>` が実在しない要素を指し、ラベルクリックが効かず、
+   * 読み上げ名も付かない。
+   * </important>
+   */
+  id?: string;
+
+  /** ラベル文字列（画面上にラベルが無い場合） */
+  "aria-label"?: string;
+
+  /** ラベルとなる要素の id */
+  "aria-labelledby"?: string;
+
+  /** 説明・エラー文言の id（ApplicationFormField が自動で渡す） */
+  "aria-describedby"?: string;
+
+  /** エラー状態（ApplicationFormField が自動で渡す） */
+  "aria-invalid"?: boolean;
 }
 
 /**
@@ -262,6 +285,11 @@ export function ApplicationDatePicker({
   minDate,
   maxDate,
   className,
+  id,
+  "aria-label": ariaLabel,
+  "aria-labelledby": ariaLabelledBy,
+  "aria-describedby": ariaDescribedBy,
+  "aria-invalid": ariaInvalid,
 }: ApplicationDatePickerProps) {
   const [open, setOpen] = React.useState(false);
   const isControlled = value !== undefined;
@@ -395,6 +423,7 @@ export function ApplicationDatePicker({
         )}
       >
         <InputGroupInput
+          id={id}
           type="text"
           disabled={disabled}
           placeholder={placeholder}
@@ -403,7 +432,10 @@ export function ApplicationDatePicker({
           onFocus={handleFocus}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          aria-invalid={error || undefined}
+          aria-label={ariaLabel}
+          aria-labelledby={ariaLabelledBy}
+          aria-describedby={ariaDescribedBy}
+          aria-invalid={ariaInvalid || error || undefined}
         />
         <InputGroupAddon align="inline-end">
           <PopoverTrigger
