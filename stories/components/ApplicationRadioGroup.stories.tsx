@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import {
-  ApplicationFormField,
+  ApplicationFieldSet,
   ApplicationRadioGroup,
   type ApplicationRadioGroupItem,
 } from "../../components/application";
@@ -78,7 +78,7 @@ const meta = {
 ## 注意事項
 
 - \`orientation="horizontal"\` は選択肢が短い文言のときのみ使う（折り返すと読みにくい）
-- \`ApplicationFormField\` で囲むとラベルとエラー表示が自動で付く
+- ラベル・エラー表示は \`ApplicationFieldSet\` で囲む（\`ApplicationFormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
 - グループ全体の \`name\` を渡すとフォーム送信に含められる
         `,
       },
@@ -263,12 +263,15 @@ export const Controlled: Story = {
 };
 
 /**
- * `ApplicationFormField` と組み合わせた実際の使い方。
+ * `ApplicationFieldSet` と組み合わせた実際の使い方。
+ *
+ * グループには `<label for>` が効かないため、名前は `aria-labelledby` で結ぶ。
+ * `ApplicationFormField` を使うとラベルはあるのにアクセシブル名が無い状態になる。
  */
 export const WithFormField: Story = {
   render: () => (
-    <ApplicationFormField label="優先度" required helpText="後から変更できます">
+    <ApplicationFieldSet label="優先度" required helpText="後から変更できます">
       <ApplicationRadioGroup items={PRIORITIES} name="priority" defaultValue="mid" />
-    </ApplicationFormField>
+    </ApplicationFieldSet>
   ),
 };

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import {
-  ApplicationFormField,
+  ApplicationFieldSet,
   ApplicationRadioTable,
   type ApplicationRadioTableProps,
   type ApplicationTableColumn,
@@ -226,11 +226,11 @@ export const Controlled: Story = {
   },
 };
 
-/** `ApplicationFormField` と組み合わせた実際の使い方。 */
+/** `ApplicationFieldSet` と組み合わせた実際の使い方（グループなので FormField ではない）。 */
 export const WithFormField: Story = {
   render: (args) => (
-    <ApplicationFormField label="契約プラン" required helpText="契約期間の途中でも変更できます">
+    <ApplicationFieldSet label="契約プラン" required helpText="契約期間の途中でも変更できます">
       <ApplicationRadioTable<Plan> {...args} name="plan" defaultValue="standard" />
-    </ApplicationFormField>
+    </ApplicationFieldSet>
   ),
 };

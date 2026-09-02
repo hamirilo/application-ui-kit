@@ -5,7 +5,7 @@ import {
   ApplicationButton,
   ApplicationButtonGroup,
   type ApplicationButtonGroupItem,
-  ApplicationFormField,
+  ApplicationFieldSet,
 } from "../../components/application";
 import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
@@ -59,7 +59,7 @@ const meta = {
 ## 注意事項
 
 - 視覚的なラベルが画面上にない場合は **\`aria-label\` が必須**（何を選ぶボタン列か伝わらない）
-- \`ApplicationFormField\` で囲むとラベルとエラー表示が自動で付く
+- ラベル・エラー表示は \`ApplicationFieldSet\` で囲む（\`ApplicationFormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
 - \`name\` を渡すとフォーム送信に含められる
         `,
       },
@@ -235,13 +235,13 @@ export const Controlled: Story = {
 };
 
 /**
- * `ApplicationFormField` と組み合わせた実際の使い方。
+ * `ApplicationFieldSet` と組み合わせた実際の使い方（グループなので FormField ではない）。
  */
 export const WithFormField: Story = {
   render: () => (
-    <ApplicationFormField label="表示期間" required helpText="後から変更できます">
+    <ApplicationFieldSet label="表示期間" required helpText="後から変更できます">
       <ApplicationButtonGroup items={PERIODS} name="period" defaultValue="week" />
-    </ApplicationFormField>
+    </ApplicationFieldSet>
   ),
 };
 
@@ -262,9 +262,9 @@ export const NativeValidation: Story = {
         alert("送信しました");
       }}
     >
-      <ApplicationFormField label="表示期間" required>
+      <ApplicationFieldSet label="表示期間" required>
         <ApplicationButtonGroup items={PERIODS} name="period" required aria-label="表示期間" />
-      </ApplicationFormField>
+      </ApplicationFieldSet>
       <ApplicationButton type="submit">送信</ApplicationButton>
     </form>
   ),

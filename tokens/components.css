@@ -494,6 +494,13 @@
            data-disabled:cursor-not-allowed data-disabled:opacity-50;
   }
 
+  /* aria-invalid はグループ（role="radiogroup"）側に付く（ラジオ 1 つ 1 つが
+   * 無効なのではなく、グループとしての選択が無効なため）。アイテム側の
+   * aria-invalid 変種だけでは届かないので、グループから拾う。 */
+  [data-slot="radio-group"][aria-invalid="true"] .cn-radio-group-item {
+    @apply border-danger;
+  }
+
   .cn-radio-group-indicator {
     @apply flex size-full items-center justify-center data-unchecked:hidden;
   }
