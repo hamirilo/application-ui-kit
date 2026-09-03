@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import {
   ButtonGroup,
-  FieldSet,
+  FormFieldSet,
   FormField,
   RadioGroup,
 } from "../../components/application";
@@ -20,7 +20,7 @@ const PERIODS = [
 ];
 
 /**
- * FieldSet は「グループで選ぶ入力」にラベル・エラー・ヘルプを付ける部品。
+ * FormFieldSet は「グループで選ぶ入力」にラベル・エラー・ヘルプを付ける部品。
  *
  * <important>
  * `<label for>` は labelable 要素にしか効かない。ラジオグループやボタングループへ
@@ -28,8 +28,8 @@ const PERIODS = [
  * </important>
  */
 const meta = {
-  title: "コンポーネント/FieldSet",
-  component: FieldSet,
+  title: "コンポーネント/FormFieldSet",
+  component: FormFieldSet,
   parameters: {
     layout: "padded",
     docs: {
@@ -45,7 +45,7 @@ const meta = {
 | 子 | 使うもの | 名前の結び方 |
 |---|---|---|
 | 単一のコントロール（Input / Select / Combobox / TreeSelect / DatePicker / Textarea） | \`FormField\` | \`<label for>\` → コントロールの id |
-| グループ（RadioGroup / RadioTable / ButtonGroup） | **\`FieldSet\`** | \`<legend>\` → \`aria-labelledby\` |
+| グループ（RadioGroup / RadioTable / ButtonGroup） | **\`FormFieldSet\`** | \`<legend>\` → \`aria-labelledby\` |
 | チェックボックス 1 個 | どちらも使わない | \`Checkbox\` が自分で \`label\` を持つ |
 
 **\`<label for>\` は button / input / select / textarea / meter / output / progress にしか効かない。**
@@ -56,7 +56,7 @@ const meta = {
 
 \`error\` を渡すと 3 つが同時に起きる。
 
-1. \`FieldSet\` に \`data-invalid\` … legend と説明が destructive 色になる
+1. \`FormFieldSet\` に \`data-invalid\` … legend と説明が destructive 色になる
 2. グループに \`aria-invalid\` … 支援技術へ伝わり、枠が danger 色になる
 3. \`aria-describedby\` … エラー文言とヘルプがグループに紐づく
 
@@ -72,7 +72,7 @@ const meta = {
     label: "優先度",
     children: <RadioGroup items={PRIORITIES} name="priority" />,
   },
-} satisfies Meta<typeof FieldSet>;
+} satisfies Meta<typeof FormFieldSet>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -84,13 +84,13 @@ export const Overview: Story = {
     <Showcase>
       <Section title="Groups" note="グループ部品はこの形で囲む。名前は legend から aria-labelledby で結ぶ。">
         <Stack className="max-w-md">
-          <FieldSet label="優先度" required helpText="後から変更できます">
+          <FormFieldSet label="優先度" required helpText="後から変更できます">
             <RadioGroup items={PRIORITIES} name="priority" defaultValue="mid" />
-          </FieldSet>
+          </FormFieldSet>
 
-          <FieldSet label="表示期間" required>
+          <FormFieldSet label="表示期間" required>
             <ButtonGroup items={PERIODS} name="period" defaultValue="week" />
-          </FieldSet>
+          </FormFieldSet>
         </Stack>
       </Section>
 
@@ -99,13 +99,13 @@ export const Overview: Story = {
         note="error を渡すと legend が destructive 色になり、グループが aria-invalid になる。"
       >
         <Stack className="max-w-md">
-          <FieldSet label="優先度" required error="優先度を選択してください">
+          <FormFieldSet label="優先度" required error="優先度を選択してください">
             <RadioGroup items={PRIORITIES} name="priority-error" />
-          </FieldSet>
+          </FormFieldSet>
 
-          <FieldSet label="表示期間" required error="表示期間を選択してください">
+          <FormFieldSet label="表示期間" required error="表示期間を選択してください">
             <ButtonGroup items={PERIODS} name="period-error" />
-          </FieldSet>
+          </FormFieldSet>
         </Stack>
       </Section>
 
@@ -114,10 +114,10 @@ export const Overview: Story = {
         note="上は名前が付く。下はラベルが見えていても、支援技術からは名前の無いグループになる。"
       >
         <Stack className="max-w-md">
-          <Labeled label="FieldSet（正）">
-            <FieldSet label="優先度">
+          <Labeled label="FormFieldSet（正）">
+            <FormFieldSet label="優先度">
               <RadioGroup items={PRIORITIES} name="ok" />
-            </FieldSet>
+            </FormFieldSet>
           </Labeled>
           <Labeled label="FormField（グループには使わない）">
             <FormField label="優先度">

@@ -73,7 +73,7 @@ Django + React Islands で実装困難な構成を避ける。
 | Button / ButtonGroup | 操作。variant = primary / secondary / danger / success |
 | Input / SearchInput / Checkbox / RadioGroup / Select / Combobox / DatePicker | フォーム入力。Combobox は検索・新規作成つき選択。説明を見比べて選ばせるなら RadioGroup の `variant="cards"` |
 | ScopeSearch | 画面上部の共通検索。1 本の入力で複数種別を横断し、種別ごとのグループで候補を出す |
-| FormField / FieldSet | ラベル・必須表示・エラー配置の統一。単一のコントロールは FormField、ラジオ・ボタングループのようなグループ入力は FieldSet |
+| FormField / FormFieldSet | ラベル・必須表示・エラー配置の統一。単一のコントロールは FormField、ラジオ・ボタングループのようなグループ入力は FormFieldSet |
 | Dialog / ConfirmDialog / FormDialog | ダイアログ。破壊的操作の確認は ConfirmDialog（`confirm()` を使わない） |
 | toast | 補助的なフィードバック（`alert()` を使わない） |
 | Table | 一覧。空状態が必須の API |
@@ -85,7 +85,7 @@ Django + React Islands で実装困難な構成を避ける。
 
 **shadcn/ui をそのまま公開している部品:** Card / Spinner / Textarea / Progress /
 Empty / Item / Field / Label / Separator（API は shadcn/ui のドキュメントと同じ）。
-`FieldSet` はこちらではなく上の表にある。グループ入力のラベル・エラー配置を
+`FormFieldSet` はこちらではなく上の表にある。グループ入力のラベル・エラー配置を
 引き受ける実装をこのキットが持つため。
 
 **置いていないもの:** 社員選択・組織ツリーなどの業務ドメイン UI（ドメインを所有する

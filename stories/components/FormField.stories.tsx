@@ -45,12 +45,12 @@ application の \`includes/molecules/form_field.html\` の React 版。
 | テンプレート（.html） | \`{% include 'includes/molecules/form_field.html' %}\` |
 | ラベルが不要な入力（検索ボックス、テーブル内のインライン編集） | \`Input\` 単体 + \`aria-label\` |
 | チェックボックス | \`Checkbox\`（ラベルを自前で持っているため二重になる） |
-| グループで選ぶ入力（RadioGroup / RadioTable / ButtonGroup） | **\`FieldSet\`** |
+| グループで選ぶ入力（RadioGroup / RadioTable / ButtonGroup） | **\`FormFieldSet\`** |
 
 **グループには使わない。** \`<label for>\` は button / input / select / textarea /
 meter / output / progress にしか効かず、\`<div role="radiogroup">\` や
 \`<div role="group">\` を指してもブラウザは黙って無視する。結果、ラベルが見えていても
-支援技術からは**名前の無いグループ**になる。\`FieldSet\` は
+支援技術からは**名前の無いグループ**になる。\`FormFieldSet\` は
 \`<legend>\` + \`aria-labelledby\` で結ぶ。
 
 ## Props

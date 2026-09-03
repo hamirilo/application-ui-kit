@@ -43,7 +43,7 @@ const meta = {
 | ボタンの区切り | \`border-t border-border pt-4\` |
 | エラー | 全体は先頭のアラート、項目単位は \`FormField error\` |
 | エラーの伝え方 | \`Field\` の \`data-invalid\`（見た目）+ コントロールの \`aria-invalid\`（支援技術）。両方必要 |
-| グループ項目 | ラジオ・ボタングループは \`FieldSet\`（\`FormField\` では名前が付かない） |
+| グループ項目 | ラジオ・ボタングループは \`FormFieldSet\`（\`FormField\` では名前が付かない） |
 | 幅 | 1 カラムは \`max-w-2xl\` 程度。**画面幅いっぱいに伸ばさない**（1 行が長いと読み返せない） |
 | 送信中 | ボタンを \`loading\`、フォーム全体を \`<fieldset disabled>\` |
 
@@ -71,7 +71,7 @@ const meta = {
   （Components/toast の \`NotForValidation\` を参照）
 - **グループ（ラジオ・ボタングループ）には \`FormField\` を使わない。**
   \`<label for>\` はグループ要素に効かないため、ラベルが見えていても
-  支援技術からは名前の無いグループになる。\`FieldSet\` を使う
+  支援技術からは名前の無いグループになる。\`FormFieldSet\` を使う
 - 送信中は \`<fieldset disabled>\` で囲む。ボタンを無効化するだけでは
   入力が編集され続けてしまう
 - \`autoComplete\` を適切に設定する（\`name\` / \`email\` / \`tel\` 等）。

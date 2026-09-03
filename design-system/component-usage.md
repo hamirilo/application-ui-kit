@@ -7,7 +7,7 @@
 | 通常操作 | Button |
 | 削除・危険操作 | dangerのButton + Confirm Dialog |
 | 文字・選択入力 | Input / Select / Combobox |
-| 入力ラベル・必須・エラー | 単一のコントロール: FormField / グループ（ラジオ・ボタングループ）: FieldSet |
+| 入力ラベル・必須・エラー | 単一のコントロール: FormField / グループ（ラジオ・ボタングループ）: FormFieldSet |
 | 一時通知 | toast |
 | 一覧 | Table。空状態を必ず考慮する |
 | 画面横断の検索（人も組織も探す） | ScopeSearch。候補は props で渡す |

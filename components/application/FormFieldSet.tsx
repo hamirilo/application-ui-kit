@@ -1,5 +1,5 @@
 /**
- * FieldSet - グループで選ぶ入力にラベル・エラー・ヘルプを付ける
+ * FormFieldSet - グループで選ぶ入力にラベル・エラー・ヘルプを付ける
  *
  * ラジオグループ・ボタングループのように「単一のフォームコントロールが無い」入力用。
  *
@@ -16,6 +16,15 @@
  *
  * 単一のコントロールを持つ入力（Input / Select / Combobox / DatePicker …）は
  * `FormField` を使う。
+ *
+ * <important>
+ * 名前が `FieldSet` ではなく `FormFieldSet` なのは意図的。`FieldSet` は
+ * shadcn/ui の primitive（素の `<fieldset>` を通す合成API）が公開APIとして
+ * 先に名前を持っており、そこへこの props API を上書きすると同名で実体だけが
+ * 入れ替わる。JavaScript の利用側は `disabled` のような props を黙って失い、
+ * `FieldSet` + `FieldLegend` + `FieldGroup` の合成も成り立たなくなる。
+ * 名前を分けて両方を公開する。対になる `FormField` と綴りも揃う。
+ * </important>
  */
 
 import * as React from "react";
@@ -28,7 +37,7 @@ import {
 } from "../ui/field";
 import { joinDescribedBy } from "./native-validation";
 
-export interface FieldSetProps {
+export interface FormFieldSetProps {
   /** グループのラベル */
   label?: React.ReactNode;
 
@@ -54,28 +63,28 @@ export interface FieldSetProps {
 }
 
 /**
- * FieldSet コンポーネント
+ * FormFieldSet コンポーネント
  *
  * @example
  * ```tsx
- * <FieldSet label="優先度" required helpText="後から変更できます">
+ * <FormFieldSet label="優先度" required helpText="後から変更できます">
  *   <RadioGroup items={PRIORITIES} name="priority" />
- * </FieldSet>
+ * </FormFieldSet>
  *
  * // エラー付き
- * <FieldSet label="表示期間" error="表示期間を選択してください">
+ * <FormFieldSet label="表示期間" error="表示期間を選択してください">
  *   <ButtonGroup items={PERIODS} name="period" />
- * </FieldSet>
+ * </FormFieldSet>
  * ```
  */
-export function FieldSet({
+export function FormFieldSet({
   label,
   required = false,
   error,
   helpText,
   children,
   className,
-}: FieldSetProps) {
+}: FormFieldSetProps) {
   const autoId = React.useId();
 
   const legendId = label ? `${autoId}-legend` : undefined;
@@ -132,4 +141,4 @@ export function FieldSet({
   );
 }
 
-FieldSet.displayName = "FieldSet";
+FormFieldSet.displayName = "FormFieldSet";

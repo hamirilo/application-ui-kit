@@ -18,6 +18,7 @@
     "tokens/**/*",
     "stories/**/*",
     ".storybook/**/*",
+    "scripts/fixtures/compat-6.1/**/*",
     "vite-env.d.ts"
   ],
   "exclude": ["node_modules", "storybook-static"]

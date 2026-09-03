@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import {
-  FieldSet,
+  FormFieldSet,
   RadioGroup,
   type RadioGroupItem,
 } from "../../components/application";
@@ -78,7 +78,7 @@ const meta = {
 ## 注意事項
 
 - \`orientation="horizontal"\` は選択肢が短い文言のときのみ使う（折り返すと読みにくい）
-- ラベル・エラー表示は \`FieldSet\` で囲む（\`FormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
+- ラベル・エラー表示は \`FormFieldSet\` で囲む（\`FormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
 - グループ全体の \`name\` を渡すとフォーム送信に含められる
         `,
       },
@@ -263,15 +263,15 @@ export const Controlled: Story = {
 };
 
 /**
- * `FieldSet` と組み合わせた実際の使い方。
+ * `FormFieldSet` と組み合わせた実際の使い方。
  *
  * グループには `<label for>` が効かないため、名前は `aria-labelledby` で結ぶ。
  * `FormField` を使うとラベルはあるのにアクセシブル名が無い状態になる。
  */
 export const WithFormField: Story = {
   render: () => (
-    <FieldSet label="優先度" required helpText="後から変更できます">
+    <FormFieldSet label="優先度" required helpText="後から変更できます">
       <RadioGroup items={PRIORITIES} name="priority" defaultValue="mid" />
-    </FieldSet>
+    </FormFieldSet>
   ),
 };

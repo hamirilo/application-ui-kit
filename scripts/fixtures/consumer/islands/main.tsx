@@ -27,7 +27,17 @@ if (missing.length > 0) {
 /* v6.2.0 は非破壊リリースなので、無印の新名と Application* の旧名エイリアスの
  * 両方が引けることを確かめる。旧名が落ちていれば利用側の既存コードが壊れる。
  * 全件は index.test.ts が見るので、ここは代表と例外だけを押さえる。 */
-const NEW_NAMES = ["Button", "DatePicker", "FieldSet", "toast", "Toaster", "Table"];
+const NEW_NAMES = [
+  "Button",
+  "DatePicker",
+  // FieldSet は shadcn/ui の primitive、FormFieldSet はこの repository の
+  // props API 版。同名にすると実体だけが入れ替わるので両方を引いて確かめる。
+  "FieldSet",
+  "FormFieldSet",
+  "toast",
+  "Toaster",
+  "Table",
+];
 const LEGACY_NAMES = [
   "ApplicationButton",
   "ApplicationDatePicker",

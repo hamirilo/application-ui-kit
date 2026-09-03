@@ -129,14 +129,16 @@ export type {
   DropdownProps as ApplicationDropdownProps,
 } from "./Dropdown";
 
+/* 新名は `FieldSet` ではなく `FormFieldSet`。`FieldSet` は shadcn/ui の
+ * primitive が持つ名前で、そこへ上書きすると同名で実体が入れ替わる。 */
 export {
-  /** @deprecated v7.0.0 で削除。`FieldSet` を使ってください。 */
-  FieldSet as ApplicationFieldSet,
-} from "./FieldSet";
+  /** @deprecated v7.0.0 で削除。`FormFieldSet` を使ってください。 */
+  FormFieldSet as ApplicationFieldSet,
+} from "./FormFieldSet";
 export type {
-  /** @deprecated v7.0.0 で削除。`FieldSetProps` を使ってください。 */
-  FieldSetProps as ApplicationFieldSetProps,
-} from "./FieldSet";
+  /** @deprecated v7.0.0 で削除。`FormFieldSetProps` を使ってください。 */
+  FormFieldSetProps as ApplicationFieldSetProps,
+} from "./FormFieldSet";
 
 export {
   /** @deprecated v7.0.0 で削除。`FormDialog` を使ってください。 */

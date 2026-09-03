@@ -5,7 +5,7 @@ import {
   Button,
   ButtonGroup,
   type ButtonGroupItem,
-  FieldSet,
+  FormFieldSet,
 } from "../../components/application";
 import { Labeled, Section, Showcase, Stack } from "../_showcase";
 
@@ -59,7 +59,7 @@ const meta = {
 ## 注意事項
 
 - 視覚的なラベルが画面上にない場合は **\`aria-label\` が必須**（何を選ぶボタン列か伝わらない）
-- ラベル・エラー表示は \`FieldSet\` で囲む（\`FormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
+- ラベル・エラー表示は \`FormFieldSet\` で囲む（\`FormField\` は\n  単一のコントロール用。グループへ使うと \`<label for>\` が効かず名前が付かない）
 - \`name\` を渡すとフォーム送信に含められる
         `,
       },
@@ -235,13 +235,13 @@ export const Controlled: Story = {
 };
 
 /**
- * `FieldSet` と組み合わせた実際の使い方（グループなので FormField ではない）。
+ * `FormFieldSet` と組み合わせた実際の使い方（グループなので FormField ではない）。
  */
 export const WithFormField: Story = {
   render: () => (
-    <FieldSet label="表示期間" required helpText="後から変更できます">
+    <FormFieldSet label="表示期間" required helpText="後から変更できます">
       <ButtonGroup items={PERIODS} name="period" defaultValue="week" />
-    </FieldSet>
+    </FormFieldSet>
   ),
 };
 
@@ -262,9 +262,9 @@ export const NativeValidation: Story = {
         alert("送信しました");
       }}
     >
-      <FieldSet label="表示期間" required>
+      <FormFieldSet label="表示期間" required>
         <ButtonGroup items={PERIODS} name="period" required aria-label="表示期間" />
-      </FieldSet>
+      </FormFieldSet>
       <Button type="submit">送信</Button>
     </form>
   ),

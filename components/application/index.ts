@@ -93,8 +93,11 @@ export type { TableProps, TableColumn } from "./Table";
 export { FormField } from "./FormField";
 export type { FormFieldProps } from "./FormField";
 
-export { FieldSet } from "./FieldSet";
-export type { FieldSetProps } from "./FieldSet";
+/* 名前は `FieldSet` ではなく `FormFieldSet`。`FieldSet` は下の
+ * 「shadcn/ui をそのまま公開しているもの」で primitive が持つ。理由は
+ * FormFieldSet.tsx の冒頭コメントを参照。 */
+export { FormFieldSet } from "./FormFieldSet";
+export type { FormFieldSetProps } from "./FormFieldSet";
 
 export { Tabs } from "./Tabs";
 export type { TabsProps, TabItem } from "./Tabs";
@@ -145,8 +148,8 @@ export type { CopyButtonProps, CopyResult } from "./CopyButton";
  * 独自の振る舞いが必要になったら、上のセクションへ移してください。
  * 名前は変わらないので、利用側の import はそのまま動きます。
  *
- * `FieldSet` はここにありません。グループ入力のラベル・必須・エラー配置を
- * 引き受ける実装を上のセクションで公開しているためです。
+ * `FieldSet` は shadcn/ui の primitive のままです。ラベル・必須・エラー配置を
+ * 引き受ける props API 版は上のセクションで `FormFieldSet` として公開しています。
  * ========================================================================== */
 
 export {
@@ -189,6 +192,7 @@ export {
 } from "../ui/item";
 export {
   Field,
+  FieldSet,
   FieldLegend,
   FieldGroup,
   FieldLabel,

@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import * as React from "react";
 import {
-  FieldSet,
+  FormFieldSet,
   RadioTable,
   type RadioTableProps,
   type TableColumn,
@@ -226,11 +226,11 @@ export const Controlled: Story = {
   },
 };
 
-/** `FieldSet` と組み合わせた実際の使い方（グループなので FormField ではない）。 */
+/** `FormFieldSet` と組み合わせた実際の使い方（グループなので FormField ではない）。 */
 export const WithFormField: Story = {
   render: (args) => (
-    <FieldSet label="契約プラン" required helpText="契約期間の途中でも変更できます">
+    <FormFieldSet label="契約プラン" required helpText="契約期間の途中でも変更できます">
       <RadioTable<Plan> {...args} name="plan" defaultValue="standard" />
-    </FieldSet>
+    </FormFieldSet>
   ),
 };
