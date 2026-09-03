@@ -130,15 +130,27 @@ FILE: for my $file (@ARGV) {
     }
 
     # b. 判別できない書き方が残っていたら、このファイルは触らない
+    #
+    # 行ごとに split して当てないこと。formatter が
+    #
+    #   const {
+    #     ApplicationToast
+    #   } = getGlobals();
+    #
+    # のように折ると、`{`〜`}` と `=` が同じ行に載らず検出をすり抜ける。
+    # すり抜けると素の識別子として `toast` へ書き換わり、**黙って部分変換される**
+    # という防ぎたかった壊れ方そのものになる。全文へ当てて、行番号は
+    # match位置から数える。
     my @problems;
     for my $rule (@AMBIGUOUS) {
         my ( $pattern, $why ) = @$rule;
-        my @lines = split /\n/, $text, -1;
-        for my $i ( 0 .. $#lines ) {
-            next unless $lines[$i] =~ $pattern;
-            ( my $shown = $lines[$i] ) =~ s/^\s+|\s+$//g;
+        while ( $text =~ /$pattern/g ) {
+            my $line = 1 + ( substr( $text, 0, $-[0] ) =~ tr/\n// );
+
+            # 複数行に跨る match はそのまま出すと読みにくいので 1 行へ畳む。
+            ( my $shown = $& ) =~ s/\s+/ /g;
             $shown =~ s{\0KEEP(\d+)\0}{$kept[$1]}g;
-            push @problems, sprintf( "%s:%d: %s\n      → %s", $file, $i + 1, $shown, $why );
+            push @problems, sprintf( "%s:%d: %s\n      → %s", $file, $line, $shown, $why );
         }
     }
     if (@problems) {

@@ -106,6 +106,9 @@ describe("rename-legacy-names.pl", () => {
       ["ブラケット記法（単引用符）", "(window as any)['ApplicationToast'].success('ok');"],
       ["window からの分割代入", "const { ApplicationToast } = window as any;"],
       ["globalThis からの分割代入", "const { ApplicationToast } = globalThis as any;"],
+      /* formatter が折った形。保護も検出も全文へ当てないと片方だけ通る。 */
+      ["多行の分割代入", "const {\n  ApplicationToast,\n} = window as any;"],
+      ["多行のプロパティアクセス", "window\n  .ApplicationToast\n  .success('ok');"],
       /* 文字列リテラルは名前そのもの。Django テンプレートと共有する契約なので
        * どこに現れても書き換えない。 */
       ["文字列リテラル", 'const key = "ApplicationToast";'],
@@ -151,6 +154,13 @@ describe("rename-legacy-names.pl", () => {
       ],
       ["受け側の分からない分割代入", "const { ApplicationToast } = getGlobals();"],
       ["this 経由のアクセス", 'this.ApplicationToast.success("ok");'],
+      /* formatter が折ると `{`〜`}` と `=` が同じ行に載らない。行ごとに当てて
+       * いると検出をすり抜け、素の識別子として `toast` へ書き換わっていた。 */
+      ["多行の分割代入（受け側が分からない）", "const {\n  ApplicationToast,\n} = getGlobals();"],
+      [
+        "多行のプロパティアクセス（受け側が分からない）",
+        "const w = window as any;\nw\n  .ApplicationToast\n  .success('ok');",
+      ],
     ];
 
     it.each(AMBIGUOUS)("%s は書き換えずに失敗する", (_name, source) => {

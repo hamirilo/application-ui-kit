@@ -162,14 +162,14 @@ Base UI 由来の 4 部品でネイティブ検証が弾いたとき、ブラウ
 吹き出しだけで、`aria-describedby` では結ばれない。
 
 これを閉じるには `Form` 層（= 却下した案 2）が要る。**既知の未解決事項として残す。**
-アプリ側で検証してエラー文言を `FormField error` / `FieldSet error`
+アプリ側で検証してエラー文言を `FormField error` / `FormFieldSet error`
 へ渡す場合は、この経路を通らないため影響しない。
 
 ## 結果
 
 - 1 により、`TreeSelect` / `ButtonGroup` は「未選択で送信 → 可視コントロールにフォーカスとエラー」が成立する
 - 2 により、エラー状態の伝達経路が `data-invalid` + `aria-invalid` の 2 本に揃い、独自 prop が消えた。上流の指示どおりに書けば全部品で同じように効く
-- グループ部品は `FieldSet` を使う。`FormField` をグループへ使うと名前が付かないことを、Story とテストで固定した
+- グループ部品は `FormFieldSet` を使う。`FormField` をグループへ使うと名前が付かないことを、Story とテストで固定した
 - Base UI へ依存する変更は入れていない。`@base-ui/react/internals/*` への依存も無い
 - 残る制約は「3. 残る制約」のとおり
 

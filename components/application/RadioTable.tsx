@@ -65,7 +65,9 @@ export interface RadioTableProps<T> {
    *
    * <important>
    * グループには `<label for>` が効かない。ラベルを付けるときは
-   * FieldSet を使うか、この prop を渡す。
+   * FormFieldSet を使うか、この prop を渡す。
+   * `FieldSet`（shadcn/ui の primitive）は legend の id を内側の
+   * グループへ注入しないので、囲んでも名前は付かない。
    * </important>
    */
   "aria-labelledby"?: string;

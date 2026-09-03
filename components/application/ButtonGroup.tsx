@@ -164,7 +164,7 @@ export const ButtonGroup = React.forwardRef<HTMLDivElement, ButtonGroupProps>(
 
     const invalid = nativeValidation.message !== null;
 
-    /* 呼び出し側（FormField / FieldSet）が既にエラーを
+    /* 呼び出し側（FormField / FormFieldSet）が既にエラーを
      * 出しているときは、自前の文言を出さない。出すと同じ意味の赤い文言が 2 つ並び、
      * aria-describedby に両方の id が入って 2 回読まれる。
      * 判定は注入される aria-invalid で行う（error prop は注入しなくなったため）。 */

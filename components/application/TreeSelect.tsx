@@ -120,7 +120,7 @@ export interface TreeSelectProps {
   /** FormField がエラー・補足説明を紐づけるために注入する */
   "aria-describedby"?: string;
 
-  /** エラー状態（FormField / FieldSet が自動で渡す） */
+  /** エラー状態（FormField / FormFieldSet が自動で渡す） */
   "aria-invalid"?: boolean;
 }
 
@@ -243,7 +243,7 @@ export function TreeSelect({
     : null;
 
   const invalid = nativeValidation.message !== null;
-  /* 呼び出し側（FormField / FieldSet 等）が既にエラーを
+  /* 呼び出し側（FormField / FormFieldSet 等）が既にエラーを
    * 出しているときは、同じ場所に 2 つ文言が並ばないよう自前の文言は出さない。
    * フォーカスと aria-invalid だけを引き受ける。
    * 判定には注入される aria-invalid も含める（error prop は注入しなくなったため、
