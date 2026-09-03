@@ -18,7 +18,7 @@ import { Cluster, Section, Showcase } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationDialog",
+  title: "コンポーネント/ApplicationDialog",
   component: ApplicationDialog,
   parameters: {
     layout: "padded",

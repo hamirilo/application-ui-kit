@@ -73,7 +73,7 @@ const CATEGORIES: ApplicationTreeSelectItem[] = [
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationTreeSelect",
+  title: "コンポーネント/ApplicationTreeSelect",
   component: ApplicationTreeSelect,
   parameters: {
     layout: "padded",

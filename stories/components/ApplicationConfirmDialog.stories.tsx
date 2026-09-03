@@ -13,7 +13,7 @@ import { Cluster, Section, Showcase } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationConfirmDialog",
+  title: "コンポーネント/ApplicationConfirmDialog",
   component: ApplicationConfirmDialog,
   parameters: {
     layout: "padded",

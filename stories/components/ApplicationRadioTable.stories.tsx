@@ -55,7 +55,7 @@ const COLUMNS: ApplicationTableColumn<Plan>[] = [
 type PlanTableProps = ApplicationRadioTableProps<Plan>;
 
 const meta = {
-  title: "Components/ApplicationRadioTable",
+  title: "コンポーネント/ApplicationRadioTable",
   component: ApplicationRadioTable,
   parameters: {
     layout: "padded",
