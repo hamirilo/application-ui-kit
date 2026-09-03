@@ -3,7 +3,7 @@ import { AlertCircle, Check, Download, Plus, Search, Trash2 } from 'lucide-react
 import { LUCIDE_METRICS } from '../../tokens/icon-metrics.generated'
 import { SpecTable, Code, DoDont } from './_parts'
 
-<Meta title="Foundations/Icons" />
+<Meta title="基礎/アイコン" />
 
 # Icons
 
@@ -63,7 +63,7 @@ margin-inline = 1px − 描画サイズ × 空き比率
 宣言し忘れると 1rem 前提の補正がかかり、小さいアイコンで詰まりすぎます。
 
 <DoDont
-  doText={<>サイズはコンポーネントのサイズクラスに任せる。<Code>{'<ApplicationButton size="sm" leftIcon={<Plus />}>'}</Code></>}
+  doText={<>サイズはコンポーネントのサイズクラスに任せる。<Code>{'<Button size="sm" leftIcon={<Plus />}>'}</Code></>}
   dontText={<>アイコンに直接サイズを書く。<Code>{'<Plus className="w-4 h-4" />'}</Code></>}
 />
 

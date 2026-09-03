@@ -51,15 +51,15 @@
 
 | Option | 実装 |
 | --- | --- |
-| Radio | `ApplicationRadioGroup` |
-| Select | `ApplicationSelect` |
-| Combobox | `ApplicationCombobox` |
-| Button Group | `ApplicationButtonGroup` |
-| Card Choice | `ApplicationRadioGroup variant="cards"` |
-| Radio Table | `ApplicationRadioTable` |
+| Radio | `RadioGroup` |
+| Select | `Select` |
+| Combobox | `Combobox` |
+| Button Group | `ButtonGroup` |
+| Card Choice | `RadioGroup variant="cards"` |
+| Radio Table | `RadioTable` |
 
 いずれも同じ排他選択なので、Patternを乗り換えるときに書き換えるのは見せ方だけです。
 
 ## Catalog
 
-Storybookの `Patterns/Single Choice` で主要な候補を同一画面上で比較します。
+Storybookの `パターン/単一選択` で主要な候補を同一画面上で比較します。
