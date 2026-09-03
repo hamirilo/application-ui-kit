@@ -87,7 +87,20 @@ for my $old (
 my @keys = sort { length($b) <=> length($a) } keys %map;
 
 # グローバル契約の受け側として認識する名前。
-my $GLOBAL_ROOT = qr/(?:window|globalThis|self)/;
+#
+# <important>
+# 先頭側の識別子境界が要る。付けないと `uiwindow.ApplicationToast` や
+# `itself.ApplicationToast` の末尾の `window` / `self` に当たり、他人のオブジェクト
+# 経由のアクセスをグローバル契約として保護してしまう（警告もなく素通りする）。
+#
+# `\b` ではなく lookbehind を使うのは、JS の識別子に `$` が使えるため。
+# `$` は `\w` に含まれないので `\b` では `$window` を弾けない。
+#
+# 後ろ側は `.` / `?.` が続く形しか書いていないので `\b` で足りる。
+# なお先頭が `.` の場合（`parent.window.…` / `globalThis.window.…`）は
+# 意図的に許す。cross-frame でグローバルを指す正当な書き方。
+# </important>
+my $GLOBAL_ROOT = qr/(?<![\w\$])(?:window|globalThis|self)\b/;
 
 # `window.ApplicationToast` として守る書き方。
 #
