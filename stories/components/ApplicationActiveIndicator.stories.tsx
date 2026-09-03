@@ -4,7 +4,7 @@ import { ApplicationActiveIndicator } from "../../components/application";
 import { Section, Showcase } from "../_showcase";
 
 const meta = {
-  title: "Components/ApplicationActiveIndicator",
+  title: "コンポーネント/ApplicationActiveIndicator",
   component: ApplicationActiveIndicator,
   parameters: {
     layout: "padded",

@@ -37,7 +37,7 @@ const TAGS: ApplicationComboboxItem[] = [
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationCombobox",
+  title: "コンポーネント/ApplicationCombobox",
   component: ApplicationCombobox,
   parameters: {
     layout: "padded",

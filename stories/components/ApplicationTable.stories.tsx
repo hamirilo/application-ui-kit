@@ -95,7 +95,7 @@ const COLUMNS: ApplicationTableColumn<Request>[] = [
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationTable",
+  title: "コンポーネント/ApplicationTable",
   component: ApplicationTable,
   parameters: {
     layout: "padded",

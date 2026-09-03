@@ -13,7 +13,7 @@ import { Cluster, Section, Showcase } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationBadge",
+  title: "コンポーネント/ApplicationBadge",
   component: ApplicationBadge,
   parameters: {
     layout: "padded",

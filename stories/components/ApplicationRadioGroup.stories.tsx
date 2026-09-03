@@ -35,7 +35,7 @@ const SHIPPING: ApplicationRadioGroupItem[] = [
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationRadioGroup",
+  title: "コンポーネント/ApplicationRadioGroup",
   component: ApplicationRadioGroup,
   parameters: {
     layout: "padded",

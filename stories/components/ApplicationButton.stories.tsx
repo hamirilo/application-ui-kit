@@ -13,7 +13,7 @@ import { Cluster, Section, Showcase } from "../_showcase";
  * </important>
  */
 const meta = {
-  title: "Components/ApplicationButton",
+  title: "コンポーネント/ApplicationButton",
   component: ApplicationButton,
   parameters: {
     layout: "padded",
