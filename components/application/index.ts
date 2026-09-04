@@ -88,7 +88,7 @@ export type {
 } from "./ButtonGroup";
 
 export { Table } from "./Table";
-export type { TableProps, TableColumn } from "./Table";
+export type { TableProps, TableColumn, TableSort, TableSelection, TableRowKey } from "./Table";
 
 export { FormField } from "./FormField";
 export type { FormFieldProps } from "./FormField";
@@ -139,6 +139,32 @@ export type { ThemeToggleProps } from "./ThemeToggle";
 export { CopyButton, copyTextToClipboard } from "./CopyButton";
 export type { CopyButtonProps, CopyResult } from "./CopyButton";
 
+export { Alert } from "./Alert";
+export type { AlertProps, AlertTone, AlertVariant } from "./Alert";
+
+export { Breadcrumbs } from "./Breadcrumbs";
+export type { BreadcrumbsProps, BreadcrumbItem } from "./Breadcrumbs";
+
+export { PageHeader } from "./PageHeader";
+export type { PageHeaderProps } from "./PageHeader";
+
+export { Stat } from "./Stat";
+export type { StatProps, StatTone } from "./Stat";
+
+export { FileDropZone } from "./FileDropZone";
+export type { FileDropZoneProps } from "./FileDropZone";
+
+export { Steps } from "./Steps";
+export type { StepsProps, StepItem, StepStatus } from "./Steps";
+
+export { DescriptionList } from "./DescriptionList";
+export type { DescriptionListProps, DescriptionItem } from "./DescriptionList";
+
+/* Textarea は shadcn/ui の re-export から移動した（error と文字数カウンタを持つため）。
+ * 名前は変わらないので利用側の import はそのまま動く。 */
+export { Textarea } from "./Textarea";
+export type { TextareaProps } from "./Textarea";
+
 /* ==========================================================================
  * shadcn/ui をそのまま公開しているもの
  *
@@ -162,7 +188,17 @@ export {
   CardFooter,
 } from "../ui/card";
 export { Spinner } from "../ui/spinner";
-export { Textarea } from "../ui/textarea";
+export { Switch } from "../ui/switch";
+export { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
+export {
+  Popover,
+  PopoverContent,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from "../ui/popover";
+export { Avatar, AvatarFallback, AvatarGroup, AvatarGroupCount, AvatarImage } from "../ui/avatar";
 export {
   Progress,
   ProgressTrack,
@@ -204,11 +240,18 @@ export {
 } from "../ui/field";
 export { Label } from "../ui/label";
 export { Separator } from "../ui/separator";
+export {
+  Accordion,
+  AccordionItem,
+  AccordionTrigger,
+  AccordionContent,
+} from "../ui/accordion";
+export { Collapsible, CollapsibleTrigger, CollapsibleContent } from "../ui/collapsible";
 
 /* ==========================================================================
  * 旧名（Application* 接頭辞つき）の後方互換エイリアス
  *
- * v6.2.0 を非破壊にするためだけに残しています。**v7.0.0 で削除します。**
+ * v7.0.0 を非破壊にするためだけに残しています。**v8.0.0 で削除します。**
  * 新しい export はここではなく上のセクションへ接頭辞なしで追加してください。
  * ========================================================================== */
 

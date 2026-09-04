@@ -33,7 +33,8 @@ Claude Design 等の AI や人間が**画面をデザインするとき**に渡�
 
 **実装前提:** shadcn/ui + Tailwind CSS v4。このキットの部品と
 semantic token で実装できる構成にする。shadcn/ui で表現できるものを独自 Component 化しない。
-Django + React Islands で実装困難な構成を避ける。
+Django + React Islands で実装困難な構成を避ける。Django テンプレート側の部品は
+テンプレート用クラス（§3 の表）と Islands で組み、Django Form の描画を React へ持ち上げない。
 
 ---
 
@@ -41,7 +42,8 @@ Django + React Islands で実装困難な構成を避ける。
 
 色は「何色か」ではなく「何のための表現か」で選ぶ。raw color（`bg-blue-600` 等)を
 主要操作・状態表現の意味として直接使わない。具体値は [tokens/theme.css](../tokens/theme.css) が SSOT
-（ライトは青基調、`html.dark` でダークモードにオプトイン）。
+（ライトは青基調、`html.dark` でダークモードにオプトイン。Token 具体値は `tokens/tokens.css`、
+テンプレート用クラスは `tokens/classes.css` に分かれていて、`theme.css` は入口）。
 
 | Token | 用途 |
 |---|---|
@@ -54,6 +56,7 @@ Django + React Islands で実装困難な構成を避ける。
 | `muted` / `muted-foreground` | 控えめな面・補足文字 |
 | `accent` / `accent-foreground` | hover 等の弱い強調 |
 | `border` / `input` / `ring` | 枠線・入力枠・フォーカスリング |
+| `status-{new,active,done,warning,danger,pending,neutral}` (+ `-foreground`) | 業務状態（未対応・対応中・完了…）。Badge の tone とテンプレートの `.badge-{tone}` が引く |
 
 - 既存 Token で表現できる場合は新しい Token を増やさない
 - アプリごとのブランド差分は、利用側 CSS の `@theme` 上書きで表現する（部品は変更しない）
@@ -80,13 +83,55 @@ Django + React Islands で実装困難な構成を避ける。
 | RadioTable | 表から1行を選ばせる。プラン・送付先など列で比較して決める選択 |
 | Tabs / Pagination / NavItem | 画面内の切替・送り・ナビゲーション |
 | Badge / ActiveIndicator | 状態表示 |
+| Alert | 継続して伝える注意・案内（フォーム全体のエラー、未完了の設定、権限による制限）。ページ幅のお知らせは `variant="banner"` |
+| PageHeader / Breadcrumbs | 画面の見出し領域（見出し・説明・主操作・タブ）と現在位置 |
+| Stat | KPI・統計タイル（ラベル・値・単位・増減） |
+| FileDropZone | ファイルの選択・ドロップ・事前チェック（種類・サイズ・件数）。Django の input と組むなら Islands の `file-drop-zone` |
+| Steps | 手順の進み具合（done / current / error / upcoming）。ウィザードや申請フロー |
+| DescriptionList | 詳細画面の項目名と値。空は「—」 |
+| Textarea | 複数行入力。`error` と `maxLength` + `showCount` の文字数カウンタ（Input も `showCount` を持つ） |
+| Table（`sort` / `selection` / `stickyHeader`） | 並び替えの状態表示（ロジックは呼び出し側）、行選択、固定ヘッダ |
+| Pagination（`totalCount` / `pageSizeOptions`） | 件数表記「N 件中 a–b 件」と表示件数の切替 |
 | Dropdown | メニュー |
 | ThemeToggle | ライト/ダーク切替 |
 
-**shadcn/ui をそのまま公開している部品:** Card / Spinner / Textarea / Progress /
-Empty / Item / Field / Label / Separator（API は shadcn/ui のドキュメントと同じ）。
+**shadcn/ui をそのまま公開している部品:** Card / Spinner / Progress /
+Empty / Item / Field / Label / Separator / Accordion / Collapsible / Switch / Tooltip / Popover / Avatar
+（API は shadcn/ui のドキュメントと同じ）。
 `FormFieldSet` はこちらではなく上の表にある。グループ入力のラベル・エラー配置を
 引き受ける実装をこのキットが持つため。
+
+**Django テンプレートから使うクラス**（`tokens/classes.css`。React 側の部品と 1:1。
+定義の一覧が公開契約 — [decisions/adr-0007](../decisions/adr-0007-template-class-contract-and-presentation-islands.md)）:
+
+| テンプレート用クラス | React 側 | 用途 |
+|---|---|---|
+| `.btn-primary` / `.btn-secondary` / `.btn-success` / `.btn-danger`（`.btn-xs` / `.btn-sm` / `.btn-lg`） | Button | 操作 |
+| `.input-field` | Input / Select / Textarea | フォーム入力 |
+| `.card` / `.card-sm` / `.card-lg` | Card | 面 |
+| `.badge` + `.badge-{tone}` | Badge `tone` | 状態表示。`models.py` の `*_display_class` は tone クラス名を返す |
+| `.alert` + `.alert-{tone}`（`.alert-banner`） | Alert | 継続して伝える注意・案内 |
+| `.breadcrumbs` | Breadcrumbs | 現在位置 |
+| `.page-header` | PageHeader | 画面の見出し領域。主操作は `.page-header-actions` |
+| `.stat` | Stat | KPI・統計タイル |
+| `.data-table` | Table | 一覧 |
+| `.disclosure`（`<details>`） | Accordion / Collapsible。件数の動的更新が要るなら Islands `disclosure` | 開閉 |
+| `.tabs` / `.tab` / `.tab-active` | Tabs（React の中身）/ Islands `tabs`（サーバー描画パネルの切替） | 画面内の切替 |
+| — | FileDropZone / Islands `file-drop-zone` | ファイル添付（テンプレートでは Island を使う） |
+| `input[type=checkbox].switch`（`.switch-sm`） | Switch | 即時反映の ON / OFF |
+| `.pagination` / `.pagination-summary` / `.pagination-list` / `.pagination-item` | Pagination | サーバーが描くページ送り・件数表記 |
+| `.data-table th[aria-sort]` / `.data-table-scroll` / `tr[aria-selected]` | Table の `sort` / `stickyHeader` / `selection` | 並び替えの状態表示・固定ヘッダ・選択行 |
+| `.description-list` | DescriptionList | 詳細画面の項目名と値 |
+| `.steps` / `.step` / `.step-done` / `.step-current` / `.step-error` | Steps | 手順の進み具合 |
+| `textarea.input-field` | Textarea | 複数行入力（React 版は文字数カウンタも持つ） |
+| `.avatar-sm` / `.avatar-md` / `.avatar-lg` | Avatar | 人・システムの丸いアイコン（20 / 28 / 36px） |
+| `.filter-bar` / `.filter-bar-field` / `.htmx-indicator` | 対応なし（レイアウト。パターン/一覧表の絞り込み行と同じ配置） | 一覧の上の絞り込み |
+
+- テンプレートでは上のクラスを使い、同じ部品を raw utility の組み合わせや独自 CSS で再実装しない。
+  自前の同名クラスがある場合は `styles.css` を読み込んだうえで削除する（残すと読み込み順で自前が勝つ）
+- 見せ方だけの切替（タブ・開閉・入力欄の出し分け）は Islands の `tabs` / `disclosure` / `field-visibility`。パネルの中身は Django テンプレートのまま
+- 確認ダイアログはテンプレートを書き換えずに寄せられる: base.html に `confirm-host` を 1 つ置けば、`hx-confirm` と `confirm-modal` イベントがそのままキットのダイアログになる
+- 見本は Storybook「基礎/テンプレート用クラス」
 
 **置いていないもの:** 社員選択・組織ツリーなどの業務ドメイン UI（ドメインを所有する
 プロジェクト側）。チャート・地図・動画などは利用側で選定する。
@@ -97,8 +142,9 @@ Empty / Item / Field / Label / Separator（API は shadcn/ui のドキュメン�
 
 | 種類 | 表現 |
 |---|---|
-| 入力項目のエラー | Field Error（対象フィールドの近く） |
-| フォーム全体・業務ルールのエラー | Form Error / Alert（分かりやすい位置） |
+| 入力項目のエラー | Field Error（対象フィールドの近く。`FormField` の `error`） |
+| フォーム全体・業務ルールのエラー | `Alert`（フォーム先頭。テンプレートは `.alert .alert-danger`） |
+| 継続して伝える注意・案内（未完了の設定、権限による制限、メンテナンス予告） | `Alert`。ページ幅なら `variant="banner"` |
 | 操作・非同期処理の一時的失敗 | Toast |
 | ページ・機能自体を利用できない | Error State / Error Page |
 | データがない | Empty State（有効な次の操作がある場合のみ提示） |
