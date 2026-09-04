@@ -50,8 +50,20 @@ jobs:
       - name: build-storybook
         run: bun run build-storybook
 
-      # main へ入ったものだけ成果物として置く。横断で見るための UI Catalog（配信側）が
-      # これを取りに来て配る。
+      # 上の build はこのリポジトリの node_modules を使うため、
+      # 宣言漏れの依存 (phantom dependency) を検出できない。
+      # 利用側を模した非巻き上げレイアウトでビルドし直して確認する。
+      - name: Node のセットアップ (配布検証の npm pack / npm install 用)
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+
+      - name: 配布物の検証
+        run: bun run verify:package
+
+      # main へ入り、配布物の検証まで通ったものだけ成果物として置く（失敗した commit の
+      # Storybook を配らないため、この job の最後に置く）。横断で見るための UI Catalog
+      #（配信側）がこれを取りに来て配る。
       #
       # <important>
       # ここから配信サーバーへ push しない。GitHub のホストランナーからは配信側の
@@ -67,14 +79,3 @@ jobs:
           path: storybook-static
           retention-days: 30
           if-no-files-found: error
-
-      # 上の build はこのリポジトリの node_modules を使うため、
-      # 宣言漏れの依存 (phantom dependency) を検出できない。
-      # 利用側を模した非巻き上げレイアウトでビルドし直して確認する。
-      - name: Node のセットアップ (配布検証の npm pack / npm install 用)
-        uses: actions/setup-node@v4
-        with:
-          node-version: "22"
-
-      - name: 配布物の検証
-        run: bun run verify:package
