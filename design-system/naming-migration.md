@@ -1,15 +1,15 @@
-# 旧名 → 新名の移行（v6.2.0）
+# 旧名 → 新名の移行（v7.0.0）
 
 公開APIから `Application` 接頭辞を撤廃しました。判断の経緯は
 [decisions/adr-0006](../decisions/adr-0006-drop-application-prefix.md) を正とします。
 
-**v6.2.0は非破壊です。** 旧名は `@deprecated` エイリアスとして残っているので、
+**v7.0.0は非破壊です。** 旧名は `@deprecated` エイリアスとして残っているので、
 上げただけでは何も壊れません。移行は各Applicationの都合で進めてください。
-**旧名はv7.0.0で削除します。**
+**旧名はv8.0.0で削除します。**
 
 ## 移行手順
 
-1. `package.json` の `application-ui-kit` を `^6.2.0` へ上げる
+1. `package.json` の `application-ui-kit` を `^7.0.0` へ上げる
 2. 下のスクリプトで一括置換する
 3. typecheckを通す
 
