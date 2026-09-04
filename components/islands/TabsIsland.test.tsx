@@ -78,6 +78,23 @@ describe("TabsIsland", () => {
     expect(screen.getByRole("tab", { name: "教材 (4)" })).toBeTruthy();
   });
 
+  it("htmx:afterSettle で開いていたパネルが消えたら残ったパネルを開く", () => {
+    const { host, mount } = setupHost(`
+      <section data-tab-panel="a" data-tab-label="A">a</section>
+      <section data-tab-panel="b" data-tab-label="B" hidden>b</section>
+    `);
+    render(<TabsIsland initial="b" />, { container: mount });
+    expect(host.querySelector<HTMLElement>("[data-tab-panel=b]")?.hidden).toBe(false);
+
+    host.querySelector("[data-tab-panel=b]")?.remove();
+    act(() => {
+      document.body.dispatchEvent(new Event("htmx:afterSettle", { bubbles: true }));
+    });
+    expect(screen.queryByRole("tab", { name: "B" })).toBeNull();
+    expect(screen.getByRole("tab", { name: "A" }).getAttribute("aria-selected")).toBe("true");
+    expect(host.querySelector<HTMLElement>("[data-tab-panel=a]")?.hidden).toBe(false);
+  });
+
   it("initial が存在しない値なら先頭を開く", () => {
     const { host, mount } = setupHost(`
       <section data-tab-panel="a" data-tab-label="A">a</section>

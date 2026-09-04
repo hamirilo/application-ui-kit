@@ -136,6 +136,18 @@ export const FileDropZone = React.forwardRef<HTMLDivElement, FileDropZoneProps>(
     const [dragging, setDragging] = React.useState(false);
     const [rejections, setRejections] = React.useState<string[]>([]);
 
+    // 内部の input（onBrowse 省略時）はそのまま form の送信対象になる。
+    // 表示している一覧と input.files を常に一致させ、事前チェックで弾いたものや
+    // 一覧から削除したものが送信されない・選んだものが消えないようにする。
+    // 空にすれば value も空になるので、削除後に同じファイルをもう一度選べる。
+    React.useEffect(() => {
+      const input = inputRef.current;
+      if (!input || onBrowse || typeof DataTransfer === "undefined") return;
+      const transfer = new DataTransfer();
+      for (const file of files) transfer.items.add(file);
+      input.files = transfer.files;
+    }, [files, onBrowse]);
+
     const handleIncoming = (incoming: File[]) => {
       if (disabled || !incoming.length) return;
       const reasons: string[] = [];
@@ -221,11 +233,7 @@ export const FileDropZone = React.forwardRef<HTMLDivElement, FileDropZoneProps>(
               disabled={disabled}
               tabIndex={-1}
               className="sr-only"
-              onChange={(event) => {
-                handleIncoming(Array.from(event.target.files ?? []));
-                // 同じファイルをもう一度選んでも change が発火するように空にする
-                event.target.value = "";
-              }}
+              onChange={(event) => handleIncoming(Array.from(event.target.files ?? []))}
             />
           )}
         </div>

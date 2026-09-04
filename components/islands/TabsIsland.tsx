@@ -156,6 +156,12 @@ export function TabsIsland({ initial, links = [], label, urlParam }: TabsIslandP
       const found = collectPanels(host);
       setPanels(found);
       setCounts(readCounts(found));
+      // 差し替えで開いていたパネルが消えたら、どのパネルも開かない状態にせず
+      // サーバーが表示状態にしたもの → 先頭 の順で選び直す
+      setActive((current) => {
+        if (found.some((panel) => panel.key === current)) return current;
+        return found.find((panel) => !panel.element.hidden)?.key ?? found[0]?.key ?? "";
+      });
     };
     document.body.addEventListener("htmx:afterSettle", refresh);
     return () => document.body.removeEventListener("htmx:afterSettle", refresh);
