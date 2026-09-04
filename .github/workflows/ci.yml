@@ -60,3 +60,22 @@ jobs:
 
       - name: 配布物の検証
         run: bun run verify:package
+
+      # main へ入り、配布物の検証まで通ったものだけ成果物として置く（失敗した commit の
+      # Storybook を配らないため、この job の最後に置く）。横断で見るための UI Catalog
+      #（配信側）がこれを取りに来て配る。
+      #
+      # <important>
+      # ここから配信サーバーへ push しない。GitHub のホストランナーからは配信側の
+      # ネットワークへ届かないため、配信側が pull する。
+      # 名前を storybook-static から変えるときは配信側（UI Catalog）の registry も
+      # 一緒に変えること。
+      # </important>
+      - name: Storybook の静的成果物をアップロード（main のみ）
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        uses: actions/upload-artifact@v4
+        with:
+          name: storybook-static
+          path: storybook-static
+          retention-days: 30
+          if-no-files-found: error

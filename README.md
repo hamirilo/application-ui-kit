@@ -52,6 +52,20 @@ bun run storybook
 
 Patternは網羅性のために増やさず、「実際の開発で一度迷い、次回も同じ判断に迷いそうか」を追加基準とします。
 
+### 共有版（UI Catalog）
+
+開発時だけ `bun run storybook` を起動します。共有・横断で見るための版は **静的ビルドを配信**し、
+Storybookを常駐Nodeプロセスにしません。
+
+```bash
+bun run build-storybook   # storybook-static/ を出力
+```
+
+mainへマージするとCIが `storybook-static` をworkflow artifactとして上げ、配信側（UI Catalog）が
+それを取りに来て配ります。他リポジトリのStorybookと横断で見るにはUI Catalogを使います。
+
+Catalogの構成・配信URL・リポジトリの追加手順は `ui-catalog` repositoryのREADMEを正とします。
+
 ## Token
 
 `tokens/theme.css` が具体的なstyle TokenのSource of Truthです。
