@@ -12,4 +12,6 @@ ds-bundle/
 .design-sync/learnings/
 .design-sync/.cache/
 .design-sync/node_modules
+# design-sync — per-fork/owner target, never shared via git (see DESIGN.md)
+.design-sync/config.local.json
 
