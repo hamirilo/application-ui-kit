@@ -7,6 +7,9 @@
   "entry": "dist/components/application/index.js",
   "buildCmd": "bun run build",
   "readmeHeader": ".design-sync/conventions.md",
+  "titleMap": {
+    "Toast": "Toaster"
+  },
   "overrides": {
     "Pagination": { "cardMode": "column" },
     "Table": { "viewport": "900x1150" },
@@ -16,7 +19,13 @@
     "ButtonGroup": { "viewport": "900x900" },
     "Combobox": { "viewport": "900x870" },
     "DatePicker": { "viewport": "900x870" },
-    "RadioGroup": { "viewport": "900x850" },
-    "Select": { "viewport": "900x780" }
+    "RadioGroup": { "viewport": "900x1600" },
+    "Select": { "viewport": "900x780" },
+    "Alert": { "viewport": "900x950" },
+    "FileDropZone": { "viewport": "900x1150" },
+    "FormFieldSet": { "viewport": "900x1020" },
+    "RadioTable": { "viewport": "900x1100", "cardMode": "column" },
+    "Steps": { "viewport": "900x870" },
+    "TreeSelect": { "viewport": "900x870" }
   }
 }
