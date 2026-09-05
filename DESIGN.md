@@ -1,38 +1,252 @@
-# Claude Design 同期
+---
+version: alpha
+name: Application UI Kit
+description: 社内業務システム向けの、落ち着いた操作性と情報把握のしやすさを最優先にしたデザインシステム
+colors:
+  background: "#ffffff"
+  foreground: "#1e293b"
+  primary: "#2563eb"
+  primary-hover: "#1d4ed8"
+  primary-active: "#1e40af"
+  primary-foreground: "#ffffff"
+  secondary: "#ffffff"
+  secondary-hover: "#f8fafc"
+  secondary-active: "#f1f5f9"
+  secondary-foreground: "#334155"
+  secondary-border: "#cbd5e1"
+  success: "#10b981"
+  success-hover: "#059669"
+  success-active: "#047857"
+  success-foreground: "#ffffff"
+  danger: "#ef4444"
+  danger-hover: "#dc2626"
+  danger-active: "#b91c1c"
+  danger-foreground: "#ffffff"
+  warning: "#f97316"
+  warning-hover: "#ea580c"
+  warning-foreground: "#ffffff"
+  info: "#38bdf8"
+  info-hover: "#0284c7"
+  info-foreground: "#ffffff"
+  card: "#ffffff"
+  card-foreground: "#1e293b"
+  popover: "#ffffff"
+  popover-foreground: "#1e293b"
+  muted: "#f1f5f9"
+  muted-foreground: "#64748b"
+  accent: "#f1f5f9"
+  accent-foreground: "#1e293b"
+  border: "#e2e8f0"
+  input: "#e2e8f0"
+  ring: "#2563eb"
+  disabled: "#f1f5f9"
+  disabled-foreground: "#64748b"
+  disabled-border: "#e2e8f0"
+  status-new: "#fef9c3"
+  status-new-foreground: "#ca8a04"
+  status-active: "#f0f9ff"
+  status-active-foreground: "#0284c7"
+  status-done: "#ecfdf5"
+  status-done-foreground: "#059669"
+  status-warning: "#fff7ed"
+  status-warning-foreground: "#ea580c"
+  status-danger: "#fff1f2"
+  status-danger-foreground: "#e11d48"
+  status-pending: "#faf5ff"
+  status-pending-foreground: "#9333ea"
+  status-neutral: "#f1f5f9"
+  status-neutral-foreground: "#64748b"
+typography:
+  h1:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 36px
+    fontWeight: 700
+    lineHeight: 1.2
+  h2:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 30px
+    fontWeight: 700
+    lineHeight: 1.2
+  h3:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 24px
+    fontWeight: 700
+    lineHeight: 1.2
+  h4:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 20px
+    fontWeight: 600
+    lineHeight: 1.2
+  body-lg:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 18px
+    fontWeight: 400
+    lineHeight: 1.6
+  body-md:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.6
+  body-sm:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.4
+  label-sm:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 14px
+    fontWeight: 500
+    lineHeight: 1.4
+  caption:
+    fontFamily: Inter, "IBM Plex Sans JP", sans-serif
+    fontSize: 12px
+    fontWeight: 400
+    lineHeight: 1.4
+rounded:
+  sm: 4px
+  md: 8px
+  lg: 12px
+  xl: 16px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 16px
+  lg: 24px
+  xl: 32px
+  2xl: 48px
+components:
+  button-primary:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.primary-foreground}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.md}"
+    height: 32px
+    padding: 0 16px
+  button-primary-hover:
+    backgroundColor: "{colors.primary-hover}"
+  button-secondary:
+    backgroundColor: "{colors.secondary}"
+    textColor: "{colors.secondary-foreground}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.md}"
+    height: 32px
+    padding: 0 16px
+  button-danger:
+    backgroundColor: "{colors.danger}"
+    textColor: "{colors.danger-foreground}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.md}"
+    height: 32px
+    padding: 0 16px
+  card:
+    backgroundColor: "{colors.card}"
+    textColor: "{colors.card-foreground}"
+    rounded: "{rounded.lg}"
+    padding: "{spacing.md}"
+  input-field:
+    backgroundColor: "{colors.background}"
+    textColor: "{colors.foreground}"
+    typography: "{typography.body-md}"
+    rounded: "{rounded.md}"
+    height: 32px
+    padding: 0 12px
+---
 
-このリポジトリのUI Kit（`application-ui-kit`）を [Claude Design](https://claude.ai/design) へ同期する仕組みについて。同期先のプロジェクトでは、Claude Designのdesign agentがこのリポジトリの実コンポーネント（実際にビルドされた`dist/`由来のbundle）を使ってUIを組み立てる。
+# Application UI Kit
 
-## 何をしているか
+## Overview
 
-`.design-sync/` 配下の設定に従い、Storybookの実描画と `dist/` のビルド成果物から次を生成してアップロードする。
+社内業務システム向けの、落ち着いて分かりやすい設計を基本とします。
+装飾よりも操作性と情報の把握しやすさを最優先とし、情報密度は「中〜やや高め」を基準とします。
 
-- コンポーネントのbundle（`_ds_bundle.js` / `_ds_bundle.css`）と各コンポーネントのプレビューカード
-- 各コンポーネントの `.d.ts` / `.prompt.md`（design agentが読むAPI仕様・使い方）
-- Semantic Tokenやfontなどのスタイル一式
+- 主操作（Primary Action）は PageHeader 付近（通常は右上）の明確な位置に配置します。
+- 画面レイアウトは業務フローに応じた 3 系統（Standard / Simple / Focus）を起点とします。
+- 原則として shadcn/ui + Tailwind CSS v4 の構成に準拠し、生のユーティリティの ad-hoc な組み合わせではなくセマンティックトークンを活用します。
 
-アップロード前に、生成した各プレビューがこのリポジトリの実Storybookと一致するか目視で検証する（品質保証の核）。
+## Colors
 
-## 実行方法
+色は「何色か」ではなく「何のための表現か」というセマンティクスで選択します。生のカラーユーティリティ（例: `bg-blue-600` など）を直接指定せず、トークンを使用します。
 
-Claude Code で `/design-sync` を実行する。初回は数十分〜数時間かかることがある（既存プロジェクトへの再同期は差分のみで済むことが多い）。
+- **Primary (`#2563eb`)**: メインアクション（作成・送信・保存）。1画面に原則1つのみ配置します。
+- **Secondary (`#ffffff` + `#cbd5e1` ボーダー)**: 補助操作（キャンセル・戻る）。キャンセル操作には必ずこれを使用します。
+- **Danger (`#ef4444`)**: 削除や取り消し不能な破壊的操作に限定して使用します。
+- **Success (`#10b981`)**: 保存完了、確定、承認などの成功状態を表します。
+- **Warning (`#f97316`)**: 警告や注意喚起に使用します。
+- **Info (`#38bdf8`)**: 補足的な情報提示に使用します。
+- **Status Colors**: 業務ステータス（`status-new`: 新規, `status-active`: 進行中, `status-done`: 完了, `status-warning`: 差戻し, `status-danger`: 緊急/エラー, `status-pending`: 保留, `status-neutral`: 終了/アーカイブ）は淡い背景と濃い文字の組み合わせで統一します。
 
-## 設定ファイル
+WCAG 適合性として主要テキストはコントラスト比 4.5:1 以上（AA 合格）を維持し、無効（Disabled）状態は彩度を落とした専用トークン（`disabled`）で表現します。
 
-| ファイル | git管理 | 内容 |
+## Typography
+
+フォントファミリーは `"Inter", "IBM Plex Sans JP", sans-serif` を基本とします。
+
+- **H1 (`36px` / `700` / `1.2`)**: ページタイトル。1画面に1つ配置します。
+- **H2 (`30px` / `700` / `1.2`)**: セクションタイトル。
+- **H3 (`24px` / `700` / `1.2`)**: サブセクション見出し。
+- **H4 (`20px` / `600` / `1.2`)**: カード見出し・小見出し。
+- **Body-MD (`16px` / `400` / `1.6`)**: 標準本文テキスト。読みやすさを重視した行間を設定します。
+- **Body-SM (`14px` / `400` / `1.4`)**: 補足情報およびボタン内テキスト。
+- **Label-SM (`14px` / `500` / `1.4`)**: 入力フィールドのラベルやテーブルヘッダー。
+- **Caption (`12px` / `400` / `1.4`)**: メタ情報、注記、バッジテキスト。アクセシビリティの最小サイズ基準です。
+
+## Layout
+
+Tailwind CSS の標準スペーシング（0.25rem = 4px 刻み）に準拠します。任意値（`p-[13px]` 等）は禁止し、スケール値を使用します。
+
+- **余白ルール**:
+  - ラベルと入力欄の間: `6px` (`mb-1.5` で固定、混在禁止)
+  - フォーム項目の垂直間隔: `16px` (`space-y-4`)
+  - カード内パディング: `16px` (`padding: 16px` / `card` 標準)
+  - セクション間の間隔: `24px` (`spacing.lg`)
+  - 空状態（Empty state）の上下余白: `48px` (`spacing.2xl`)
+- **画面レイアウト 3 系統**:
+  - **Standard (一覧・ダッシュボード)**: 上部に PageHeader、フィルターバー、メインコンテンツ領域（Table またはグリッド）。
+  - **Simple (単一目的・設定)**: 幅を絞った単一カラム。入力ステップの明瞭化。
+  - **Focus (集中作業・ウィザード)**: ナビゲーションを最小化し、Steps コンポーネントと連動した入力・確認フロー。
+
+## Elevation & Depth
+
+シャドウは最小限にとどめ、情報の階層を強調しすぎないフラット寄りの設計とします。
+
+- **標準 (`shadow-sm`)**: カード、パネル、ボタンの標準的な浮遊感。原則としてこれのみを使用します。
+- **浮遊要素 (`shadow-lg`)**: ドロップダウンメニュー、ポップオーバー、モーダルダイアログのみ例外的に許可します。
+- **非推奨**: `shadow-md` や `shadow-xl` など中途半端または過大なシャドウは使用しません。
+
+## Shapes
+
+角丸（Border Radius）の基準は `--radius: 0.5rem` (`8px`) です。
+
+- **Small (`4px` / `rounded-sm`)**: チェックボックス等の小さなコントロール（8px を適用すると円形に見えてしまうため必ず 4px を使用）。
+- **Medium (`8px` / `rounded-md`)**: ボタン、入力欄、セレクトボックス（標準コントロール）。
+- **Large (`12px` / `rounded-lg`)**: カード（Card）、パネル。
+- **Extra Large (`16px` / `rounded-xl`)**: ダイアログ、モーダルウィンドウ。
+- **Full (`9999px` / `rounded-full`)**: バッジ、アバター、丸型インジケーター。
+
+## Components
+
+既存のコンポーネントライブラリを優先して使用します。
+
+| 部品種別 | 推奨コンポーネント | 用途・基準 |
 |---|---|---|
-| `.design-sync/config.json` | される | `shape` / `buildCmd` / `titleMap` / `overrides` など、fork間で共通のビルド・検証設定 |
-| `.design-sync/config.local.json` | **されない**（`.gitignore`） | `projectId` のみ。同期先のClaude Designプロジェクトを指す |
-| `.design-sync/NOTES.md` | される | 過去の同期で判明した不具合・誤検知・re-sync時の注意点。**再同期の前に必ず読む** |
-| `.design-sync/conventions.md` | される | design agentのsystem promptに載る、このUI Kit固有の使い方（wrapping、styling idiom等） |
+| アクション | Button, ButtonGroup | variant は `primary`, `secondary`, `danger`, `success` の 4 種。 |
+| 入力 | Input, SearchInput, Select, Combobox, DatePicker | ラベル・エラーメッセージの配置には FormField / FormFieldSet を必ず組み合わせる。 |
+| データ表示 | Table, RadioTable | テーブルは必ず空状態（Empty state）ハンドリングを含む。 |
+| 構造・案内 | PageHeader, Breadcrumbs, Tabs | 画面の見出し、主操作ボタン、階層パンくずを一体で提供。 |
+| 状態・通知 | Badge, ActiveIndicator, Alert, Toast | 一時的な通知は Toast、持続的な案内は Alert、状態表現は Badge（tone を指定）。 |
+| 対話 | ConfirmDialog, FormDialog | 破壊的操作の確認には `window.confirm` を使わず ConfirmDialog を使用。 |
 
-### なぜ `projectId` だけ別ファイルなのか
+## Do's and Don'ts
 
-このリポジトリは fork運用（[decisions/adr-0002](decisions/adr-0002-fork-branch-and-upstream-flow.md)）を前提にしており、fork / ownerごとに同期先のClaude Designプロジェクトが異なりうる。`projectId` を `config.json` にコミットすると、全forkが同じ1つのプロジェクトへ同期してしまう。そのため `projectId` は `config.local.json`（`.env.local` と同じ発想の、コミットしないローカル設定）に分離している。
+### Do
+- **主操作を明確にする**: 画面ごとに主要なアクション（Primary）を 1 つに絞り、右上などの定位置に置く。
+- **セマンティックトークンを使う**: 色やサイズは用途別のトークン名（`primary`, `border`, `status-active`）で指定する。
+- **アクセシビリティを確保する**: エラー時は見た目の枠線だけでなく `aria-invalid` とテキストメッセージを両方付与する。
+- **空状態を必ず定義する**: データが 0 件の Table やリストには、次に取るべきアクションを示す空状態を置く。
 
-- 同期実行時、`config.local.json` があればそこから `projectId` を読み、`config.json` の内容とマージして使う。
-- まだ存在しない場合（初回 clone、または初回同期）は、Claude Designの `list_projects` / `create_project` で対象プロジェクトを決め、そのIDを `config.local.json` に書く。
-- `config.json` 自体に `projectId` を書き込んだまま commit しないこと。
-
-## トラブルシューティング
-
-同期中に警告や見た目の不一致が出たら、まず `.design-sync/NOTES.md` の「Known false positives」「Re-sync risks」を確認する。同じ調査を毎回やり直さないための記録なので、再同期のたびに更新すること。
+### Don't
+- **過剰なカード分割をしない**: 業務システムにおいて関連する情報を細切れのカードに分割しすぎない。
+- **装飾的なグラデーションやアニメーションを避ける**: 背景グラデーションや意味のない移動アニメーションは業務の集中を阻害するため排除する。
+- **生の色（raw color utilities）を直接書かない**: `bg-blue-600` や `text-gray-900` を直書きせず、ダークモードやテーマ変更に耐えうるトークンを使用する。
+- **キャンセルに Primary スタイルを使わない**: キャンセル・戻る操作には必ず Secondary スタイルを適用する。
